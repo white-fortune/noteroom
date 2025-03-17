@@ -3,7 +3,7 @@ import Quill, { QuillOptions } from "quill";
 import "quill/dist/quill.snow.css";
 import Swal from "sweetalert2";
 import ThumbnailPopup from "./ThumbnailPopup";
-import "../styles.css";
+import "../../public/css/upload-note.css";
 
 const toolbarOptions = [
   ["bold", "italic", "underline"],
