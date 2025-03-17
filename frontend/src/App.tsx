@@ -11,7 +11,7 @@ import UserProfile from "./pages/user-profile/UserProfile";
 import { useUserAuth } from "./context/UserAuthContext";
 import Login from "./pages/login/Login";
 import nrLogo from "./assets/ng_logo.png"
-
+import UploadNote from "./pages/upload-note/UploadNote";
 
 //TODO: A reddit like logo when the feed loads or the user auth loads
 
@@ -61,6 +61,7 @@ function App() {
 					<Route path="/user/:username" element={<UserProfile />} />
 					<Route path="/search-profile" element={<SearchProfile />} />
 					<Route path="/settings" element={<Settings />} />
+					<Route path="/upload-note" element={<UploadNote />} />
 				</Route>
 			</Routes>
 
