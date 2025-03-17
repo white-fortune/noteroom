@@ -19,7 +19,7 @@ body {
   min-height: 100vh;
 }
 
-.middle-section {
+.middle-section-upload {
   width: 100%;
   height: auto;
   margin-top: 90px;
@@ -422,7 +422,7 @@ body {
 }
 
 @media (max-width: 480px) {
-  .middle-section {
+  .middle-section-upload {
     margin-top: 60px;
     margin-bottom: 60px;
   }
@@ -495,7 +495,7 @@ body {
 }
 
 @media (min-width: 769px) {
-  .middle-section {
+  .middle-section-upload {
     width: 600px;
     padding: 20px;
   }
@@ -505,7 +505,7 @@ body {
 }
 
 @media (max-width: 768px) {
-  .middle-section {
+  .middle-section-upload {
     margin-bottom: 60px;
     width: 100%;
     padding: 20px;
@@ -525,7 +525,7 @@ body {
 }
 
 @media (max-width: 480px) {
-  .middle-section {
+  .middle-section-upload {
     width: 100%;
   }
   .section-header h2 {
@@ -544,7 +544,7 @@ body {
 }
 
 @media (max-width: 320px) {
-  .middle-section {
+  .middle-section-upload {
     padding: 15px;
   }
   .thumbnail-container {

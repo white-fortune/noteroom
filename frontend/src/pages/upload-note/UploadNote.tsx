@@ -186,7 +186,7 @@ const UploadNote: React.FC = () => {
   };
 
   return (
-    <div className="middle-section">
+    <div className="middle-section-upload">
       <header className="section-header">
         <h2>Upload New Note</h2>
         <p className="header-subtitle">
