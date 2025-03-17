@@ -19,7 +19,7 @@ export default function SearchProfile() {
 
     async function getMtcProfiles(showMore: boolean) {
         try {
-            let response = await fetch(`http://127.0.0.1:2000/api/users/mutual-college?batch=${mtcBatch}${!showMore ? "&countdoc=true" : ""}`)
+            let response = await fetch(`http://localhost:2000/api/users/mutual-college?batch=${mtcBatch}${!showMore ? "&countdoc=true" : ""}`, { credentials: 'include' })
             let data = await response.json()
             if (data && data.students.length !== 0) {
                 if (showMore) {
@@ -45,7 +45,7 @@ export default function SearchProfile() {
         setShowMtcMoreButton(totalMtcCount.current !== mutualCollegeProfiles.length)
     }, [mtcBatch])
 
-    
+
 
     return (
         <div className="middle-section">
@@ -64,29 +64,29 @@ export default function SearchProfile() {
                 </svg>
             </div>
 
-            <SearchBar 
-                profile={[searchedProfiles, setSearchedProfiles]} 
+            <SearchBar
+                profile={[searchedProfiles, setSearchedProfiles]}
                 schBatch={[schBatch, setSchBatch]}
                 showMoreButton={[showSchMoreButton, setShowSchMoreButton]}
                 showStatusMessage={[showStatusMessage, setShowStatusMessage]}
             />
-            <ProfiesContainer 
-                sectionLabel={"Search Results"} 
-                profiles={searchedProfiles} 
-                batch={[schBatch, setSchBatch]} 
+            <ProfiesContainer
+                sectionLabel={"Search Results"}
+                profiles={searchedProfiles}
+                batch={[schBatch, setSchBatch]}
                 showMoreButton={[showSchMoreButton, setShowSchMoreButton]}
                 showStatusMessage={[showStatusMessage, setShowStatusMessage]}
                 type_={ProfileTypes.SEARCHED_PROFILES}
-            /> 
+            />
 
-            { mutualCollegeProfiles.length !== 0 && <ProfiesContainer 
-                sectionLabel={"Mutual College"} 
-                profiles={mutualCollegeProfiles} 
-                batch={[mtcBatch, setMtcBatch]} 
+            {mutualCollegeProfiles.length !== 0 && <ProfiesContainer
+                sectionLabel={"Mutual College"}
+                profiles={mutualCollegeProfiles}
+                batch={[mtcBatch, setMtcBatch]}
                 showMoreButton={[showMtcMoreButton, setShowMtcMoreButton]}
                 showStatusMessage={[showStatusMessage, setShowStatusMessage]}
                 type_={ProfileTypes.MUTUAL_COLLEGE_PROFILES}
-            /> }
+            />}
         </div>
     )
 }

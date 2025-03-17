@@ -7,7 +7,7 @@ const router = Router()
 export default function profileApiRouter(io: Server) {
     router.get("/mutual-college", async (req, res) => {
         try {
-            let studentID = req.session["stdid"] || "9181e241-575c-4ef3-9d3c-2150eac4566d"
+            let studentID = req.session["stdid"]
             let studentDocID = (await Convert.getDocumentID_studentid(studentID)).toString()
             let countDoc = req.query.countdoc ? true : false
 
@@ -27,16 +27,18 @@ export default function profileApiRouter(io: Server) {
             if(req.params.username) {
                 let username = req.params.username
 
-                let visiterStudentID = req.session["stdid"] || "9181e241-575c-4ef3-9d3c-2150eac4566d"
+                let visiterStudentID = req.session["stdid"]
                 let profileStudentID = await Convert.getStudentID_username(username)
 
                 let profile = await getProfile(username)
                 if (profile.ok) {
                     res.json({ ok: true, profile: {...profile.student, owner: visiterStudentID === profileStudentID } })
                 } else {
+                    //TODO: handle invalid profile url
                     res.json({ ok: false, message: "Sorry, nobody on NoteRoom goes by that name." })
                 }
             } else {
+                //TODO: handle 404, generally
                 res.json({ ok: false, message: "Page not found!" })
             }
         } catch (error) {

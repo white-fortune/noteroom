@@ -10,7 +10,7 @@ export default function postApiRouter(io: Server) {
 
     router.get("/:postID/metadata", async (req, res) => {
         try {
-            let studentID = req.session["stdid"] || "9181e241-575c-4ef3-9d3c-2150eac4566d"
+            let studentID = req.session["stdid"]
             let studentDocID = (await Convert.getDocumentID_studentid(studentID)).toString()
             let response: any = await getSingleNote(req.params.postID, studentDocID, { images: false })
             if (response.ok) {
@@ -39,7 +39,7 @@ export default function postApiRouter(io: Server) {
     router.get("/:postID/comments", async (req, res) => {
         try {
             let postID = req.params.postID
-            let studentDocID = (await Convert.getDocumentID_studentid(req.session["stdid"] || "9181e241-575c-4ef3-9d3c-2150eac4566d")).toString()
+            let studentDocID = (await Convert.getDocumentID_studentid(req.session["stdid"])).toString()
             let response = await getComments({ noteDocID: postID, studentDocID })
             if (response.ok) {
                 res.json({ ok: true, comments: response.comments })
@@ -55,7 +55,7 @@ export default function postApiRouter(io: Server) {
         try {
             let postID = req.params.postID
             let action = <"save" | "delete">req.query["action"]
-            let studentDocID = (await Convert.getDocumentID_studentid(req.session["stdid"] || "9181e241-575c-4ef3-9d3c-2150eac4566d")).toString()
+            let studentDocID = (await Convert.getDocumentID_studentid(req.session["stdid"])).toString()
     
             if (action === 'save') {
                 let response = await addSaveNote({ studentDocID, noteDocID: postID })
@@ -77,7 +77,7 @@ export default function postApiRouter(io: Server) {
     router.post("/:postID/feedbacks", async (req, res) => {
         try {
             const postID = req.params.postID
-            const studentID = req.session["stdid"] || req.body.commenter
+            const studentID = req.session["stdid"]
             const feedbackContent = req.body.feedbackContent
             const commenterDocID = (await Convert.getDocumentID_studentid(studentID)).toString()
 
@@ -87,12 +87,14 @@ export default function postApiRouter(io: Server) {
                 feedbackContents: feedbackContent
             }
             const response = await addFeedback(feedbackData)
+            console.log(response)
             if (response.ok) {
                 res.json({ ok: true, feedback: response.feedback })
             } else {
                 res.json({ ok: false })
             }
         } catch (error) {
+            console.error(error)
             res.json({ ok: false })
         }
     })
@@ -100,7 +102,7 @@ export default function postApiRouter(io: Server) {
     router.post("/:postID/feedbacks/:feedbackID/replies", async (req, res) => {
         try {
             const postID = req.params.postID
-            const studentID = req.session["stdid"] || req.body.replier
+            const studentID = req.session["stdid"]
             const replyContent = req.body.replyContent
             const parentFeedbackDocID = req.params.feedbackID 
             const replierDocID = (await Convert.getDocumentID_studentid(studentID)).toString()
@@ -126,7 +128,7 @@ export default function postApiRouter(io: Server) {
         try {
             const postID = req.params.postID
             const action = req.query["action"]
-            const voterStudentID = req.session["stdid"] || "9181e241-575c-4ef3-9d3c-2150eac4566d"
+            const voterStudentID = req.session["stdid"]
             const voterStudentDocID = (await Convert.getDocumentID_studentid(voterStudentID)).toString()
             const voteType = <"upvote" | "downvote">req.query["type"]
             
@@ -145,7 +147,7 @@ export default function postApiRouter(io: Server) {
 
     router.get("/saved", async (req, res) => {
         try {
-            let studentID = req.session["stdid"] || "9181e241-575c-4ef3-9d3c-2150eac4566d"
+            let studentID = req.session["stdid"]
             let response = await getSavedPosts(studentID)
             if (response.ok) {
                 res.json({ ok: true, posts: response.posts })

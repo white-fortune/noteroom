@@ -1,54 +1,80 @@
 import { DashBoard } from "./pages/dashboard/index";
 import { LeftPanel, NoteSearchBar, NotificationModal, RightPanel } from "./partials/index";
 import MobileControlPanel from "./partials/MobileControlPanel";
-import { ReactNode, useState } from "react";
+import { useState } from "react";
 import PostView from "./pages/post-view/PostView";
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 import SearchProfile from "./pages/search-profile/SearchProfile";
-import FeedNotesProvider from "./context/FeedNoteContext";
-import ScrollPositionProvider from "./context/ScrollPosition";
 import Settings from "./pages/settings/Settings";	
 import UserProfile from "./pages/user-profile/UserProfile";
-import AppDataProvider from "./context/AppDataContext";
 // import SignUp from "./pages/sign-up/SignUp";
-// import Login from "./pages/login/Login";
+import { useUserAuth } from "./context/UserAuthContext";
+import Login from "./pages/login/Login";
+import nrLogo from "./assets/ng_logo.png"
 
 
-function Providers({ children }: { children: ReactNode | ReactNode[] }) {
-	// FIXME: Combine the saved notes and user profile in one context. cause they are under user profile maybe.
-	return (
-		<ScrollPositionProvider>
-			<AppDataProvider>
-				<FeedNotesProvider>
-					{ children }
-				</FeedNotesProvider>
-			</AppDataProvider>
-		</ScrollPositionProvider>
-	)
+//TODO: A reddit like logo when the feed loads or the user auth loads
+
+function PublicRoute() {
+	const [userAuth, , loading] = useUserAuth()
+	if (loading) {
+		return <>
+			<img src={nrLogo} />
+		</>
+	}
+	if (userAuth) {
+		return <Navigate to="/feed" />
+	}
+
+	return <Outlet />
+}
+
+function ProtectedRoute() {
+	const [userAuth, , loading] = useUserAuth()
+	if (loading) {
+		return <>
+			<img src={nrLogo} />
+		</>
+	}
+	if (!userAuth) {
+		return <Navigate to="/login" />
+	}
+
+	return <Outlet />
 }
 
 function App() {	
-	const [showNotiModal, setShowNotiModal] = useState(false)
-	const [showRightPanel, setShowRightPanel] = useState(false)
+	const [showNotiModal, setShowNotiModal] = useState(false);
+	const [showRightPanel, setShowRightPanel] = useState(false);
+	const [userAuth] = useUserAuth();
 
 	return (
-		<Providers>
-			<LeftPanel />
-			<NoteSearchBar notiModalState={[showNotiModal, setShowNotiModal]} />
-			<NotificationModal notiState={[showNotiModal, setShowNotiModal]} />
-
+		<>
 			<Routes>
-				<Route path="/feed" element={<DashBoard />} />
-				<Route path="/post/:postID" element={<PostView />} />
-				<Route path="/user/:username" element={<UserProfile />} />
-				<Route path="/search-profile" element={<SearchProfile />} />
-				<Route path="/settings" element={<Settings />} />
+				<Route element={<PublicRoute />}>
+					<Route path="/login" element={<Login />} />
+				</Route>
+
+				<Route element={<ProtectedRoute />}>
+					<Route path="/feed" element={<DashBoard />} />
+					<Route path="/post/:postID" element={<PostView />} />
+					<Route path="/user/:username" element={<UserProfile />} />
+					<Route path="/search-profile" element={<SearchProfile />} />
+					<Route path="/settings" element={<Settings />} />
+				</Route>
 			</Routes>
 
-			<RightPanel notiModalState={[showNotiModal, setShowNotiModal]} rightPanelState={showRightPanel}/>		
-			<MobileControlPanel rightPanelState={[showRightPanel, setShowRightPanel]}/>
-		</Providers>
-	)
+			{userAuth && (
+				<>
+					<LeftPanel />
+					<NoteSearchBar notiModalState={[showNotiModal, setShowNotiModal]} />
+					<NotificationModal notiState={[showNotiModal, setShowNotiModal]} />
+					<RightPanel notiModalState={[showNotiModal, setShowNotiModal]} rightPanelState={showRightPanel} />
+					<MobileControlPanel rightPanelState={[showRightPanel, setShowRightPanel]} />
+				</>
+			)}
+		</>
+	);
 }
 
 export default App;

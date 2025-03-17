@@ -9,7 +9,7 @@ export default function requestsApiRouter(io: Server) {
 
     router.get("/", async (req, res) => {
         try {
-            let studentID = req.session["stdid"] || "9181e241-575c-4ef3-9d3c-2150eac4566d"
+            let studentID = req.session["stdid"]
             let studentDocID = (await Convert.getDocumentID_studentid(studentID)).toString()
             let response = await getRequests(studentDocID)
             if (response.ok) {
