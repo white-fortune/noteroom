@@ -158,23 +158,33 @@ export const SignUp = {
 
 export const LogIn = {
     async getProfile(email: string) {
-        let student = await Students.findOne({ email: email })
-        return new Promise((resolve, reject) => {
+        try {
+            let student = await Students.findOne({ email: email })
             if (student) {
-                resolve({
+                return { ok: true, data: {
                     studentPass: student["password"],
-                    recordID: student["_id"],
                     studentID: student["studentID"],
                     username: student["username"],
                     authProvider: student["authProvider"]
-                })
+                } }
             } else {
-                reject('Sorry! No student account is associated with that email account')
+                return { ok: false, error: "NO_EMAIL" }
             }
-        })
+        } catch (error) {
+            return { ok: false, error: "SERVER" }
+        }
     }
 } 
 
+export async function getUserAuth(studentID_: string) {
+    try {
+        const authData = await Students.findOne({ studentID: studentID_ }, { studentID: 1, username: 1, _id: 0 })
+        const { studentID, username } = authData
+        return { ok: true, userAuth: { studentID, username} }
+    } catch (error) {
+        return { ok: false }
+    }
+}
 export async function getProfile(username: string) {
     try {
         let student = await Students.aggregate([

@@ -1,5 +1,5 @@
 import { createContext, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { ImageContainer } from "./ImageContainer";
 import { NoteEngagement } from "./NoteEngagements";
 import PostHeader from "./PostHeader";
@@ -21,12 +21,12 @@ export default function PostView() {
     const [noteImages, setNoteImages] = useState<string[]>([])
     const [offset, setOffset] = useState<number>(0)
     const { postID } = useParams()
-    
+
     const [noteData, setNoteData] = useState<any>(null)
-    
+
     const nextImage = () => setOffset(currentIndex => (currentIndex + 1) % noteImages.length)
     const prevImage = () => setOffset(currentIndex => (currentIndex - 1 + noteImages.length) % noteImages.length)
-    
+
     useEffect(() => {
         async function getNoteData() {
             try {
@@ -34,11 +34,11 @@ export default function PostView() {
                 if (noteData) {
                     setNoteData(noteData)
                 } else {
-                    let response = await fetch(`http://127.0.0.1:2000/api/posts/${postID}/metadata`)
+                    let response = await fetch(`http://localhost:2000/api/posts/${postID}/metadata`, { credentials: 'include' })
                     let data = await response.json()
                     if (data.ok) {
                         let note = new FeedNoteObject(data.noteData)
-                        setNoteData(note)   
+                        setNoteData(note)
                     }
                 }
             } catch (error) {
@@ -47,11 +47,11 @@ export default function PostView() {
         }
         getNoteData()
     }, [feedNotes, postID])
-    
+
     useEffect(() => {
         async function getNoteImages() {
             try {
-                let response = await fetch(`http://127.0.0.1:2000/api/posts/${postID}/images`)
+                let response = await fetch(`http://localhost:2000/api/posts/${postID}/images`, { credentials: 'include' })
                 let data = await response.json()
                 if (data.ok && data.images?.length !== 0) {
                     setNoteImages(data.images)
@@ -71,16 +71,16 @@ export default function PostView() {
         }
         getNoteImages()
     }, [postID])
-        
+
     return (
-        <PostContext.Provider value={{noteData, controller: [upvoteNote, saveNote]}}>
+        <PostContext.Provider value={{ noteData, controller: [upvoteNote, saveNote] }}>
             <div className="middle-section">
                 <div className="post-container">
                     <PostHeader></PostHeader>
 
                     <div className="post-content">
                         <h1 className="post-title">{noteData?.noteData.noteTitle}</h1>
-                        <div className="post-description" dangerouslySetInnerHTML={{__html: noteData?.noteData.description}}></div>
+                        <div className="post-description" dangerouslySetInnerHTML={{ __html: noteData?.noteData.description }}></div>
                         <ImageContainer noteImages={noteImages} controller={[prevImage, nextImage, offset]}></ImageContainer>
                     </div>
 

@@ -17,7 +17,7 @@ export default function UserProfile() {
 			if (username === currentUsername) {
 				setUser(profile)
 			} else {
-				const response = await fetch(`http://127.0.0.1:2000/api/users/${username}`)
+				const response = await fetch(`http://localhost:2000/api/users/${username}`, { credentials: 'include' })
 				if (response.ok) {
 					const data = await response.json()
 					if (data && data.ok) {

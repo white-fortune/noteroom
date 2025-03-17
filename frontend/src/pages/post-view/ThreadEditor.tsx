@@ -4,19 +4,19 @@ import { useParams } from "react-router-dom"
 
 export default function ThreadEditor() {
     const [replyData, setReplyData] = useState<string>("")
-    const { openedThreadID: [openedThreadID, ], comments: [, setComments] } = useContext(CommentsControllerContext)
+    const { openedThreadID: [openedThreadID,], comments: [, setComments] } = useContext(CommentsControllerContext)
     const { postID } = useParams()
 
     async function sendReply() {
         const threadID = openedThreadID.split("-")[1]
         try {
             const replyFormData = new FormData()
-            replyFormData.append("replier", "9181e241-575c-4ef3-9d3c-2150eac4566d")
             replyFormData.append("replyContent", replyData)
 
-            const response = await fetch(`http://127.0.0.1:2000/api/posts/${postID}/feedbacks/${threadID}/replies`, {
+            const response = await fetch(`http://localhost:2000/api/posts/${postID}/feedbacks/${threadID}/replies`, {
                 method: "post",
-                body: replyFormData
+                body: replyFormData,
+                credentials: "include"
             })
             if (response.ok) {
                 const jsonData = await response.json()
@@ -36,8 +36,8 @@ export default function ThreadEditor() {
                     setComments((commentData: any[]) => {
                         return commentData.map(comment => {
                             if (comment[0]._id === threadID) {
-                                return [ comment[0], [ ...comment[1], ...[fetchedReply] ] ]
-                            } 
+                                return [comment[0], [...comment[1], ...[fetchedReply]]]
+                            }
                             return comment
                         })
                     })

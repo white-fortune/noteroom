@@ -29,6 +29,7 @@ import seacrhApiRouter from './services/new_apis/search.js';
 import profileApiRouter from './services/new_apis/profile.js';
 import notificationApiRouter from './services/new_apis/notifications.js';
 import requestsApiRouter from './services/new_apis/requests.js';
+import authApiRouter from './services/new_apis/auth.js';
 
 
 // const __filename = fileURLToPath(import.meta.url);
@@ -38,8 +39,8 @@ config({ path: join(__dirname, '.env') });
 const app = express()
 const server = createServer(app);
 const io = new SocketIOServer(server, { cors: { origin: '*' } });
-// const url = process.env.MONGO_URI
-const url = 'mongodb://localhost:27017/information'
+const url = process.env.MONGO_URI
+// const url = 'mongodb://localhost:27017/information'
 connect(url).then(() => {
     console.log(`Connected to database information`);
 })
@@ -50,7 +51,10 @@ const port = process.env.PORT
 app.set('view engine', 'ejs')
 app.set('views', join(__dirname, '../views'))
 
-app.use(cors())
+app.use(cors({
+    origin: "http://localhost:5173",
+    credentials: true
+}))
 app.use(_static(join(__dirname, '../public'))) // Middleware for using static files. All are stored in "/public" folder
 app.use(urlencoded({
     extended: true
@@ -65,11 +69,13 @@ app.use(session({
         ttl: 60 * 60 * 720
     }),
     cookie: {
-        httpOnly: true,
-        secure: false,
+        httpOnly: true,   // Prevents JavaScript access
+        secure: false,    // Change to `true` in production with HTTPS
         maxAge: 1000 * 60 * 60 * 720
     }
-})) // Middleware for working with sessions
+}));
+
+ // Middleware for working with sessions
 app.use(cookieParser()) // Middleware for working with cookies
 app.use(fileUpload()) // Middleware for working with files
 // app.use('/login', loginRouter(io))
@@ -89,6 +95,8 @@ app.use('/api/requests', requestsApiRouter(io))
 
 app.use('/api/feed', feedApiRouter(io))
 app.use('/api/search', seacrhApiRouter(io))
+
+app.use('/api/auth', authApiRouter(io))
 
 app.use('/blog', blogsRouter())
 app.use(errorHandler) // Middleware for handling errors

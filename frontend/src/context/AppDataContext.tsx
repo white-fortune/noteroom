@@ -2,7 +2,7 @@ import { createContext, ReactNode, useContext, useEffect, useState } from "react
 import { NotificationObject, RequestObject, SavedNoteObject } from "../types/types";
 
 const AppDataContext = createContext<any>(null)
-export default function AppDataProvider({ children }: { children: ReactNode | ReactNode[]} ) {
+export default function AppDataProvider({ children }: { children: ReactNode | ReactNode[] }) {
     const [notifs, setNotifs] = useState<NotificationObject[]>([])
     const [savedNotes, setSavedNotes] = useState<SavedNoteObject[]>([])
     const [profile, setProfile] = useState<any>({})
@@ -12,7 +12,7 @@ export default function AppDataProvider({ children }: { children: ReactNode | Re
     useEffect(() => {
         async function getNotifs() {
             try {
-                let response = await fetch('http://127.0.0.1:2000/api/notifications')
+                let response = await fetch('http://localhost:2000/api/notifications', { credentials: 'include' })
                 if (response.ok) {
                     let data = await response.json()
                     if (data.ok && data.notifications.length !== 0) {
@@ -31,7 +31,7 @@ export default function AppDataProvider({ children }: { children: ReactNode | Re
         getNotifs()
         async function getSavedNotes() {
             try {
-                let response = await fetch('http://127.0.0.1:2000/api/posts/saved')
+                let response = await fetch('http://localhost:2000/api/posts/saved', { credentials: 'include' })
                 if (response.ok) {
                     let data = await response.json()
                     if (data.ok && data.posts.length !== 0) {
@@ -39,8 +39,8 @@ export default function AppDataProvider({ children }: { children: ReactNode | Re
                             ...savedNotes,
                             ...data.posts.map((note: any) => {
                                 //FIXME: send pre-modified saved notes object just like owned_posts
-                                return { 
-                                    noteID: note._id, 
+                                return {
+                                    noteID: note._id,
                                     noteTitle: note.title.length > 30 ? note.title.slice(0, 30) + "..." : note.title,
                                     noteThumbnail: note.thumbnail
                                 }
@@ -62,7 +62,7 @@ export default function AppDataProvider({ children }: { children: ReactNode | Re
 
         async function getProfile() {
             try {
-                let response = await fetch(`http://127.0.0.1:2000/api/users/${currentUsername}`)
+                let response = await fetch(`http://localhost:2000/api/users/${currentUsername}`, { credentials: 'include' })
                 if (response.ok) {
                     let data = await response.json()
                     if (data.ok && data.profile) {
@@ -83,7 +83,7 @@ export default function AppDataProvider({ children }: { children: ReactNode | Re
 
         async function getRequests() {
             try {
-                let response = await fetch('http://127.0.0.1:2000/api/requests')
+                let response = await fetch('http://localhost:2000/api/requests', { credentials: 'include' })
                 if (response.ok) {
                     let data = await response.json()
                     if (data.ok && data.requests.length !== 0) {
@@ -104,14 +104,14 @@ export default function AppDataProvider({ children }: { children: ReactNode | Re
 
     return (
         <AppDataContext.Provider value={
-            { 
+            {
                 notification: [notifs, setNotifs],
                 savedNotes: [savedNotes, setSavedNotes],
                 userProfile: [profile, setProfile, currentUsername],
                 requests: [requests, setRequests]
             }
         }>
-            { children }
+            {children}
         </AppDataContext.Provider>
     )
 }

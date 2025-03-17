@@ -37,7 +37,7 @@ function loginRouter(io: Server) {
             let user = await LogIn.getProfile(email)
             
             if(user["authProvider"] !== null) {
-                setSession({recordID: user['recordID'], studentID: user["studentID"], username: user["username"] }, req, res)
+                setSession({studentID: user["studentID"], username: user["username"] }, req, res)
                 res.send({ redirect: '/dashboard' })
                 log('info', `On /login/auth/google StudentID=${req.session['stdid'] || "--studentid--"}: login successfully.`)
             } else {
@@ -60,7 +60,7 @@ function loginRouter(io: Server) {
                 let student = await LogIn.getProfile(email)
                 if(student["authProvider"] === null) {
                     if (password === student['studentPass']) {
-                        setSession({recordID: student['recordID'], studentID: student["studentID"], username: student["username"] }, req, res)
+                        setSession({studentID: student["studentID"], username: student["username"] }, req, res)
                         log('info', `On /login StudentID=${req.session['stdid'] || "--studentid--"}: login successfully.`)
                         res.json({ ok: true, url: '/dashboard' })
                     } else {

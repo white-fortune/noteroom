@@ -1,20 +1,20 @@
 import { useEffect, useRef, useState } from "react"
 
-export default function SearchBar({ 
-    profile: [searchedProfiles, setSearchProfiles], 
-    schBatch: [schBatch, setSchBatch], 
-    showMoreButton: [showMoreButton, setShowMoreButton], 
-    showStatusMessage: [showStatusMessage, setShowStatusMessage] 
+export default function SearchBar({
+    profile: [searchedProfiles, setSearchProfiles],
+    schBatch: [schBatch, setSchBatch],
+    showMoreButton: [showMoreButton, setShowMoreButton],
+    showStatusMessage: [showStatusMessage, setShowStatusMessage]
 }: any) {
-    
+
     const [text, setText] = useState<any>("")
     const totalCount = useRef<number>(-1)
     async function searchProfile(showMore: boolean) {
         try {
             if (text.trim().length !== 0) {
-                let response = await fetch(`http://127.0.0.1:2000/api/search?q=${text}&type=profiles&batch=${schBatch}${!showMore ? "&countdoc=true" : ""}`) 
+                let response = await fetch(`http://localhost:2000/api/search?q=${text}&type=profiles&batch=${schBatch}${!showMore ? "&countdoc=true" : ""}`, { credentials: 'include' })
                 let data = await response.json()
-    
+
                 if (data && data.students.length !== 0) {
                     if (showMore) {
                         setSearchProfiles((prev: any) => [...prev, ...(data.students)])
@@ -55,7 +55,7 @@ export default function SearchBar({
     return (
         <div className="prfl-search-container">
             <fieldset className="field-container">
-                <input type="text" placeholder="Who are you looking for?" className="field" value={text} onChange={(e) => setText(e.target.value)}/>
+                <input type="text" placeholder="Who are you looking for?" className="field" value={text} onChange={(e) => setText(e.target.value)} />
                 <button className="search-prfl-btn" onClick={() => searchProfile(false)}>
                     <svg
                         xmlns="http://www.w3.org/2000/svg"

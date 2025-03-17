@@ -8,7 +8,7 @@ function Notification({ notiData }: { notiData: NotificationObject }) {
     return (
         <div className="notification" id={"noti-" + notiData.notiID}>
             <div className="noti__first-col--img-wrapper">
-                { isInteraction ? <img src={notiData.fromUserSudentDocID?.profile_pic} alt="notification" className="noti__source-user-img" /> : ''}
+                {isInteraction ? <img src={notiData.fromUserSudentDocID?.profile_pic} alt="notification" className="noti__source-user-img" /> : ''}
             </div>
 
             <div className="noti__sec-col--msg-wrapper">
@@ -28,12 +28,12 @@ function Notification({ notiData }: { notiData: NotificationObject }) {
 }
 
 export default function NotificationModal({ notiState }: { notiState: [any, any] }) {
-    const {notification: [notifs, setNotifs]} = useAppData()
+    const { notification: [notifs, setNotifs] } = useAppData()
 
     async function deleteAllNotification() {
-        if (notifs.length === 0) return 
-        
-        let response = await fetch('http://127.0.0.1:2000/api/notifications', { method: 'delete' })
+        if (notifs.length === 0) return
+
+        let response = await fetch('http://localhost:2000/api/notifications', { method: 'delete', credentials: 'include' })
         if (response.ok) {
             let data = await response.json()
             if (data.ok) {
@@ -51,7 +51,7 @@ export default function NotificationModal({ notiState }: { notiState: [any, any]
     }, [])
 
     return (
-        <div className="notification-modal-overlay" style={{display: notiState[0] ? "flex" : "none"}}>
+        <div className="notification-modal-overlay" style={{ display: notiState[0] ? "flex" : "none" }}>
             <div className="notification-modal">
                 <div className="notification-header">
                     <h4 className="notification-header-label">Notifications</h4>

@@ -50,7 +50,7 @@ function signupRouter(io: Server) {
             let student = await SignUp.addStudent(studentData)
             let studentDocID = student._id
 
-            setSession({recordID: studentDocID, studentID: student["studentID"], username: student["username"] }, req, res)
+            setSession({ studentID: student["studentID"], username: student["username"] }, req, res)
             res.json({ redirect: "/onboarding" })
             log('info', `On /sign-up/auth/google StudentID=${student['studentID'] || "--studentid--"}: User is signed-up and got redirected to onboard`)
             
@@ -81,7 +81,7 @@ function signupRouter(io: Server) {
             let student = await SignUp.addStudent(studentData)
             let studentDocID = student._id
 
-            setSession({recordID: studentDocID, studentID: student['studentID'], username: student["username"]}, req, res)
+            setSession({studentID: student['studentID'], username: student["username"]}, req, res)
             res.json({ url: `/onboarding` })
             log('info', `On /sign-up StudentID=${student['studentID'] || "--studentid--"}: User is signed-up and got redirected to onboard`)
             
