@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import Quill, { QuillOptions } from "quill";
 import "quill/dist/quill.snow.css";
-import io, { Socket } from "socket.io-client";
 import Swal from "sweetalert2";
 import ThumbnailPopup from "./ThumbnailPopup";
 import "../../public/css/upload-note.css";
@@ -20,7 +19,6 @@ const UploadNote: React.FC = () => {
   const editorRef = useRef<HTMLDivElement>(null);
   const quillRef = useRef<Quill | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const socketRef = useRef<Socket>(io(window.location.origin));
 
   useEffect(() => {
     if (editorRef.current && !quillRef.current) {
@@ -32,14 +30,46 @@ const UploadNote: React.FC = () => {
           toolbar: toolbarOptions,
         },
       } as QuillOptions);
-      editorRef.current.style.height = "250px"; // Slightly taller for a pro look
+      editorRef.current.style.height = "250px";
     }
+
+    return () => {
+      if (quillRef.current) {
+        quillRef.current = null;
+      }
+    };
   }, []);
 
+  // file uploads with validation for type and size
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files ? Array.from(e.target.files) : [];
-    setStackFiles((prev) => [...prev, ...files]);
-    showUploadEffect();
+    const maxSize = 10 * 1024 * 1024; 
+    const validTypes = ["image/png", "image/jpeg"];
+
+    const validFiles = files.filter((file) => {
+      if (!validTypes.includes(file.type)) {
+        Swal.fire({
+          icon: "error",
+          title: "Invalid File Type",
+          text: `${file.name} is not a supported format (PNG or JPG only).`,
+        });
+        return false;
+      }
+
+      if (file.size > maxSize) {
+        Swal.fire({
+          icon: "error",
+          title: "File Too Large",
+          text: `${file.name} exceeds the 10MB limit.`,
+        });
+        return false;
+      }
+
+      return true;
+    });
+
+    setStackFiles((prev) => [...prev, ...validFiles]);
+    if (validFiles.length > 0) showUploadEffect();
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
@@ -66,7 +96,7 @@ const UploadNote: React.FC = () => {
     }
   };
 
-  const handlePublish = () => {
+  const handlePublish = async () => {
     if (stackFiles.length < 2) {
       Swal.fire({
         icon: "warning",
@@ -82,13 +112,10 @@ const UploadNote: React.FC = () => {
     const noteTitle = (
       document.querySelector(".note-title") as HTMLInputElement
     )?.value;
+    const descriptionText = quillRef.current?.getText().trim() || "";
     const noteDescription = quillRef.current?.root.innerHTML || "";
 
-    if (
-      !noteSubject ||
-      !noteTitle ||
-      !quillRef.current?.root?.textContent?.trim()
-    ) {
+    if (!noteSubject || !noteTitle || !descriptionText) {
       Swal.fire({
         icon: "error",
         title: "Incomplete Form",
@@ -97,27 +124,67 @@ const UploadNote: React.FC = () => {
       return;
     }
 
-    // your the data array
+    setIsLoading(true);
+
+    // your note data object for logging
     const noteData = {
       title: noteTitle,
       subject: noteSubject,
       description: noteDescription,
-      images: stackFiles,
+      images: stackFiles, 
     };
 
     console.log("Published Note Data:", noteData);
 
-    Swal.fire({
-      icon: "success",
-      title: "Data Collected",
-      text: "Your note data has been collected! Check the console for details.",
-    });
-    setStackFiles([]);
-    setIsPopupOpen(false);
-    if (fileInputRef.current) fileInputRef.current.value = "";
-    (document.querySelector(".note-subject") as HTMLSelectElement).value = "";
-    (document.querySelector(".note-title") as HTMLInputElement).value = "";
-    if (quillRef.current) quillRef.current.root.innerHTML = "";
+    const formData = new FormData();
+    stackFiles.forEach((file, index) =>
+      formData.append(`image-${index}`, file)
+    );
+    formData.append("noteSubject", noteSubject);
+    formData.append("noteTitle", noteTitle);
+    formData.append("noteDescription", noteDescription);
+
+    try {
+      Swal.fire({
+        icon: "info",
+        title: "Processing Upload",
+        text: "Your note is being uploaded. Please wait...",
+        showConfirmButton: false,
+      });
+      const response = await fetch("/upload", {
+        method: "POST",
+        body: formData,
+      });
+      const responseData = await response.json();
+      if (response.ok) {
+        setStackFiles([]);
+        setIsPopupOpen(false);
+        if (fileInputRef.current) fileInputRef.current.value = "";
+        (document.querySelector(".note-subject") as HTMLSelectElement).value = "";
+        (document.querySelector(".note-title") as HTMLInputElement).value = "";
+        if (quillRef.current) quillRef.current.root.innerHTML = "";
+
+        Swal.fire({
+          icon: "success",
+          title: "Upload Complete",
+          text: "Your note has been published!",
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Upload Failed",
+          text: responseData.message || "Something went wrong.",
+        });
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Connection Error",
+        text: "Please check your internet connection and try again.",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -167,6 +234,7 @@ const UploadNote: React.FC = () => {
             multiple
             ref={fileInputRef}
             onChange={handleFileChange}
+            accept="image/png, image/jpeg"
           />
           <label htmlFor="fileInput" className="browse-files-btn">
             Select Files
@@ -214,7 +282,7 @@ const UploadNote: React.FC = () => {
                 fill="#1D8102"
               />
               <path
-                d="M20.0564 8.62512L11.744 16.9376L7.94357 13.1371C7.49539 12.689 6.76887 12.689 6.32069 13.1371C5.8726 13.5853 5.8726 14.3118 6.32069 14.76L10.9326 19.3719C11.1567 19.5959 11.4503 19.708 11.744 19.708C12.0377 19.708 12.3314 19.5959 12.5555 19.3719L21.6793 10.2481C22.1274 9.79992 22.1274 9.07339 21.6793 8.62521C21.2311 8.17703 20.5045 8.17703 20.0564 8.62512Z"
+                d="M20.0564 8.62512L11.744 16.9376L7.94357 13.1371C7.49539 12.689 6.76887 12.689 6.32069 13.1371C5.8726 13.5853 5.8726 14.3118 6.32069 14.76L10.9326 19.3719C11.1567 19.5959 11.4503 19.708 11.744 19.708C12.0377 19.708 12.3314 19.708 12.5555 19.3719L21.6793 10.2481C22.1274 9.79992 22.1274 9.07339 21.6793 8.62521C21.2311 8.17703 20.5045 8.17703 20.0564 8.62512Z"
                 fill="#1D8102"
               />
             </g>
