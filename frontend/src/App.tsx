@@ -10,6 +10,7 @@ import ScrollPositionProvider from "./context/ScrollPosition";
 import Settings from "./pages/settings/Settings";	
 import UserProfile from "./pages/user-profile/UserProfile";
 import AppDataProvider from "./context/AppDataContext";
+import UploadNote from "./pages/upload-note/UploadNote";
 // import SignUp from "./pages/sign-up/SignUp";
 // import Login from "./pages/login/Login";
 
@@ -43,6 +44,9 @@ function App() {
 				<Route path="/user/:username" element={<UserProfile />} />
 				<Route path="/search-profile" element={<SearchProfile />} />
 				<Route path="/settings" element={<Settings />} />
+				<Route path="/upload-note" element={<UploadNote />} />
+				{/* <Route path="/sign-up" element={<SignUp />} />
+				<Route path="/login" element={<Login />} /> */}
 			</Routes>
 
 			<RightPanel notiModalState={[showNotiModal, setShowNotiModal]} rightPanelState={showRightPanel}/>		

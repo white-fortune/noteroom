@@ -4,7 +4,7 @@ import "quill/dist/quill.snow.css";
 import io, { Socket } from "socket.io-client";
 import Swal from "sweetalert2";
 import ThumbnailPopup from "./ThumbnailPopup";
-import "../styles.css";
+import "../../public/css/upload-note.css";
 
 const toolbarOptions = [
   ["bold", "italic", "underline"],
