@@ -39,8 +39,10 @@ config({ path: join(__dirname, '.env') });
 const app = express()
 const server = createServer(app);
 const io = new SocketIOServer(server, { cors: { origin: '*' } });
-const url = process.env.MONGO_URI
-// const url = 'mongodb://localhost:27017/information'
+const url = process.env.DEVELOPMENT === "true" ? "mongodb://localhost:27017/information" : process.env.MONGO_URI
+if (process.env.DEVELOPMENT) {
+    console.log('\x1b[36m%s\x1b[0m', `Feature flag: DEVELOPMENT (.env) = Enabled. Using local MongoDB.`)
+}
 connect(url).then(() => {
     console.log(`Connected to database information`);
 })

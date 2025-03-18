@@ -1,10 +1,12 @@
 import { createContext, useContext, useEffect, useState } from "react"
-import CommentBox from "./CommentBox"
-import ThreadEditor from "./ThreadEditor"
+import JoinConversation from "./JoinCoversation"
 import { PostContext } from "./PostView"
+import TextEditor from "./CommentEditor"
+import Swal from "sweetalert2"
+import withReactContent from "sweetalert2-react-content"
 
 function Comment({ feedbackData, children }: any) {
-    const { openedThreadID: [openedThreadID,], controller: [handleOpenThread] } = useContext(CommentsControllerContext)
+    const { controller: [openReplyEditor] } = useContext(CommentsControllerContext)
 
     return (
         <div className='main-cmnt-container'>
@@ -33,8 +35,10 @@ function Comment({ feedbackData, children }: any) {
 
                         <svg
                             className="reply-icon thread-opener"
-                            onClick={(e) => handleOpenThread(e, true)}
-                            data-tippy-content="Reply"
+                            onClick={() => openReplyEditor(
+                                (new DOMParser()).parseFromString(feedbackData?.feedbackContents, "text/html").querySelector("body")?.textContent,
+                                feedbackData?._id
+                            )}
                             width="25" height="24" viewBox="0 0 22 21" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M18.7186 12.9452C18.7186 13.401 18.5375 13.8382 18.2152 14.1605C17.8929 14.4829 17.4557 14.6639 16.9999 14.6639H6.68747L3.25 18.1014V4.35155C3.25 3.89571 3.43108 3.45854 3.75341 3.13622C4.07573 2.81389 4.5129 2.63281 4.96873 2.63281H16.9999C17.4557 2.63281 17.8929 2.81389 18.2152 3.13622C18.5375 3.45854 18.7186 3.89571 18.7186 4.35155V12.9452Z" stroke="#1E1E1E" strokeWidth="1.14582" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
@@ -43,7 +47,6 @@ function Comment({ feedbackData, children }: any) {
 
                 <div className="thread-section" id={"thread-" + feedbackData?._id}>
                     {children}
-                    {openedThreadID === (`thread-${feedbackData?._id}`) ? <ThreadEditor /> : ''}
                 </div>
             </div>
         </div>
@@ -51,8 +54,8 @@ function Comment({ feedbackData, children }: any) {
 }
 
 
-function Reply({ replyData }: { replyData: any }) {
-    const { controller: [handleOpenThread] } = useContext(CommentsControllerContext)
+function Reply({ replyData, parentFeedbackDocID }: { replyData: any, parentFeedbackDocID: any }) {
+    const { controller: [openReplyEditor] } = useContext(CommentsControllerContext)
 
     return (
         <div className='thread-msg'>
@@ -68,7 +71,10 @@ function Reply({ replyData }: { replyData: any }) {
                 </div>
                 <div className="reply-msg" dangerouslySetInnerHTML={{ __html: replyData.feedbackContents }}></div>
                 <div className="main__engagement-opts engagement-opts">
-                    <svg className="reply-icon thread-opener" onClick={(e) => handleOpenThread(e, false)} data-tippy-content="Reply" width="25" height="24" viewBox="0 0 22 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg className="reply-icon thread-opener" onClick={() => openReplyEditor(
+                        (new DOMParser()).parseFromString(replyData?.feedbackContents, "text/html").querySelector("body")?.textContent,
+                        parentFeedbackDocID
+                    )} width="25" height="24" viewBox="0 0 22 21" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M18.7186 12.9452C18.7186 13.401 18.5375 13.8382 18.2152 14.1605C17.8929 14.4829 17.4557 14.6639 16.9999 14.6639H6.68747L3.25 18.1014V4.35155C3.25 3.89571 3.43108 3.45854 3.75341 3.13622C4.07573 2.81389 4.5129 2.63281 4.96873 2.63281H16.9999C17.4557 2.63281 17.8929 2.81389 18.2152 3.13622C18.5375 3.45854 18.7186 3.89571 18.7186 4.35155V12.9452Z" stroke="#1E1E1E" strokeWidth="1.14582" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                 </div>
@@ -91,7 +97,7 @@ function CommentSection() {
                                 return (
                                     <Comment feedbackData={commentData[0]} key={commentData[0]._id} >
                                         {commentData[1] && commentData[1].length > 0 ? commentData[1].map((replyData: any) => {
-                                            return <Reply replyData={replyData} key={replyData._id} ></Reply>
+                                            return <Reply replyData={replyData} key={replyData._id} parentFeedbackDocID={commentData[0]._id}></Reply>
                                         }) : ''}
                                     </Comment>
                                 )
@@ -104,35 +110,93 @@ function CommentSection() {
     )
 }
 
+
 export const CommentsControllerContext = createContext<any>(null)
 export default function CommentsContainer() {
     const [comments, setComments] = useState<any[]>([])
-    const [openedThreadID, setOpenedThreadID] = useState<string | null>(null)
+    const [showEditor, setShowEditor] = useState<boolean>(false)
+    const [replyToText, setReplyToText] = useState<string>("")
+    const [openedThreadID, setOpenedThreadID] = useState<string>("")
+    const [replyData, setReplyData] = useState<string>("")
+    const [loading, setLoading] = useState<boolean>(false)
+    
     const { noteData } = useContext(PostContext)
     const postID = noteData?.noteData.noteID
 
-    /* 
-    Comments structure:
-        [
-            [
-                { ...commentData },
-                [ {...replyData}, {...replyData} ]
-            ],
-            [
-                { ...commentData },
-                [ {...replyData}, {...replyData} ]
-            ]
-        ]
-    */
+    async function sendReply() {
+        try {
+            if (replyData.trim().length === 0) return
 
-    function handleOpenThread(event: any, fromComment: boolean = false) {
-        let clickedThreadSection = event.target.closest('.thread-section')
-        if (fromComment) {
-            clickedThreadSection = event.target.closest(".main__cmnts-replies-wrapper").querySelector('.thread-section')
+            setLoading(true)
+            const replyFormData = new FormData()
+            replyFormData.append("replyContent", replyData)
+
+            const response = await fetch(`http://localhost:2000/api/posts/${postID}/feedbacks/${openedThreadID}/replies`, {
+                method: "post",
+                body: replyFormData,
+                credentials: "include"
+            })
+            if (response.ok) {
+                const jsonData = await response.json()
+                if (jsonData.ok) {
+                    const reply = jsonData.reply
+                    const fetchedReply = {
+                        _id: reply._id,
+                        feedbackContents: reply.feedbackContents,
+                        commenterDocID: {
+                            profile_pic: reply.commenterDocID.profile_pic,
+                            displayname: reply.commenterDocID.displayname,
+                            username: reply.commenterDocID.username
+                        },
+                        parentFeedbackDocID: reply.parentFeedbackDocID._id,
+                        createdAt: reply.createdAt
+                    }
+                    setComments((commentData: any[]) => {
+                        return commentData.map(comment => {
+                            if (comment[0]._id === openedThreadID) {
+                                return [comment[0], [...comment[1], ...[fetchedReply]]]
+                            }
+                            return comment
+                        })
+                    })
+
+                    setShowEditor(false)
+                    setReplyData("")
+                    setOpenedThreadID("")
+                    setReplyToText("")
+                } else {
+                    fireToast("Something went wrong! Couldn't reply")
+                }
+                setLoading(false)
+            } else {
+                fireToast("Something went wrong! Couldn't reply")
+            }
+            setLoading(false)
+        } catch (error) {
+            fireToast("Something went wrong! Couldn't reply")
+        } finally {
+            setLoading(false)
         }
-        const clickedThreadID = clickedThreadSection.getAttribute("id")
-        setOpenedThreadID(clickedThreadID)
     }
+
+    function openReplyEditor(replyToText: string, openedThreadID: string) {
+        setShowEditor(prev => !prev)
+        setOpenedThreadID(openedThreadID)
+        setReplyToText(replyToText.length > 100 ? replyToText.slice(0, 100) + "..." : replyToText)
+    }
+
+
+    function fireToast(title: string) {
+        return withReactContent(Swal).fire({
+            toast: true,
+            position: "bottom-right",
+            title: title,
+            showConfirmButton: true,
+            timer: 3000,
+            timerProgressBar: true
+        })
+    }
+    
 
     useEffect(() => {
         async function getComments() {
@@ -153,11 +217,14 @@ export default function CommentsContainer() {
         getComments()
     }, [postID])
 
+
     return (
         <div className="comment-section">
-            <CommentsControllerContext.Provider value={{ comments: [comments, setComments], openedThreadID: [openedThreadID, setOpenedThreadID], controller: [handleOpenThread] }}>
-                <CommentBox></CommentBox>
+            <CommentsControllerContext.Provider value={{ comments: [comments, setComments], controller: [openReplyEditor] }}>
+                <JoinConversation fireToast={fireToast} loading={[loading, setLoading]}></JoinConversation>
                 <CommentSection></CommentSection>
+
+                <TextEditor showState={[showEditor, setShowEditor]} reply={replyToText} text={[replyData, setReplyData]} action={sendReply} loading={[loading, setLoading]} />
             </CommentsControllerContext.Provider>
         </div>
     )

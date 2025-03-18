@@ -80,14 +80,13 @@ export default function postApiRouter(io: Server) {
             const studentID = req.session["stdid"]
             const feedbackContent = req.body.feedbackContent
             const commenterDocID = (await Convert.getDocumentID_studentid(studentID)).toString()
-
+            
             const feedbackData = {
                 noteDocID: postID,
                 commenterDocID: commenterDocID,
                 feedbackContents: feedbackContent
             }
             const response = await addFeedback(feedbackData)
-            console.log(response)
             if (response.ok) {
                 res.json({ ok: true, feedback: response.feedback })
             } else {

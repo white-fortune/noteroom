@@ -1,8 +1,9 @@
 import { createContext, ReactNode, useCallback, useContext, useEffect, useReducer, useRef, useState } from "react";
 import feedReducer, { FeedActions } from "../reducers/feedReducer";
 import { SavedNoteObject } from "../types/types";
-import { saveNoteApi, voteNoteApi } from "../utils/noteActionsApi";
 import { useAppData } from "./AppDataContext";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 
 
 export const FeedNoteContext = createContext<any>(null)
@@ -28,6 +29,17 @@ export default function FeedNotesProvider({ children }: { children: ReactNode | 
         if (node) observer.current.observe(node)
     }, [loading])
 
+    function fireToast(title: string) {
+        return withReactContent(Swal).fire({
+            toast: true,
+            position: "bottom-start",
+            title: title,
+            showConfirmButton: true,
+            timer: 3000,
+            timerProgressBar: true
+        })
+    }
+
     async function fetchNotes() {
         setLodaing(true)
         try {
@@ -47,20 +59,49 @@ export default function FeedNotesProvider({ children }: { children: ReactNode | 
         }
     }
 
-    function upvoteNote(noteID: string, upvoteState: boolean) {
-        dispatch({ type: FeedActions.TOGGLE_UPVOTE_NOTE, payload: { noteID: noteID } })
-        voteNoteApi({ noteID, studentID: "9181e241-575c-4ef3-9d3c-2150eac4566d" }, upvoteState)
-    }
-    function saveNote({ noteID, noteTitle, noteThumbnail }: SavedNoteObject, savedState: boolean) {
-        dispatch({ type: FeedActions.TOGGLE_SAVE_NOTE, payload: { noteID: noteID } })
-        setSavedNotes((prev: any) => {
-            if (savedState) {
-                return prev.filter((note: SavedNoteObject) => note.noteID !== noteID)
+    async function upvoteNote(noteID: string, upvoteState: boolean) {
+        try {        
+            dispatch({ type: FeedActions.TOGGLE_UPVOTE_NOTE, payload: { noteID: noteID } })
+            let response = await fetch(`http://localhost:2000/api/posts/${noteID}/vote?type=upvote${upvoteState ? '&action=delete' : ''}`, { 
+                method: "post",
+                credentials: "include"
+            })
+            if (response.ok) {
+                let data = await response.json()
+                return { ok: data.ok }
             } else {
-                return [...prev, { noteID, noteTitle, noteThumbnail }]
+                return { ok: false }
             }
-        })
-        saveNoteApi(noteID, savedState)
+        } catch (error) {
+            return { ok: true, error: error }
+        }
+    }
+    async function saveNote({ noteID, noteTitle, noteThumbnail }: SavedNoteObject, savedState: boolean) {
+        try {
+            dispatch({ type: FeedActions.TOGGLE_SAVE_NOTE, payload: { noteID: noteID } })
+            setSavedNotes((prev: any) => {
+                if (savedState) {
+                    return prev.filter((note: SavedNoteObject) => note.noteID !== noteID)
+                } else {
+                    return [...prev, { noteID, noteTitle, noteThumbnail }]
+                }
+            })
+
+            let response = await fetch(`http://localhost:2000/api/posts/${noteID}/save?action=${savedState ? 'delete' : 'save'}`, { 
+                method: 'put',
+                credentials: "include" 
+            })
+            if (response.ok) {
+                let data = await response.json()
+                if (data.ok) {
+                    fireToast(savedState ? "Removed from saved" : "Post saved")
+                }
+            } else {
+                return { ok: false }
+            }
+        } catch (error) {
+            return { ok: false }
+        }
     }
 
     useEffect(() => {

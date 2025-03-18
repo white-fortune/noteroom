@@ -1,13 +1,19 @@
 import { useContext, useState } from "react"
 import { CommentsControllerContext } from "./CommentsContainer"
 import { useParams } from "react-router-dom"
+import "../../public/css/quick-post.css"
+import TextEditor from "./CommentEditor"
 
-export default function CommentEditor() {
+export default function JoinConversation({ fireToast, loading: [loading, setLoading] }: any) {
 	const { comments: [, setComments] } = useContext(CommentsControllerContext)
 	const [commentData, setCommentData] = useState<string>("")
+	const [showEditor, setShowEditor] = useState<boolean>(false)
 	const { postID } = useParams()
 	async function sendComment() {
+		if (commentData.trim().length === 0) return
+
 		try {
+			setLoading(true)
 			const feedbackFormData = new FormData()
 			feedbackFormData.append("feedbackContent", commentData)
 
@@ -38,19 +44,31 @@ export default function CommentEditor() {
 					]
 					setComments((comments: any) => [...[fetchedComment], ...comments])
 					setCommentData("")
+					setShowEditor(false)
 				} else {
-					console.log(jsonData)
+					fireToast("Something went wrong! Couldn't reply")
 				}
+				setLoading(false)
+			} else {
+				fireToast("Something went wrong! Couldn't reply")
 			}
+			setLoading(false)
 		} catch (error) {
-			console.error(error)
+			fireToast("Something went wrong! Couldn't reply")
+		} finally {
+			setLoading(false)
 		}
 	}
+	
 
 	return (
 		<>
-			<textarea name="comment-data" value={commentData} onChange={(e) => setCommentData(e.target.value)}></textarea>
-			<button onClick={sendComment}>send</button>
+			<div className="quick-post-container" onClick={() => setShowEditor(prev => !prev)}>
+				<div className="quick-post__first-row">
+					<div className="quick-post__fr--msg-btn">Join the conversation</div>
+				</div>
+			</div>
+			<TextEditor showState={[showEditor, setShowEditor]} reply={false} text={[commentData, setCommentData]} action={sendComment} loading={[loading, setLoading]} />
 		</>
 	)
 }
