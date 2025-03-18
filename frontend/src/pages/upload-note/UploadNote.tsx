@@ -4,6 +4,29 @@ import "quill/dist/quill.snow.css";
 import Swal from "sweetalert2";
 import ThumbnailPopup from "./ThumbnailPopup";
 import "../../public/css/upload-note.css";
+import "mathlive";
+
+interface MathfieldElement extends HTMLElement {
+  value: string;
+  getValue: () => string;
+  setValue: (value: string) => void;
+  textContent: string;
+}
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      "math-field": React.DetailedHTMLProps<
+        React.HTMLAttributes<HTMLElement> & {
+          ref?: React.Ref<MathfieldElement>;
+          value?: string;
+          placeholder?: string;
+          "virtual-keyboard-mode"?: string;
+        },
+        HTMLElement
+      >;
+    }
+  }
+}
 
 const toolbarOptions = [
   ["bold", "italic", "underline"],
@@ -18,9 +41,30 @@ const UploadNote: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const editorRef = useRef<HTMLDivElement>(null);
   const quillRef = useRef<Quill | null>(null);
+  const mathFieldRef = useRef<MathfieldElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js";
+    script.async = true;
+    document.body.appendChild(script);
+
+    (window as any).MathJax = {
+      tex: {
+        inlineMath: [
+          ["$", "$"],
+          ["\\(", "\\)"],
+        ],
+      },
+      startup: {
+        ready: () => {
+          (window as any).MathJax.startup.defaultReady();
+          (window as any).MathJax.typesetPromise();
+        },
+      },
+    };
+
     if (editorRef.current && !quillRef.current) {
       quillRef.current = new Quill(editorRef.current, {
         theme: "snow",
@@ -30,19 +74,78 @@ const UploadNote: React.FC = () => {
           toolbar: toolbarOptions,
         },
       } as QuillOptions);
+
+      const BlockEmbed = Quill.import("blots/block/embed") as unknown as {
+        new (...args: any[]): {
+          domNode: HTMLElement;
+        };
+        create(value: string): HTMLElement;
+        value(node: HTMLElement): string;
+        scope?: number;
+      };
+      class MathBlot extends BlockEmbed {
+        static blotName = "math";
+        static tagName = "div";
+        static scope = (Quill.import('blots/block/embed') as any).scope;
+        
+        static create(value: string) {
+          const node = super.create(value);
+          node.setAttribute("data-latex", value);
+          node.innerHTML = `\\(${value}\\)`;
+          setTimeout(() => {
+            if ((window as any).MathJax) {
+              (window as any).MathJax.typesetPromise([node]);
+            }
+          }, 0);
+          return node;
+        }
+        static value(node: HTMLElement) {
+          return node.getAttribute("data-latex") || "";
+        }
+      }
+      Quill.register('formats/math', MathBlot);
+
       editorRef.current.style.height = "250px";
+    }
+
+    if (mathFieldRef.current) {
+      mathFieldRef.current.setValue("");
+      mathFieldRef.current.setAttribute("virtual-keyboard-mode", "manual");
+      mathFieldRef.current.setAttribute("placeholder", "Enter math here (e.g., x^2 + 3)");
     }
 
     return () => {
       if (quillRef.current) {
         quillRef.current = null;
       }
+      if (mathFieldRef.current) {
+        mathFieldRef.current = null;
+      }
+      document.body.removeChild(script);
     };
   }, []);
 
+  const handleInsertMath = () => {
+    if (mathFieldRef.current && quillRef.current) {
+      const latex = mathFieldRef.current.getValue();
+      if (latex) {
+        const range = quillRef.current.getSelection(true);
+        const index = range ? range.index : quillRef.current.getLength();
+        quillRef.current.insertEmbed(index, "math", latex, "user");
+        mathFieldRef.current.setValue(""); // Clear the MathLive field after adding
+      } else {
+        Swal.fire({
+          icon: "warning",
+          title: "No Math Content",
+          text: "Please enter a mathematical expression before inserting.",
+        });
+      }
+    }
+  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files ? Array.from(e.target.files) : [];
-    const maxSize = 10 * 1024 * 1024; 
+    const maxSize = 10 * 1024 * 1024;
     const validTypes = ["image/png", "image/jpeg"];
 
     const validFiles = files.filter((file) => {
@@ -125,12 +228,11 @@ const UploadNote: React.FC = () => {
 
     setIsLoading(true);
 
-    // your note data object
     const noteData = {
       title: noteTitle,
       subject: noteSubject,
       description: noteDescription,
-      images: stackFiles, 
+      images: stackFiles,
     };
 
     console.log("Published Note Data:", noteData);
@@ -150,17 +252,19 @@ const UploadNote: React.FC = () => {
         text: "Your note is being uploaded. Please wait...",
         showConfirmButton: false,
       });
-      const response = await new Promise<{ ok: boolean; message?: string }>(
-        (resolve) => setTimeout(() => resolve({ ok: true }), 2000)
-      );
+      const response = await fetch("/upload", {
+        method: "POST",
+        body: formData,
+      });
+      const responseData = await response.json();
       if (response.ok) {
         setStackFiles([]);
         setIsPopupOpen(false);
         if (fileInputRef.current) fileInputRef.current.value = "";
-        (document.querySelector(".note-subject") as HTMLSelectElement).value =
-          "";
+        (document.querySelector(".note-subject") as HTMLSelectElement).value = "";
         (document.querySelector(".note-title") as HTMLInputElement).value = "";
         if (quillRef.current) quillRef.current.root.innerHTML = "";
+        if (mathFieldRef.current) mathFieldRef.current.setValue("");
 
         Swal.fire({
           icon: "success",
@@ -171,7 +275,7 @@ const UploadNote: React.FC = () => {
         Swal.fire({
           icon: "error",
           title: "Upload Failed",
-          text: response.message,
+          text: responseData.message || "Something went wrong.",
         });
       }
     } catch (error) {
@@ -353,6 +457,40 @@ const UploadNote: React.FC = () => {
           <label>Description</label>
           <div className="text-editor-wrapper">
             <div ref={editorRef} />
+            <div className="math-editor-container">
+              <label style={{ marginTop: "10px", display: "block" }}>
+                Add Mathematical Expressions:
+              </label>
+              <div className="math-editor-wrapper">
+                {React.createElement('math-field', {
+                  ref: mathFieldRef,
+                  placeholder: "Enter math here (e.g., x^2 + 3)",
+                })}
+                <button
+                  className="insert-math-btn"
+                  onClick={handleInsertMath}
+                  title="Insert Math"
+                  aria-label="Insert Math"
+                >
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <circle cx="12" cy="12" r="12" fill="var(--squid-ink)" />
+                    <path
+                      d="M12 7V17M7 12H17"
+                      stroke="var(--neon-blue)"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
         <button
