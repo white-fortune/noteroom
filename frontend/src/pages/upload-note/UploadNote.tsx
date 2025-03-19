@@ -2,9 +2,12 @@ import React, { useState, useEffect, useRef } from "react";
 import Quill, { QuillOptions } from "quill";
 import "quill/dist/quill.snow.css";
 import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 import ThumbnailPopup from "./ThumbnailPopup";
 import "../../public/css/upload-note.css";
 import "mathlive";
+
+const ReactSwal = withReactContent(Swal);
 
 interface MathfieldElement extends HTMLElement {
   value: string;
@@ -12,6 +15,7 @@ interface MathfieldElement extends HTMLElement {
   setValue: (value: string) => void;
   textContent: string;
 }
+
 declare global {
   namespace JSX {
     interface IntrinsicElements {
@@ -36,9 +40,13 @@ const toolbarOptions = [
 ];
 
 const UploadNote: React.FC = () => {
+  const [noteSubject, setNoteSubject] = useState<string>("");
+  const [noteTitle, setNoteTitle] = useState<string>("");
   const [stackFiles, setStackFiles] = useState<File[]>([]);
   const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [showUploadSuccess, setShowUploadSuccess] = useState<boolean>(false);
+  
   const editorRef = useRef<HTMLDivElement>(null);
   const quillRef = useRef<Quill | null>(null);
   const mathFieldRef = useRef<MathfieldElement | null>(null);
@@ -65,6 +73,14 @@ const UploadNote: React.FC = () => {
       },
     };
 
+    return () => {
+      if (script.parentNode) {
+        script.parentNode.removeChild(script);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
     if (editorRef.current && !quillRef.current) {
       quillRef.current = new Quill(editorRef.current, {
         theme: "snow",
@@ -105,7 +121,9 @@ const UploadNote: React.FC = () => {
       }
       Quill.register('formats/math', MathBlot);
 
-      editorRef.current.style.height = "250px";
+      if (editorRef.current) {
+        editorRef.current.style.height = "250px";
+      }
     }
 
     if (mathFieldRef.current) {
@@ -115,13 +133,8 @@ const UploadNote: React.FC = () => {
     }
 
     return () => {
-      if (quillRef.current) {
-        quillRef.current = null;
-      }
-      if (mathFieldRef.current) {
-        mathFieldRef.current = null;
-      }
-      document.body.removeChild(script);
+      quillRef.current = null;
+      mathFieldRef.current = null;
     };
   }, []);
 
@@ -132,9 +145,9 @@ const UploadNote: React.FC = () => {
         const range = quillRef.current.getSelection(true);
         const index = range ? range.index : quillRef.current.getLength();
         quillRef.current.insertEmbed(index, "math", latex, "user");
-        mathFieldRef.current.setValue(""); // Clear the MathLive field after adding
+        mathFieldRef.current.setValue(""); 
       } else {
-        Swal.fire({
+        ReactSwal.fire({
           icon: "warning",
           title: "No Math Content",
           text: "Please enter a mathematical expression before inserting.",
@@ -150,7 +163,7 @@ const UploadNote: React.FC = () => {
 
     const validFiles = files.filter((file) => {
       if (!validTypes.includes(file.type)) {
-        Swal.fire({
+        ReactSwal.fire({
           icon: "error",
           title: "Invalid File Type",
           text: `${file.name} is not a supported format (PNG or JPG only).`,
@@ -159,7 +172,7 @@ const UploadNote: React.FC = () => {
       }
 
       if (file.size > maxSize) {
-        Swal.fire({
+        ReactSwal.fire({
           icon: "error",
           title: "File Too Large",
           text: `${file.name} exceeds the 10MB limit.`,
@@ -185,22 +198,15 @@ const UploadNote: React.FC = () => {
   };
 
   const showUploadEffect = () => {
-    const uploadMsg = document.querySelector(
-      ".success-upload-msg"
-    ) as HTMLElement;
-    if (uploadMsg) {
-      uploadMsg.style.display = "flex";
-      requestAnimationFrame(() => uploadMsg.classList.add("s-u-effect"));
-      setTimeout(() => {
-        uploadMsg.classList.remove("s-u-effect");
-        setTimeout(() => (uploadMsg.style.display = "none"), 400);
-      }, 2000);
-    }
+    setShowUploadSuccess(true);
+    setTimeout(() => {
+      setShowUploadSuccess(false);
+    }, 2400);
   };
 
   const handlePublish = async () => {
     if (stackFiles.length < 2) {
-      Swal.fire({
+      ReactSwal.fire({
         icon: "warning",
         title: "Minimum 2 Images Required",
         text: "Please upload at least two images to proceed.",
@@ -208,17 +214,11 @@ const UploadNote: React.FC = () => {
       return;
     }
 
-    const noteSubject = (
-      document.querySelector(".note-subject") as HTMLSelectElement
-    )?.value;
-    const noteTitle = (
-      document.querySelector(".note-title") as HTMLInputElement
-    )?.value;
     const descriptionText = quillRef.current?.getText().trim() || "";
     const noteDescription = quillRef.current?.root.innerHTML || "";
 
     if (!noteSubject || !noteTitle || !descriptionText) {
-      Swal.fire({
+      ReactSwal.fire({
         icon: "error",
         title: "Incomplete Form",
         text: "Please fill out all fields before publishing.",
@@ -246,7 +246,7 @@ const UploadNote: React.FC = () => {
     formData.append("noteDescription", noteDescription);
 
     try {
-      Swal.fire({
+      ReactSwal.fire({
         icon: "info",
         title: "Processing Upload",
         text: "Your note is being uploaded. Please wait...",
@@ -260,26 +260,26 @@ const UploadNote: React.FC = () => {
       if (response.ok) {
         setStackFiles([]);
         setIsPopupOpen(false);
+        setNoteSubject("");
+        setNoteTitle("");
         if (fileInputRef.current) fileInputRef.current.value = "";
-        (document.querySelector(".note-subject") as HTMLSelectElement).value = "";
-        (document.querySelector(".note-title") as HTMLInputElement).value = "";
         if (quillRef.current) quillRef.current.root.innerHTML = "";
         if (mathFieldRef.current) mathFieldRef.current.setValue("");
 
-        Swal.fire({
+        ReactSwal.fire({
           icon: "success",
           title: "Upload Complete",
           text: "Your note has been published!",
         });
       } else {
-        Swal.fire({
+        ReactSwal.fire({
           icon: "error",
           title: "Upload Failed",
           text: responseData.message || "Something went wrong.",
         });
       }
     } catch (error) {
-      Swal.fire({
+      ReactSwal.fire({
         icon: "error",
         title: "Connection Error",
         text: "Please check your internet connection and try again.",
@@ -370,7 +370,8 @@ const UploadNote: React.FC = () => {
           </div>
           <span className="stack-prompt">View Stack</span>
         </div>
-        <div className="success-upload-msg">
+        <div className={`success-upload-msg ${showUploadSuccess ? 's-u-effect' : ''}`} 
+             style={{ display: showUploadSuccess ? "flex" : "none" }}>
           <svg
             width="20"
             height="20"
@@ -405,7 +406,8 @@ const UploadNote: React.FC = () => {
             name="noteSubject"
             id="noteSubject"
             className="note-subject"
-            defaultValue=""
+            value={noteSubject}
+            onChange={(e) => setNoteSubject(e.target.value)}
             required
           >
             <option value="" disabled>
@@ -451,6 +453,8 @@ const UploadNote: React.FC = () => {
             placeholder="Enter a concise title (max 200 characters)"
             name="noteTitle"
             maxLength={200}
+            value={noteTitle}
+            onChange={(e) => setNoteTitle(e.target.value)}
           />
         </div>
         <div className="form-group">
