@@ -2,9 +2,9 @@ import Students from "../schemas/students.js";
 import Notes from "../schemas/notes.js";
 import { IStudentDB } from "../types/database.types.js";
 import mongoose from "mongoose";
-import { deleteNoteImages, upload } from "./firebaseService.js";
 import { log } from "../helpers/utils.js";
 import Badges from "../schemas/badges.js";
+import { upload } from "./firebaseService.js";
 
 export const Convert = {
     async getStudentID_username(username: string) {
@@ -271,7 +271,7 @@ export async function changeProfileDetails(studentID: any, values: { fieldName: 
                 if (student) {
                     let prvProfilePicURL = student.profile_pic
                     let savePath = `${student._id.toString()}/${values.newValue["name"]}`
-                    let profilePicUrl = await upload(values.newValue, savePath, prvProfilePicURL.split('/')[1] === 'images' ? undefined : { replaceWith: prvProfilePicURL })
+                    let profilePicUrl = await upload(values.newValue, savePath)
                     if (profilePicUrl) {
                         await Students.updateOne({ studentID }, { $set: { profile_pic: profilePicUrl } })
                     } else {
@@ -297,7 +297,6 @@ export async function deleteAccount(studentDocID: string, firebase=false) {
             if (!firebase) {
                 return { ok: true }
             } else {
-                await deleteNoteImages({ studentDocID, noteDocID: ''}, false, true)
                 return { ok: true }
             }
         } else {

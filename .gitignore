@@ -13,3 +13,4 @@ dist/
 *.rest
 /views/test.*
 *.drawio
+*.js

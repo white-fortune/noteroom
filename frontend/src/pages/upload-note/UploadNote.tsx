@@ -46,7 +46,7 @@ const UploadNote: React.FC = () => {
   const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showUploadSuccess, setShowUploadSuccess] = useState<boolean>(false);
-  
+
   const editorRef = useRef<HTMLDivElement>(null);
   const quillRef = useRef<Quill | null>(null);
   const mathFieldRef = useRef<MathfieldElement | null>(null);
@@ -92,7 +92,7 @@ const UploadNote: React.FC = () => {
       } as QuillOptions);
 
       const BlockEmbed = Quill.import("blots/block/embed") as unknown as {
-        new (...args: any[]): {
+        new(...args: any[]): {
           domNode: HTMLElement;
         };
         create(value: string): HTMLElement;
@@ -103,7 +103,7 @@ const UploadNote: React.FC = () => {
         static blotName = "math";
         static tagName = "div";
         static scope = (Quill.import('blots/block/embed') as any).scope;
-        
+
         static create(value: string) {
           const node = super.create(value);
           node.setAttribute("data-latex", value);
@@ -145,7 +145,7 @@ const UploadNote: React.FC = () => {
         const range = quillRef.current.getSelection(true);
         const index = range ? range.index : quillRef.current.getLength();
         quillRef.current.insertEmbed(index, "math", latex, "user");
-        mathFieldRef.current.setValue(""); 
+        mathFieldRef.current.setValue("");
       } else {
         ReactSwal.fire({
           icon: "warning",
@@ -158,7 +158,6 @@ const UploadNote: React.FC = () => {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files ? Array.from(e.target.files) : [];
-    const maxSize = 10 * 1024 * 1024;
     const validTypes = ["image/png", "image/jpeg"];
 
     const validFiles = files.filter((file) => {
@@ -171,7 +170,7 @@ const UploadNote: React.FC = () => {
         return false;
       }
 
-      if (file.size > maxSize) {
+      if (file.size > 10*1024*1024) {
         ReactSwal.fire({
           icon: "error",
           title: "File Too Large",
@@ -184,6 +183,7 @@ const UploadNote: React.FC = () => {
     });
 
     setStackFiles((prev) => [...prev, ...validFiles]);
+
     if (validFiles.length > 0) showUploadEffect();
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
@@ -193,8 +193,8 @@ const UploadNote: React.FC = () => {
     return count === 0
       ? "No Images"
       : count === 1
-      ? "1 Image"
-      : `${count} Images`;
+        ? "1 Image"
+        : `${count} Images`;
   };
 
   const showUploadEffect = () => {
@@ -205,15 +205,6 @@ const UploadNote: React.FC = () => {
   };
 
   const handlePublish = async () => {
-    if (stackFiles.length < 2) {
-      ReactSwal.fire({
-        icon: "warning",
-        title: "Minimum 2 Images Required",
-        text: "Please upload at least two images to proceed.",
-      });
-      return;
-    }
-
     const descriptionText = quillRef.current?.getText().trim() || "";
     const noteDescription = quillRef.current?.root.innerHTML || "";
 
@@ -221,80 +212,86 @@ const UploadNote: React.FC = () => {
       ReactSwal.fire({
         icon: "error",
         title: "Incomplete Form",
-        text: "Please fill out all fields before publishing.",
+        text: "Please share all the details before publishing",
       });
       return;
     }
 
     setIsLoading(true);
 
-    const noteData = {
-      title: noteTitle,
-      subject: noteSubject,
-      description: noteDescription,
-      images: stackFiles,
-    };
-
-    console.log("Published Note Data:", noteData);
-
     const formData = new FormData();
     stackFiles.forEach((file, index) =>
       formData.append(`image-${index}`, file)
     );
-    formData.append("noteSubject", noteSubject);
-    formData.append("noteTitle", noteTitle);
-    formData.append("noteDescription", noteDescription);
+    formData.append("postSubject", noteSubject);
+    formData.append("postTitle", noteTitle);
+    formData.append("postDescription", noteDescription);
 
     try {
       ReactSwal.fire({
-        icon: "info",
-        title: "Processing Upload",
-        text: "Your note is being uploaded. Please wait...",
-        showConfirmButton: false,
-      });
-      const response = await fetch("/upload", {
-        method: "POST",
-        body: formData,
-      });
-      const responseData = await response.json();
-      if (response.ok) {
-        setStackFiles([]);
-        setIsPopupOpen(false);
-        setNoteSubject("");
-        setNoteTitle("");
-        if (fileInputRef.current) fileInputRef.current.value = "";
-        if (quillRef.current) quillRef.current.root.innerHTML = "";
-        if (mathFieldRef.current) mathFieldRef.current.setValue("");
+        icon: "success",
+        title: "Processing...",
+        text: "Your post is being processed to upload"
+      })
 
-        ReactSwal.fire({
-          icon: "success",
-          title: "Upload Complete",
-          text: "Your note has been published!",
-        });
+      const response = await fetch("http://localhost:2000/api/upload", {
+        method: "post",
+        credentials: "include",
+        body: formData
+      })
+      if (response.ok) {
+        const data = await response.json()
+        if (data.ok) {
+          setStackFiles([]);
+          setIsPopupOpen(false);
+
+          if (fileInputRef.current) {
+            fileInputRef.current.value = ""
+          }
+          (document.querySelector(".note-subject") as HTMLSelectElement).value = "";
+          (document.querySelector(".note-title") as HTMLInputElement).value = "";
+          if (quillRef.current) {
+            quillRef.current.root.innerHTML = "";
+          }
+
+          ReactSwal.fire({
+            icon: "success",
+            title: "You're good to go!",
+            text: "Your post has been uploaded successfully!"
+          })
+        } else {
+          ReactSwal.fire({
+            icon: "error",
+            title: "Upload failure",
+            text: data.message || "Something went wrong! Please try again a bit later"
+          })
+        }
       } else {
         ReactSwal.fire({
           icon: "error",
-          title: "Upload Failed",
-          text: responseData.message || "Something went wrong.",
-        });
+          title: "Upload failure",
+          text: "Something went wrong! Please try again a bit later"
+        })
       }
+
     } catch (error) {
       ReactSwal.fire({
         icon: "error",
         title: "Connection Error",
-        text: "Please check your internet connection and try again.",
-      });
+        text: "Please check your internet connection and try again."
+      })
     } finally {
       setIsLoading(false);
     }
+
   };
 
   return (
     <div className="middle-section-upload">
       <header className="section-header">
-        <h2>Upload New Note</h2>
+        <h2>Upload New Post</h2>
         <p className="header-subtitle">
-          Upload images and add details to share your study notes.
+          Upload images if you want, or skip them. Just share the details, and you're good to go!"
         </p>
       </header>
 
@@ -353,14 +350,14 @@ const UploadNote: React.FC = () => {
               stackFiles.length >= 1 && stackFiles.length <= 5
                 ? "#DEEDFF"
                 : stackFiles.length >= 6
-                ? "#F2F8F0"
-                : "#F8F8F8",
+                  ? "#F2F8F0"
+                  : "#F8F8F8",
             borderColor:
               stackFiles.length >= 1 && stackFiles.length <= 5
                 ? "#2D61D8"
                 : stackFiles.length >= 6
-                ? "#529F3D"
-                : "#E0E0E0",
+                  ? "#529F3D"
+                  : "#E0E0E0",
           }}
         >
           <div className="snc-info-wrapper">
@@ -370,8 +367,8 @@ const UploadNote: React.FC = () => {
           </div>
           <span className="stack-prompt">View Stack</span>
         </div>
-        <div className={`success-upload-msg ${showUploadSuccess ? 's-u-effect' : ''}`} 
-             style={{ display: showUploadSuccess ? "flex" : "none" }}>
+        <div className={`success-upload-msg ${showUploadSuccess ? 's-u-effect' : ''}`}
+          style={{ display: showUploadSuccess ? "flex" : "none" }}>
           <svg
             width="20"
             height="20"
@@ -502,7 +499,7 @@ const UploadNote: React.FC = () => {
           onClick={handlePublish}
           disabled={isLoading}
         >
-          {isLoading ? "Publishing..." : "Publish Note"}
+          {isLoading ? "Publishing..." : "Publish Post"}
         </button>
       </div>
 
@@ -516,12 +513,6 @@ const UploadNote: React.FC = () => {
         setStackFiles={setStackFiles}
         onClose={() => setIsPopupOpen(false)}
       />
-
-      {isLoading && (
-        <div className="loader-overlay">
-          <span className="loader" />
-        </div>
-      )}
     </div>
   );
 };

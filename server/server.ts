@@ -15,9 +15,6 @@ import pkg from 'connect-mongo';
 const { create } = pkg;
 
 import errorHandler from './middlewares/errors.js'
-
-import Alerts from './schemas/alerts.js'
-
 import noteIOHandler from './services/io/ioNoteService.js';
 import notificationIOHandler from './services/io/ioNotifcationService.js';
 import checkOnboarded from './middlewares/onBoardingChecker.js';
@@ -30,21 +27,24 @@ import profileApiRouter from './services/new_apis/profile.js';
 import notificationApiRouter from './services/new_apis/notifications.js';
 import requestsApiRouter from './services/new_apis/requests.js';
 import authApiRouter from './services/new_apis/auth.js';
+import uploadApiRouter from './services/new_apis/upload.js';
 
-
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = dirname(__filename);
 config({ path: join(__dirname, '.env') });
 
 const app = express()
 const server = createServer(app);
 const io = new SocketIOServer(server, { cors: { origin: '*' } });
-const url = process.env.DEVELOPMENT === "true" ? "mongodb://localhost:27017/information" : process.env.MONGO_URI
-if (process.env.DEVELOPMENT) {
-    console.log('\x1b[36m%s\x1b[0m', `Feature flag: DEVELOPMENT (.env) = Enabled. Using local MongoDB.`)
-}
+const url = process.env.DEVELOPMENT === "true" ? process.env.MONGO_URI_DEV : process.env.MONGO_URI
+
 connect(url).then(() => {
-    console.log(`Connected to database information`);
+    if (process.env.DEVELOPMENT) {
+        console.log(`DEVELOPMENT flag enabled`)
+        console.log(`[-] using local mongodb on ${url}`)
+        console.log(`[-] using firebase development storage bucket: ${process.env.NOTEROOM_DEVELOPMENT_FIREBASE_BUCKET}`)
+    } else {
+        console.log(`[-] using remote mongodb on ${url}`)
+        console.log(`[-] using firebase development storage bucket: ${process.env.NOTEROOM_PRODUCTION_FIREBASE_BUCKET}`)
+    }
 })
 
 const port = process.env.PORT
@@ -80,25 +80,15 @@ app.use(session({
  // Middleware for working with sessions
 app.use(cookieParser()) // Middleware for working with cookies
 app.use(fileUpload()) // Middleware for working with files
-// app.use('/login', loginRouter(io))
-// app.use('/sign-up', signupRouter(io))
-// app.use('/upload', checkOnboarded(false), uploadRouter(io))
-// app.use('/view', noteViewRouter(io))
-// app.use('/dashboard',checkOnboarded(false), dashboardRouter(io))
-// app.use('/search-profile', serachProfileRouter(io))
-// app.use('/auth', resetPasswordRouter())
-// app.use('/settings', checkOnboarded(false), settingsRouter(io))
-// app.use('/api', apiRouter(io))
 
 app.use('/api/users', profileApiRouter(io))
 app.use('/api/posts', postApiRouter(io))
 app.use('/api/notifications', notificationApiRouter(io))
 app.use('/api/requests', requestsApiRouter(io))
-
 app.use('/api/feed', feedApiRouter(io))
 app.use('/api/search', seacrhApiRouter(io))
-
 app.use('/api/auth', authApiRouter(io))
+app.use('/api/upload', uploadApiRouter(io))
 
 app.use('/blog', blogsRouter())
 app.use(errorHandler) // Middleware for handling errors
@@ -149,24 +139,6 @@ io.on('connection', (socket) => {
 
     notificationIOHandler(io, socket)
     noteIOHandler(io, socket)
-})
-
-app.get('/message', async (req, res) => {
-    if (req.session && req.session["stdid"] == "1094a5ad-d519-4055-9e2b-0f0d9447da02") {
-        if (req.query.message == undefined) {
-            res.render('message')
-        } else {
-            let message = req.query.message
-            let type = req.query.type
-
-            await Alerts.create({ message: message, type: type })
-
-            res.send({ url: '/dashboard' })
-        }
-    } else {
-        res.status(404)
-        res.render('404-error', { message: 'The page you are looking for is not found' })
-    }
 })
 
 app.get('*', (req, res) => {

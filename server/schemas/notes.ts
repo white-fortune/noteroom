@@ -16,7 +16,7 @@ const notesSchema = new Schema({
     },
     content: {
         type: [String], // The directory where all the images are placed
-        default: ['']
+        default: []
     },
     description: {
         type: String,

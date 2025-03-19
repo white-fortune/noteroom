@@ -65,7 +65,7 @@ function uploadRouter(io: Server) {
 
                 ;(async function() {
                     try {
-                        let allFilePaths = await processBulkCompressUpload(req.files, studentDocID, noteDocId)
+                        let allFilePaths = await processBulkCompressUpload(req.files, studentDocID)
                         log('info', `On /upload StudentID=${req.session['stdid'] || "--studentid--"}: Bulk processing is completed of note images`)
     
                         await Notes.findByIdAndUpdate(noteDocId, { $set: { content: allFilePaths, completed: true } }) 

@@ -32,7 +32,7 @@ export default function FeedNotesProvider({ children }: { children: ReactNode | 
     function fireToast(title: string) {
         return withReactContent(Swal).fire({
             toast: true,
-            position: "bottom-start",
+            position: "bottom-right",
             title: title,
             showConfirmButton: true,
             timer: 3000,

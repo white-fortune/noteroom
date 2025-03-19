@@ -61,7 +61,7 @@ function App() {
 					<Route path="/user/:username" element={<UserProfile />} />
 					<Route path="/search-profile" element={<SearchProfile />} />
 					<Route path="/settings" element={<Settings />} />
-					<Route path="/upload-note" element={<UploadNote />} />
+					<Route path="/upload" element={<UploadNote />} />
 				</Route>
 			</Routes>
 

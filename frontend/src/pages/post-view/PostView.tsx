@@ -81,7 +81,7 @@ export default function PostView() {
                     <div className="post-content">
                         <h1 className="post-title">{noteData?.noteData.noteTitle}</h1>
                         <div className="post-description" dangerouslySetInnerHTML={{ __html: noteData?.noteData.description }}></div>
-                        <ImageContainer noteImages={noteImages} controller={[prevImage, nextImage, offset]}></ImageContainer>
+                        { noteData?.contentData.contentCount > 0 && <ImageContainer noteImages={noteImages} controller={[prevImage, nextImage, offset]} />}
                     </div>
 
                     <NoteEngagement></NoteEngagement>

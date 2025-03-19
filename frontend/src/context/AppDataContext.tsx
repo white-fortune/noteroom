@@ -7,6 +7,7 @@ export default function AppDataProvider({ children }: { children: ReactNode | Re
     const [savedNotes, setSavedNotes] = useState<SavedNoteObject[]>([])
     const [profile, setProfile] = useState<any>({})
     const [requests, setRequests] = useState<any>()
+    //FIXME: the current username will be taken from the user auth
     const currentUsername = "rafi-rahman-9181e241"
 
     useEffect(() => {

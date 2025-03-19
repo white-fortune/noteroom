@@ -3,7 +3,6 @@ import Notes from '../schemas/notes.js'
 import Comments, { } from '../schemas/comments.js'
 import { INoteDB, IQuickPostDB } from '../types/database.types.js'
 import { IManageUserNote, INoteDetails } from '../types/noteService.types.js'
-import { deleteNoteImages } from './firebaseService.js'
 import { deleteAllVotes, isUpVoted } from './voteService.js'
 import mongoose from 'mongoose'
 import { JSDOM }  from 'jsdom'
@@ -49,7 +48,6 @@ export async function deleteNote({studentDocID, noteDocID}: IManageUserNote, pos
 
             await Comments.deleteMany({ noteDocID: noteDocID })
             await deleteAllVotes(noteDocID)
-            await deleteNoteImages({ studentDocID, noteDocID }, post)
         }
         return true
     } catch (error) {
