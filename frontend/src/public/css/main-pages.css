@@ -287,7 +287,6 @@ body {
   justify-content: center; 
   gap: 15px;
   background: var(--main-bg); 
-  border-bottom: 1px solid var(--border-color);
   z-index: 1004; 
 }
 
