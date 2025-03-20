@@ -3,6 +3,7 @@ import { useSavedNotes } from "../context/SavedNotesContext";
 import { SavedNoteObject } from "../types/types";
 import { Link } from "react-router-dom";
 import { useAppData } from "../context/AppDataContext";
+import ngLogo from "../assets/ng_logo.png"
 
 function SavedNote({ note }: { note: SavedNoteObject }) {
     return <div className="saved-note">
@@ -25,7 +26,7 @@ export default function LeftPanel() {
     return (
         <div className="left-panel">
             <div className="left-panel-header">
-                <img className="left-panel--nr-logo" alt="NoteRoom Logo" />
+                <img className="left-panel--nr-logo" src={ngLogo} alt="NoteRoom Logo" />
                 <span className="users-db-msg">NoteRoom</span>
             </div>
 

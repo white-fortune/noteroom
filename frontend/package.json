@@ -14,6 +14,7 @@
     "@editorjs/list": "^2.0.6",
     "@editorjs/quote": "^2.7.6",
     "@lexical/react": "^0.27.0",
+    "@rollup/rollup-linux-x64-gnu": "^4.36.0",
     "@types/quill": "^2.0.14",
     "bootstrap": "^5.3.3",
     "jwt-decode": "^4.0.0",

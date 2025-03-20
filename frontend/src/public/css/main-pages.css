@@ -28,7 +28,7 @@ body {
   transform: translateX(-50%);
   width: 100%;
   max-width: 1800px; 
-  padding: 10px 20px;
+  padding: 5px 20px;
   background: #ffffff;
   box-shadow: var(--shadow);
   z-index: 1000;
