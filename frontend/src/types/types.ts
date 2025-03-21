@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 export interface SavedNoteObject {
     noteID: string,
     noteTitle: string,
@@ -22,7 +20,6 @@ export class RequestObject {
 
 export interface IONotification {
     notiID: string,
-    title: string,
     content: string,
     redirectTo: string | null,
     isRead: false,
@@ -33,7 +30,8 @@ export interface IONotification {
         profile_pic: string,
         displayname: any,
         username: any
-    }
+    },
+	additional?: any
 }
 export class FeedNoteObject {
 	isQuickPost: boolean;

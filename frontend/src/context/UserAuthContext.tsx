@@ -42,15 +42,15 @@ export default function UserAuthProvider({ children }: { children: ReactNode | R
 
 function AuthenticatedProviders({ children }: { children: ReactNode | ReactNode[] }) {
     return (
-        <WebSocketProvider>
-            <ScrollPositionProvider>
-                <AppDataProvider>
-                    <FeedNotesProvider>
+        <ScrollPositionProvider>
+            <AppDataProvider>
+                <FeedNotesProvider>
+                    <WebSocketProvider>
                         {children}
-                    </FeedNotesProvider>
-                </AppDataProvider>
-            </ScrollPositionProvider>
-        </WebSocketProvider>
+                    </WebSocketProvider>
+                </FeedNotesProvider>
+            </AppDataProvider>
+        </ScrollPositionProvider>
     )
 }
 

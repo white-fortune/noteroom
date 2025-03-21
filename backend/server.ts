@@ -111,7 +111,6 @@ io.on('connection', (socket) => {
     let studentID = <string>socket.handshake.query.studentID
     if (studentID) {
         userSocketMap.set(studentID, socket.id)
-        io.to(socket.id).emit("hello", studentID)
     }
 
     socket.on('disconnect', () => {

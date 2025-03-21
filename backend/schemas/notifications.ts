@@ -18,10 +18,6 @@ const NotifsSchema = new Schema({
         type: String,
         default: ''
     },
-    title: {
-        type: String,
-        default: ''
-    },
     notiType: {
         type: String
     },
@@ -34,7 +30,6 @@ const NotifsSchema = new Schema({
 const NotifsModel = model('notifications-test', NotifsSchema)
 
 
-//FOR: comments (notification-feedback, notification-reply), mentions (notification-mention)
 const interactionNotifsSchema = new Schema({
     fromUserSudentDocID: {
         type: Schema.Types.ObjectId,

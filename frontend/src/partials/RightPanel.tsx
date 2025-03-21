@@ -4,7 +4,7 @@ import { useAppData } from "../context/AppDataContext";
 import { useUserAuth } from "../context/UserAuthContext";
 import AvatarImage from "../assets/avatars/avatar-1.png"
 
-export default function RightPanel({ notiModalState: [showNotiModal, setShowNotiModal], rightPanelState }: any) {
+export default function RightPanel({ notiModalState: [, setShowNotiModal], rightPanelState }: any) {
     const {userProfile: [profile, ]} = useAppData()
     const [userAuth] = useUserAuth()
 

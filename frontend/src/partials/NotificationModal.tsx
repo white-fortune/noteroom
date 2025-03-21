@@ -1,37 +1,35 @@
 import { useCallback, useEffect } from "react"
 import { useAppData } from "../context/AppDataContext"
-import { useSocket } from "../context/WebSocketContext"
 import { useNavigate } from "react-router-dom"
-import { NotificationActions } from "../reducers/notificationReducer"
+import { NotificationActions, NotificationEvent } from "../reducers/notificationReducer"
 
 function Notification({ notiData, rightPanelState: [, setShowRightPanel], notiState: [, setShowNotiModal], dispatch }: any) {
     const navigate = useNavigate()
 
     const readNoti = useCallback(async (notiID: string) => {
-            try {
-                const response = await fetch(`http://localhost:2000/api/notifications/${notiID}/read`, {
-                    credentials: "include"
-                })
-                if (response.ok) {
-                    const data = await response.json()
-                    console.log(data)
-                }
-            } catch (error) {
-                console.error(error)
+        try {
+            const response = await fetch(`http://localhost:2000/api/notifications/${notiID}/read`, {
+                credentials: "include"
+            })
+            if (response.ok) {
+                const data = await response.json()
+                console.log(data)
             }
-
+        } catch (error) {
+            console.error(error)
+        }
     }, [])
 
     const assignAction = useCallback(() => {
         dispatch({ type: NotificationActions.READ, payload: { notiID: notiData.notiID } })
+        setShowNotiModal((prev: boolean) => !prev)
         readNoti(notiData.notiID)
     
         switch(notiData.notiType) {
             case "notification-request":
                 setShowRightPanel((prev: boolean) => !prev)
-                setShowNotiModal((prev: boolean) => !prev)
                 break
-            case "notification-mention":
+            case NotificationEvent.NOTIF_COMMENT:
                 navigate(notiData.redirectTo as string)
                 break
         }
@@ -39,7 +37,7 @@ function Notification({ notiData, rightPanelState: [, setShowRightPanel], notiSt
 
     
     return (
-        <div className="notification" id={"noti-" + notiData.notiID} onClick={assignAction}>
+        <div className="notification" onClick={assignAction}>
             <div className="noti__first-col--img-wrapper">
                 {notiData.isInteraction ? <img src={notiData.fromUser?.profile_pic} alt="notification" className="noti__source-user-img" /> : ''}
             </div>
@@ -62,12 +60,6 @@ function Notification({ notiData, rightPanelState: [, setShowRightPanel], notiSt
 
 export default function NotificationModal({ notiState: [showNotiModal, setShowNotiModal], rightPanelState: [showRightPanel, setShowRightPanel] }: any) {
     const { notification: [notifs, dispatch] } = useAppData()
-    const [socket] = useSocket()
-
-    socket?.on("hello", (data: any) => {
-        console.log(data)
-    })
-
     async function deleteAllNotification() {
         if (notifs.length === 0) return
 

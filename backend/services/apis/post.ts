@@ -4,6 +4,7 @@ import { getSinglePost, addSavePost, deleteSavedPost, getSavedPosts } from "../s
 import { addFeedback, addReply, getComments } from "../services/feedbackService";
 import { addVote, deleteVote } from "../services/voteService";
 import { Convert } from "../services/userService";
+import { NotificationEvent, NotificationSender } from "../services/notificationService";
 
 const router = Router()
 export default function postApiRouter(io: Server) {
@@ -83,7 +84,23 @@ export default function postApiRouter(io: Server) {
             }
             const response = await addFeedback(feedbackData)
             if (response.ok) {
-                res.json({ ok: true, feedback: response.feedback })
+                const { feedback } = response 
+
+                const toStudentID = feedback["noteDocID"]["ownerDocID"]["studentID"];
+                const fromStudentID = feedback["commenterDocID"]["studentID"]
+
+                if (toStudentID !== fromStudentID) {
+                    await NotificationSender(io, {
+                        ownerStudentID: toStudentID,
+                        redirectTo: `/post/${postID}`
+                    }).sendNotification({
+                        content: `gave you a comment on "${feedback["noteDocID"]["title"]}". Check it out!`,
+                        event: NotificationEvent.NOTIF_COMMENT,
+                        isInteraction: true,
+                        fromUserSudentDocID: feedback["commenterDocID"]["_id"]
+                    })
+                }
+                res.json({ ok: true, feedback: feedback })
             } else {
                 res.json({ ok: false })
             }
@@ -109,6 +126,28 @@ export default function postApiRouter(io: Server) {
             }
             const response = await addReply(replyData)
             if (response.ok) {
+                const { reply } = response
+
+                const toStudentID = reply["parentFeedbackDocID"]["commenterDocID"]["studentID"]
+                const fromStudentID = reply["commenterDocID"]["studentID"]
+
+                /* TODO: when repling, parentFeedbackDocID can be used when repling a comment and adding a reply under a comment thread. 
+                But when repling a reply, the prentFeedbackDocID will stil refer the main comment, so the reply notification won't be sent correctly. 
+                Take a general solution for that so that when repling, I will send a explicit informaion about the commenter on which I am commenting 
+                and will store that as ownerStudentID */  
+
+                if (toStudentID !==  fromStudentID) {
+                    await NotificationSender(io, {
+                        ownerStudentID: toStudentID,
+                        redirectTo: `/post/${postID}`
+                    }).sendNotification({
+                        content: `gave a reply on your comment on "${reply["noteDocID"]["title"]}". Check it out!`,
+                        event: NotificationEvent.NOTIF_COMMENT,
+                        isInteraction: true,
+                        fromUserSudentDocID: reply["commenterDocID"]["_id"]
+                    })
+                }
+
                 res.json({ ok: true, reply: response.reply })
             } else {
                 res.json({ ok: false })

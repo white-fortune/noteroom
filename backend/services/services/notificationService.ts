@@ -3,54 +3,44 @@ import { Notifs, InteractionNotifs } from "../../schemas/notifications"
 import { userSocketMap } from "../../server"
 
 
-interface IONotification {
-    notiID: string,
-    title: string,
-    content: string,
-    redirectTo: string | undefined,
-    inRead: false,
-    createdAt: string,
-    fromUser: {
-        profile_pic: string,
-        displayname: any,
-        username: any
-    }
+export enum NotificationEvent {
+    NOTIF_COMMENT = 'notification-comment',
 }
 
-export function NotificationSender(io: Server, globals?: any) {
+export function NotificationSender(io: Server, options?: { ownerStudentID: string, redirectTo: string }) {
     return {
-        //content: for interactions, only the text of the interaction (after the profile-picture and displayname)
-        async sendNotification({ content, title = '', event }, fromUserSudentDocID?: any, additional?: any) {
+        async sendNotification({content, event, isInteraction, fromUserSudentDocID, additional}: any) {
             try {
-                let ownerStudentID = globals.ownerStudentID
-                let redirectTo = globals.redirectTo || ""
+                let ownerStudentID = options.ownerStudentID
+                let redirectTo = options.redirectTo || null
 
                 let baseDocument = {
                     notiType: event,
                     content: content,
-                    title: title,
                     redirectTo: redirectTo,
                     ownerStudentID: ownerStudentID
                 }
 
-                let notification_db = !fromUserSudentDocID ? baseDocument : { ...baseDocument, fromUserSudentDocID }
-                let notification_document = !fromUserSudentDocID ? await addNoti(baseDocument) : await addInteractionNoti(notification_db)
+                let notification_db = isInteraction ? { ...baseDocument, fromUserSudentDocID } : baseDocument 
+                let notification_document = isInteraction ? await addInteractionNoti(notification_db) : await addNoti(baseDocument)
 
                 let notification_io = {
                     notiID: notification_document["_id"].toString(),
-                    title: notification_db.title,
                     content: notification_db.content,
                     redirectTo: redirectTo,
-                    isRead: "false",
+                    isRead: false,
+                    isInteraction: isInteraction,
+                    notiType: event,
                     createdAt: notification_document["createdAt"],
-                    fromUserSudentDocID: !fromUserSudentDocID ? null : notification_document["fromUserSudentDocID"],
+                    fromUser: isInteraction ? notification_document["fromUserSudentDocID"] : null,
                     additional: additional || null
                 }
                 io.to(userSocketMap.get(ownerStudentID)).emit(event, notification_io)
 
-                return true
+                return { ok: true }
             } catch (error) {
-                return false
+                console.error(error)
+                return { ok: false }
             }
         }
     }
@@ -71,7 +61,7 @@ export async function getNotifications(ownerStudentID: string) {
                 preserveNullAndEmptyArrays: true
             } },
             { $addFields: {
-                isInteraction: { $ne: [{$type: "$fromUserSudentDocID"}, "missing"] },
+                isInteraction: { $eq: ["$docType", "interaction"] },
                 fromUser: {
                     profile_pic: "$fromUserSudentDocID.profile_pic", 
                     displayname: "$fromUserSudentDocID.displayname", 
@@ -97,7 +87,7 @@ export async function getNotifications(ownerStudentID: string) {
                 }
             } }
         ])
-        return { ok: true, notifications: notifications }
+        return { ok: true, notifications }
     } catch (error) {
         return { ok: false }
     }
