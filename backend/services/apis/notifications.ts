@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { Server } from "socket.io";
-import { deleteAllNoti, getNotifications } from "../services/notificationService";
+import { deleteAllNoti, getNotifications, readNoti } from "../services/notificationService";
 
 const router = Router()
 
@@ -24,6 +24,16 @@ export default function notificationApiRouter(io: Server) {
             let studentID = req.session["stdid"]
             let deletedResult = await deleteAllNoti(studentID)
             res.json({ ok: deletedResult })
+        } catch (error) {
+            res.json({ ok: false })
+        }
+    })
+
+    router.get("/:notificationID/read", async (req, res) => {
+        try {
+            const notiID = req.params.notificationID
+            const response = await readNoti(notiID)
+            res.json({ ok: response.ok })
         } catch (error) {
             res.json({ ok: false })
         }

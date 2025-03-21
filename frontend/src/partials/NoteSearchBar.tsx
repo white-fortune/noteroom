@@ -1,4 +1,16 @@
+import { useEffect, useState } from "react";
+import { useAppData } from "../context/AppDataContext";
+import { IONotification } from "../types/types";
+
 export default function NoteSearchBar({ notiModalState }: { notiModalState: [any, any] }) {
+  const { notification: [notifs, ] } = useAppData()
+  const [unreadNotiCount, setUnreadNotiCount] = useState<number>(0)
+
+  useEffect(() => {
+    const unreadNoti = notifs.filter((noti: IONotification) => noti.isRead === false)
+    setUnreadNotiCount(unreadNoti.length)
+  }, [notifs])
+
   return (
     <div className="search-container">
       <div className="search-bar-container">
@@ -42,7 +54,7 @@ export default function NoteSearchBar({ notiModalState }: { notiModalState: [any
             <path d="M13.73 21a2 2 0 0 1-3.46 0" />
           </svg>
           <span className="notification-badge" id="notification-count">
-            0
+            { unreadNotiCount }
           </span>
         </div>
         <a href="" aria-label="Profile">

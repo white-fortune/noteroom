@@ -2,6 +2,7 @@ import { createContext, ReactNode, useContext, useEffect, useState } from "react
 import AppDataProvider from "./AppDataContext";
 import FeedNotesProvider from "./FeedNoteContext";
 import ScrollPositionProvider from "./ScrollPosition";
+import WebSocketProvider from "./WebSocketContext";
 
 const UserAuthContext = createContext<any>(null)
 
@@ -41,13 +42,15 @@ export default function UserAuthProvider({ children }: { children: ReactNode | R
 
 function AuthenticatedProviders({ children }: { children: ReactNode | ReactNode[] }) {
     return (
-        <ScrollPositionProvider>
-            <AppDataProvider>
-                <FeedNotesProvider>
-                    {children}
-                </FeedNotesProvider>
-            </AppDataProvider>
-        </ScrollPositionProvider>
+        <WebSocketProvider>
+            <ScrollPositionProvider>
+                <AppDataProvider>
+                    <FeedNotesProvider>
+                        {children}
+                    </FeedNotesProvider>
+                </AppDataProvider>
+            </ScrollPositionProvider>
+        </WebSocketProvider>
     )
 }
 

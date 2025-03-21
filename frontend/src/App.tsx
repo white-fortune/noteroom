@@ -70,7 +70,7 @@ function App() {
 				<>
 					<LeftPanel />
 					<NoteSearchBar notiModalState={[showNotiModal, setShowNotiModal]} />
-					<NotificationModal notiState={[showNotiModal, setShowNotiModal]} />
+					<NotificationModal notiState={[showNotiModal, setShowNotiModal]} rightPanelState={[showRightPanel, setShowRightPanel]} />
 					<RightPanel notiModalState={[showNotiModal, setShowNotiModal]} rightPanelState={showRightPanel} />
 					<MobileControlPanel rightPanelState={[showRightPanel, setShowRightPanel]} />
 				</>

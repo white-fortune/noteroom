@@ -1,20 +1,53 @@
-import { useEffect, useState } from "react"
-import { NotificationObject } from "../types/types"
+import { useCallback, useEffect } from "react"
 import { useAppData } from "../context/AppDataContext"
+import { useSocket } from "../context/WebSocketContext"
+import { useNavigate } from "react-router-dom"
+import { NotificationActions } from "../reducers/notificationReducer"
 
-function Notification({ notiData }: { notiData: NotificationObject }) {
-    let isInteraction = notiData.fromUserSudentDocID ? true : false
+function Notification({ notiData, rightPanelState: [, setShowRightPanel], notiState: [, setShowNotiModal], dispatch }: any) {
+    const navigate = useNavigate()
 
+    const readNoti = useCallback(async (notiID: string) => {
+            try {
+                const response = await fetch(`http://localhost:2000/api/notifications/${notiID}/read`, {
+                    credentials: "include"
+                })
+                if (response.ok) {
+                    const data = await response.json()
+                    console.log(data)
+                }
+            } catch (error) {
+                console.error(error)
+            }
+
+    }, [])
+
+    const assignAction = useCallback(() => {
+        dispatch({ type: NotificationActions.READ, payload: { notiID: notiData.notiID } })
+        readNoti(notiData.notiID)
+    
+        switch(notiData.notiType) {
+            case "notification-request":
+                setShowRightPanel((prev: boolean) => !prev)
+                setShowNotiModal((prev: boolean) => !prev)
+                break
+            case "notification-mention":
+                navigate(notiData.redirectTo as string)
+                break
+        }
+    }, [])
+
+    
     return (
-        <div className="notification" id={"noti-" + notiData.notiID}>
+        <div className="notification" id={"noti-" + notiData.notiID} onClick={assignAction}>
             <div className="noti__first-col--img-wrapper">
-                {isInteraction ? <img src={notiData.fromUserSudentDocID?.profile_pic} alt="notification" className="noti__source-user-img" /> : ''}
+                {notiData.isInteraction ? <img src={notiData.fromUser?.profile_pic} alt="notification" className="noti__source-user-img" /> : ''}
             </div>
 
             <div className="noti__sec-col--msg-wrapper">
                 <div className="noti__sc--first-row-msg">
                     <p className={"noti-msg secondary-" + notiData.isRead}>
-                        {isInteraction ? <span className="noti-source-user-name">{notiData.fromUserSudentDocID?.displayname}</span> : ''}
+                        {notiData.isInteraction ? <span className="noti-source-user-name">{notiData.fromUser?.displayname}</span> : ''}
                         &nbsp;{notiData.content}
                     </p>
                 </div>
@@ -27,17 +60,25 @@ function Notification({ notiData }: { notiData: NotificationObject }) {
     )
 }
 
-export default function NotificationModal({ notiState }: { notiState: [any, any] }) {
-    const { notification: [notifs, setNotifs] } = useAppData()
+export default function NotificationModal({ notiState: [showNotiModal, setShowNotiModal], rightPanelState: [showRightPanel, setShowRightPanel] }: any) {
+    const { notification: [notifs, dispatch] } = useAppData()
+    const [socket] = useSocket()
+
+    socket?.on("hello", (data: any) => {
+        console.log(data)
+    })
 
     async function deleteAllNotification() {
         if (notifs.length === 0) return
 
-        let response = await fetch('http://localhost:2000/api/notifications', { method: 'delete', credentials: 'include' })
+        let response = await fetch('http://localhost:2000/api/notifications', { 
+            method: 'delete', 
+            credentials: 'include' 
+        })
         if (response.ok) {
             let data = await response.json()
             if (data.ok) {
-                setNotifs([])
+                dispatch({ type: NotificationActions.DELETE_ALL })
             }
         }
     }
@@ -45,13 +86,13 @@ export default function NotificationModal({ notiState }: { notiState: [any, any]
     useEffect(() => {
         window.addEventListener('click', (event) => {
             if ((event.target as Element).getAttribute("class") === "notification-modal-overlay") {
-                notiState[1](false)
+                setShowNotiModal(false)
             }
         })
     }, [])
 
     return (
-        <div className="notification-modal-overlay" style={{ display: notiState[0] ? "flex" : "none" }}>
+        <div className="notification-modal-overlay" style={{ display: showNotiModal ? "flex" : "none" }}>
             <div className="notification-modal">
                 <div className="notification-header">
                     <h4 className="notification-header-label">Notifications</h4>
@@ -62,7 +103,7 @@ export default function NotificationModal({ notiState }: { notiState: [any, any]
 
                 <div className="notifications-container">
                     {notifs?.map((noti: any) => {
-                        return <Notification notiData={noti} key={noti.notiID}></Notification>
+                        return <Notification notiData={noti} key={noti.notiID} rightPanelState={[showRightPanel, setShowRightPanel]} notiState={[showNotiModal, setShowNotiModal]} dispatch={dispatch}></Notification>
                     })}
                 </div>
             </div>

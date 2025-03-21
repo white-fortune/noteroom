@@ -20,22 +20,21 @@ export class RequestObject {
     }
 }
 
-export class NotificationObject {
-    notiID: string;
-    fromUserSudentDocID: { profile_pic: string, displayname: string } | null;
-    content: string;
-    isRead: boolean;
-    createdAt: string;
-
-    constructor(noti: any) {
-        this.notiID = noti._id;
-        this.fromUserSudentDocID = noti.fromUserSudentDocID;
-        this.content = noti.content;
-        this.isRead = noti.isRead;
-        this.createdAt = noti.createdAt;
+export interface IONotification {
+    notiID: string,
+    title: string,
+    content: string,
+    redirectTo: string | null,
+    isRead: false,
+    createdAt: string,
+    isInteraction: boolean,
+	notiType: string,
+    fromUser: {
+        profile_pic: string,
+        displayname: any,
+        username: any
     }
 }
-
 export class FeedNoteObject {
 	isQuickPost: boolean;
 	noteData: any;

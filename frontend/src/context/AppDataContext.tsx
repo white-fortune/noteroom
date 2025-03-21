@@ -1,10 +1,11 @@
-import { createContext, ReactNode, useContext, useEffect, useState } from "react";
-import { NotificationObject, RequestObject, SavedNoteObject } from "../types/types";
+import { createContext, ReactNode, useContext, useEffect, useReducer, useState } from "react";
+import { IONotification, RequestObject, SavedNoteObject } from "../types/types";
 import { useUserAuth } from "./UserAuthContext";
+import notificationReducer, { NotificationActions } from "../reducers/notificationReducer";
 
 const AppDataContext = createContext<any>(null)
 export default function AppDataProvider({ children }: { children: ReactNode | ReactNode[] }) {
-    const [notifs, setNotifs] = useState<NotificationObject[]>([])
+    const [notifs, dispatch] = useReducer(notificationReducer, [])
     const [savedNotes, setSavedNotes] = useState<SavedNoteObject[]>([])
     const [profile, setProfile] = useState<any>({})
     const [requests, setRequests] = useState<any>()
@@ -18,16 +19,11 @@ export default function AppDataProvider({ children }: { children: ReactNode | Re
                 if (response.ok) {
                     let data = await response.json()
                     if (data.ok && data.notifications.length !== 0) {
-                        setNotifs(data.notifications.map((noti: any) => new NotificationObject(noti)))
-                    } else {
-                        setNotifs([])
+                        dispatch({ type: NotificationActions.ADD, payload: { notifications: data.notifications } })
                     }
-                } else {
-                    setNotifs([])
                 }
             } catch (error) {
                 console.error(error)
-                setNotifs([])
             }
         }
         getNotifs()
@@ -107,7 +103,7 @@ export default function AppDataProvider({ children }: { children: ReactNode | Re
     return (
         <AppDataContext.Provider value={
             {
-                notification: [notifs, setNotifs],
+                notification: [notifs, dispatch],
                 savedNotes: [savedNotes, setSavedNotes],
                 userProfile: [profile, setProfile, currentUsername],
                 requests: [requests, setRequests]
