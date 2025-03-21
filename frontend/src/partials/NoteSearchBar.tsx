@@ -1,4 +1,32 @@
+import { useState } from 'react';
+
 export default function NoteSearchBar({ notiModalState }: { notiModalState: [any, any] }) {
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [query, setQuery] = useState('');
+  const [results, setResults] = useState<Note[]>([]); 
+  const [isLoading, setIsLoading] = useState(false);
+
+  
+  interface Note {
+    id: number;
+    title: string;
+  }
+
+  const handleSearch = (searchQuery: string): void => {
+    setIsLoading(true);
+    setTimeout(() => {
+      const notes: Note[] = [
+        { id: 1, title: 'Physics Chapter 1' },
+        { id: 2, title: 'Math Chapter 3' },
+      ];
+      const filteredNotes: Note[] = notes.filter((note) =>
+        note.title.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setResults(filteredNotes);
+      setIsLoading(false);
+    }, 1000);
+  };
+
   return (
     <div className="search-container">
       <div className="search-bar-container">
@@ -8,6 +36,13 @@ export default function NoteSearchBar({ notiModalState }: { notiModalState: [any
             className="search-input"
             placeholder="Search Notes"
             aria-label="Search Notes"
+            value={query}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              handleSearch(e.target.value);
+            }}
+            onFocus={() => setIsSearchFocused(true)}
+            onBlur={() => setIsSearchFocused(false)}
           />
           <button className="search-button" aria-label="Search">
             <svg
@@ -49,11 +84,23 @@ export default function NoteSearchBar({ notiModalState }: { notiModalState: [any
           <img src="something" className="profile-avatar" alt="Profile" />
         </a>
       </div>
-      <div className="search-results-container">
+      <div className={`search-results-container ${isSearchFocused ? 'visible' : ''}`}>
         <div className="search-results-list">
-          <div className="search-status">
-            <div className="search-loading-indicator"></div>
-          </div>
+          {isLoading ? (
+            <div className="search-status" style={{ display: 'flex' }}>
+              <div className="search-loading-indicator"></div>
+            </div>
+          ) : results.length === 0 ? (
+            <div className="no-results-message">
+              No results
+            </div>
+          ) : (
+            results.map((note) => (
+              <div key={note.id} className="search-result-item">
+                {note.title}
+              </div>
+            ))
+          )}
         </div>
       </div>
     </div>
