@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react"
 import { useAppData } from "../../context/AppDataContext"
+import AvatarImage from "../../assets/avatars/avatar-1.png"
 
 function QuickPostOverlay({ showState, profile }: { showState: [any, any], profile: any }) {
     const [quickPostText, setQuickPostText] = useState("")
@@ -27,7 +28,7 @@ function QuickPostOverlay({ showState, profile }: { showState: [any, any], profi
 
                 <div className="qpec-body">
                     <div className="qpec-body-row-user-preview">
-                        <img src={profile.profile_pic} alt="User Profile Picture" className="qpec-user-profile-pic profile-pic" />
+                        <img src={profile.profile_pic || AvatarImage} alt="User Profile Picture" className="qpec-user-profile-pic profile-pic" />
                         <span className="qpec-username">{profile.displayname}</span>
                     </div>
                     <div className="qpec-body-row-text-input">
@@ -82,7 +83,7 @@ export default function QuickPost() {
         <>
             <div className="quick-post-container">
                 <div className="quick-post__first-row">
-                    <img src={profile.profile_pic} className="profile-pic quick-post__fr--prfl-pic" id="root-profile-pic" />
+                    <img src={profile.profile_pic || AvatarImage} className="profile-pic quick-post__fr--prfl-pic" id="root-profile-pic" />
                     <div className="quick-post__fr--msg-btn" onClick={() => openQuickPost()}>Ask or share anything</div>
                 </div>
 

@@ -1,6 +1,8 @@
 import fileUpload from "express-fileupload"
 import sharp from "sharp"
 import { upload } from "./firebaseService"
+import slugify from "slugify"
+import {v4 as uuidv4} from "uuid"
 
 export async function compressImage(fileObject: any) {
     try {
@@ -28,5 +30,21 @@ export async function processBulkCompressUpload(files: any, noteDocID: any) {
         return uploadedFiles
     } catch (error) {
         return []
+    }
+}
+
+
+export function generateRandomUsername(displayname: string) {
+    let sluggfied = slugify(displayname, {
+        lower: true,
+        strict: true
+    })
+    let uuid = uuidv4()
+    let suffix = uuid.split("-")[0]
+    let username = `${sluggfied}-${suffix}`
+
+    return {
+        userID: uuid,
+        username: username
     }
 }

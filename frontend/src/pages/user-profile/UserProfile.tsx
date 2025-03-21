@@ -3,8 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import PostsSection from "./PostsSection";
 import PersonalInformation from "./PersonalInformation";
 import BasicInformation from "./BasicInformation"
-import "../../public/css/user-profile.css"
 import { useAppData } from "../../context/AppDataContext";
+import "../../public/css/user-profile.css"
 
 export default function UserProfile() {
 	const [user, setUser] = useState<any>({})

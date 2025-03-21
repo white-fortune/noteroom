@@ -3,7 +3,7 @@ import { Schema, model } from 'mongoose'
 const studentsSchema = new Schema({
     profile_pic: {
         type: String,
-        default: ""
+        default: null
     },
     displayname: {
         type: String,
@@ -40,7 +40,8 @@ const studentsSchema = new Schema({
         unique: true
     },
     rollnumber: {
-        type: String
+        type: String,
+        default: "Not given"
     },
     collegesection: {
         type: String,
@@ -48,7 +49,7 @@ const studentsSchema = new Schema({
     },
     collegeyear: {
         type: String,
-        default: "-"
+        default: "Not Selected"
     },
     authProvider: {
         type: String,
@@ -58,7 +59,7 @@ const studentsSchema = new Schema({
         type: String,
         minLength: 0,
         maxLength: 300,
-        default: ""
+        default: "Just a student surviving on caffeine, last-minute deadlines, and the hope that 'Ctrl + Z' works in real life."
     },
     favouritesubject: {
         type: String,
@@ -70,7 +71,7 @@ const studentsSchema = new Schema({
     },
     group: {
         type: String,
-        default: "-"
+        default: "Not given"
     },
     username: {
         type: String,
@@ -117,7 +118,7 @@ const studentsSchema = new Schema({
     },
     collegeID: {
         type: Schema.Types.Mixed, //* Either the college name (custom one) or the college ID (pre-defined one)
-        default: null
+        default: "Not Given",
     },
     onboarded: {
         type: Boolean,

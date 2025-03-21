@@ -7,7 +7,7 @@ import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 import SearchProfile from "./pages/search-profile/SearchProfile";
 import Settings from "./pages/settings/Settings";	
 import UserProfile from "./pages/user-profile/UserProfile";
-// import SignUp from "./pages/sign-up/SignUp";
+import SignUp from "./pages/sign-up/SignUp";
 import { useUserAuth } from "./context/UserAuthContext";
 import Login from "./pages/login/Login";
 import nrLogo from "./assets/ng_logo.png"
@@ -53,6 +53,7 @@ function App() {
 			<Routes>
 				<Route element={<PublicRoute />}>
 					<Route path="/login" element={<Login />} />
+					<Route path="/signup" element={<SignUp />} />
 				</Route>
 
 				<Route element={<ProtectedRoute />}>

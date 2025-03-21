@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { RequestModal } from "../../partials"
+import AvatarImage from "../../assets/avatars/avatar-1.png"
 
 export default function BasicInformation({ user }: { user: any }) {
 	const [reqModalShow, setReqModalShow] = useState<boolean>(false)
@@ -10,7 +11,7 @@ export default function BasicInformation({ user }: { user: any }) {
 			<div className="user-prfl-pic-wrapper">
 				<img
 					className="user-prfl-pic"
-					src={user.profile_pic}
+					src={user.profile_pic || AvatarImage}
 					alt="Profile Picture"
 				/>
 			</div>

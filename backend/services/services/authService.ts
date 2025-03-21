@@ -42,3 +42,12 @@ export async function getUserVarification(email: string) {
         return { ok: false, error: "SERVER" }
     }
 }
+
+export async function addUserProfile(user: any) {
+    try {
+        const userData = await Students.create(user)
+        return { ok: true, data: userData }
+    } catch (error) {
+        return { ok: false, error: error }
+    }
+}

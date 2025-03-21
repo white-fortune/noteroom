@@ -97,7 +97,7 @@ export default function Login() {
                         <button className="primary-btn flex-center-evenly" disabled={isBtnDisabled} onClick={() => !isBtnDisabled && login()}>Login</button>
                     </div>
                 </div>
-                <p className="redirecting-msg">Don't have an account? <a href="/sign-up" className="redirect-link">Create Today</a></p>
+                <p className="redirecting-msg">Don't have an account? <a href="/signup" className="redirect-link">Create Today</a></p>
             </div>
             <img className="focus-img" src={LoginImage} alt="Two friends talking about NoteRoom" />
         </div>

@@ -1,5 +1,6 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { NotificationObject, RequestObject, SavedNoteObject } from "../types/types";
+import { useUserAuth } from "./UserAuthContext";
 
 const AppDataContext = createContext<any>(null)
 export default function AppDataProvider({ children }: { children: ReactNode | ReactNode[] }) {
@@ -7,8 +8,8 @@ export default function AppDataProvider({ children }: { children: ReactNode | Re
     const [savedNotes, setSavedNotes] = useState<SavedNoteObject[]>([])
     const [profile, setProfile] = useState<any>({})
     const [requests, setRequests] = useState<any>()
-    //FIXME: the current username will be taken from the user auth
-    const currentUsername = "rafi-rahman-9181e241"
+    const [userAuth] = useUserAuth()
+    const currentUsername = userAuth?.username
 
     useEffect(() => {
         async function getNotifs() {

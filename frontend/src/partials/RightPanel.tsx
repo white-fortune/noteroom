@@ -1,8 +1,12 @@
+import { Link } from "react-router-dom";
 import { Requests } from ".";
 import { useAppData } from "../context/AppDataContext";
+import { useUserAuth } from "../context/UserAuthContext";
+import AvatarImage from "../assets/avatars/avatar-1.png"
 
 export default function RightPanel({ notiModalState, rightPanelState }: { notiModalState: [any, any ], rightPanelState: boolean }) {
     const {userProfile: [profile, ]} = useAppData()
+    const [userAuth] = useUserAuth()
 
     return (
         <div className={"right-panel " + (rightPanelState ? "show" : "")}>
@@ -28,7 +32,7 @@ export default function RightPanel({ notiModalState, rightPanelState }: { notiMo
                     </defs>
                 </svg>
                 
-                <a href=''><img src={profile.profile_pic} className="profile-pic" id="root-profile-pic"/></a>
+                <Link to={`/user/${userAuth.username}`}><img src={profile.profile_pic || AvatarImage } className="profile-pic" id="root-profile-pic"/></Link>
             </div>
 
             <Requests></Requests>
