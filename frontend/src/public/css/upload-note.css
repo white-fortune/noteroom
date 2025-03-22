@@ -20,6 +20,7 @@ body {
   justify-content: center;
   padding: clamp(10px, 2vw, 20px);
   min-height: 100vh;
+  overflow-y: auto;
 }
 
 .middle-section-upload {
@@ -373,11 +374,19 @@ math-field:focus-within {
   }
 }
 
+@media (max-width: 970px){
+  .middle-section-upload {
+    margin-top: 80px;
+    margin-bottom: 60px;
+  }
+}
+
 @media (max-width: 768px) {
   .math-editor-container {
     width: 100%;
   }
   .middle-section-upload {
+    margin-top: 80px;
     margin-bottom: 60px;
     width: 100%;
     padding: clamp(15px, 2.5vw, 20px);
@@ -417,6 +426,7 @@ math-field:focus-within {
     width: 100%;
   }
   .middle-section-upload {
+    margin-top: 70px;
     width: 100%;
     padding: clamp(10px, 2vw, 15px);
   }
