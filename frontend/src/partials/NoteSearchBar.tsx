@@ -1,18 +1,19 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useAppData } from '../context/AppDataContext';
+import { IONotification } from '../types/types';
 
 export default function NoteSearchBar({ notiModalState }: { notiModalState: [any, any] }) {
   const { notification: [notifs,] } = useAppData()
   const [unreadNotiCount, setUnreadNotiCount] = useState<number>(0)
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [query, setQuery] = useState('');
+  const [results, setResults] = useState<Note[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const unreadNoti = notifs.filter((noti: IONotification) => noti.isRead === false)
     setUnreadNotiCount(unreadNoti.length)
   }, [notifs])
-
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const [query, setQuery] = useState('');
-  const [results, setResults] = useState<Note[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
 
 
   interface Note {
