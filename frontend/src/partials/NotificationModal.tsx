@@ -2,13 +2,15 @@ import { useCallback, useEffect } from "react"
 import { useAppData } from "../context/AppDataContext"
 import { useNavigate } from "react-router-dom"
 import { NotificationActions, NotificationEvent } from "../reducers/notificationReducer"
+import { Settings } from "../../settings"
 
+const API_SERVER_URL = Settings.API_SERVER_URL
 function Notification({ notiData, rightPanelState: [, setShowRightPanel], notiState: [, setShowNotiModal], dispatch }: any) {
     const navigate = useNavigate()
 
     const readNoti = useCallback(async (notiID: string) => {
         try {
-            const response = await fetch(`http://localhost:2000/api/notifications/${notiID}/read`, {
+            const response = await fetch(`${API_SERVER_URL}/api/notifications/${notiID}/read`, {
                 credentials: "include"
             })
             if (response.ok) {
@@ -24,8 +26,8 @@ function Notification({ notiData, rightPanelState: [, setShowRightPanel], notiSt
         dispatch({ type: NotificationActions.READ, payload: { notiID: notiData.notiID } })
         setShowNotiModal((prev: boolean) => !prev)
         readNoti(notiData.notiID)
-    
-        switch(notiData.notiType) {
+
+        switch (notiData.notiType) {
             case "notification-request":
                 setShowRightPanel((prev: boolean) => !prev)
                 break
@@ -35,7 +37,7 @@ function Notification({ notiData, rightPanelState: [, setShowRightPanel], notiSt
         }
     }, [])
 
-    
+
     return (
         <div className="notification" onClick={assignAction}>
             <div className="noti__first-col--img-wrapper">
@@ -63,9 +65,9 @@ export default function NotificationModal({ notiState: [showNotiModal, setShowNo
     async function deleteAllNotification() {
         if (notifs.length === 0) return
 
-        let response = await fetch('http://localhost:2000/api/notifications', { 
-            method: 'delete', 
-            credentials: 'include' 
+        let response = await fetch('${API_SERVER_URL}/api/notifications', {
+            method: 'delete',
+            credentials: 'include'
         })
         if (response.ok) {
             let data = await response.json()

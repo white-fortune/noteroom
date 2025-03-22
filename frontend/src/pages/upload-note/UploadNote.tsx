@@ -6,7 +6,9 @@ import withReactContent from "sweetalert2-react-content";
 import ThumbnailPopup from "./ThumbnailPopup";
 import "../../public/css/upload-note.css";
 import "mathlive";
+import { Settings } from "../../../settings";
 
+const API_SERVER_URL = Settings.API_SERVER_URL
 const ReactSwal = withReactContent(Swal);
 
 interface MathfieldElement extends HTMLElement {
@@ -170,7 +172,7 @@ const UploadNote: React.FC = () => {
         return false;
       }
 
-      if (file.size > 10*1024*1024) {
+      if (file.size > 10 * 1024 * 1024) {
         ReactSwal.fire({
           icon: "error",
           title: "File Too Large",
@@ -234,7 +236,7 @@ const UploadNote: React.FC = () => {
         text: "Your post is being processed to upload"
       })
 
-      const response = await fetch("http://localhost:2000/api/upload", {
+      const response = await fetch(`${API_SERVER_URL}/api/upload`, {
         method: "post",
         credentials: "include",
         body: formData

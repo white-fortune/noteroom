@@ -5,6 +5,9 @@ import TextEditor from "./CommentEditor"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
 import { Link } from "react-router-dom"
+import { Settings } from "../../../settings"
+
+const API_SERVER_URL = Settings.API_SERVER_URL
 
 function Comment({ feedbackData, children }: any) {
     const { controller: [openReplyEditor] } = useContext(CommentsControllerContext)
@@ -140,7 +143,7 @@ export default function CommentsContainer() {
             replyFormData.append("replyContent", replyData)
             replyFormData.append("replyToUsername", replyToUsernameRef.current)
 
-            const response = await fetch(`http://localhost:2000/api/posts/${postID}/feedbacks/${openedThreadID}/replies`, {
+            const response = await fetch(`${API_SERVER_URL}/api/posts/${postID}/feedbacks/${openedThreadID}/replies`, {
                 method: "post",
                 body: replyFormData,
                 credentials: "include"
@@ -212,8 +215,8 @@ export default function CommentsContainer() {
         async function getComments() {
             try {
                 if (postID) {
-                    let response = await fetch(`http://localhost:2000/api/posts/${postID}/comments`, { credentials: 'include' })
-                    let data = await response.json()
+                    const response = await fetch(`${API_SERVER_URL}/api/posts/${postID}/comments`, { credentials: 'include' })
+                    const data = await response.json()
                     if (data && data.ok) {
                         setComments(prev => [...prev, ...data.comments])
                     } else {

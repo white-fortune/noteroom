@@ -11,8 +11,10 @@ import "../../public/css/loaders.css"
 import "../../public/css/nav-section.css"
 import "../../public/css/main-pages.css"
 import "../../public/css/share-note.css"
+import { Settings } from "../../../settings";
 
 
+const API_SERVER_URL = Settings.API_SERVER_URL
 export const PostContext = createContext<any>(null)
 
 export default function PostView() {
@@ -34,7 +36,7 @@ export default function PostView() {
                 if (noteData) {
                     setNoteData(noteData)
                 } else {
-                    let response = await fetch(`http://localhost:2000/api/posts/${postID}/metadata`, { credentials: 'include' })
+                    let response = await fetch(`${API_SERVER_URL}/api/posts/${postID}/metadata`, { credentials: 'include' })
                     let data = await response.json()
                     if (data.ok) {
                         let note = new FeedNoteObject(data.noteData)
@@ -51,7 +53,7 @@ export default function PostView() {
     useEffect(() => {
         async function getNoteImages() {
             try {
-                let response = await fetch(`http://localhost:2000/api/posts/${postID}/images`, { credentials: 'include' })
+                let response = await fetch(`${API_SERVER_URL}/api/posts/${postID}/images`, { credentials: 'include' })
                 let data = await response.json()
                 if (data.ok && data.images?.length !== 0) {
                     setNoteImages(data.images)

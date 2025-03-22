@@ -4,8 +4,9 @@ import { SavedNoteObject } from "../types/types";
 import { useAppData } from "./AppDataContext";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import { Settings } from "../../settings";
 
-
+const API_SERVER_URL = Settings.API_SERVER_URL
 export const FeedNoteContext = createContext<any>(null)
 export default function FeedNotesProvider({ children }: { children: ReactNode | ReactNode[] }) {
     const [feedNotes, dispatch] = useReducer(feedReducer, [])
@@ -43,7 +44,7 @@ export default function FeedNotesProvider({ children }: { children: ReactNode | 
     async function fetchNotes() {
         setLodaing(true)
         try {
-            let response = await fetch(`http://localhost:2000/api/feed?seed=601914080&page=${page}`, { credentials: 'include' });
+            let response = await fetch(`${API_SERVER_URL}/api/feed?seed=601914080&page=${page}`, { credentials: 'include' });
             let notes = await response.json()
             if (notes.length !== 0) {
                 setLodaing(false)
@@ -62,7 +63,7 @@ export default function FeedNotesProvider({ children }: { children: ReactNode | 
     async function upvoteNote(noteID: string, upvoteState: boolean) {
         try {        
             dispatch({ type: FeedActions.TOGGLE_UPVOTE_NOTE, payload: { noteID: noteID } })
-            let response = await fetch(`http://localhost:2000/api/posts/${noteID}/vote?type=upvote${upvoteState ? '&action=delete' : ''}`, { 
+            let response = await fetch(`${API_SERVER_URL}/api/posts/${noteID}/vote?type=upvote${upvoteState ? '&action=delete' : ''}`, { 
                 method: "post",
                 credentials: "include"
             })
@@ -87,7 +88,7 @@ export default function FeedNotesProvider({ children }: { children: ReactNode | 
                 }
             })
 
-            let response = await fetch(`http://localhost:2000/api/posts/${noteID}/save?action=${savedState ? 'delete' : 'save'}`, { 
+            let response = await fetch(`${API_SERVER_URL}/api/posts/${noteID}/save?action=${savedState ? 'delete' : 'save'}`, { 
                 method: 'put',
                 credentials: "include" 
             })

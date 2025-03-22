@@ -7,7 +7,9 @@ import ngLogo from "../../assets/ng_logo.png"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
 import 'sweetalert2/dist/sweetalert2.min.css';
+import { Settings } from '../../../settings';
 
+const API_SERVER_URL = Settings.API_SERVER_URL
 export default function Login() {
     const navigate = useNavigate();
     const [, setUserAuth] = useUserAuth()
@@ -41,7 +43,7 @@ export default function Login() {
             loginData.append("email", email)
             loginData.append("password", password)
 
-            const response = await fetch('http://localhost:2000/api/auth/login', {
+            const response = await fetch(`${API_SERVER_URL}/api/auth/login`, {
                 method: "post",
                 body: loginData,
                 credentials: "include"

@@ -2,7 +2,9 @@ import { createContext, ReactNode, useContext, useEffect, useReducer, useState }
 import { IONotification, RequestObject, SavedNoteObject } from "../types/types";
 import { useUserAuth } from "./UserAuthContext";
 import notificationReducer, { NotificationActions } from "../reducers/notificationReducer";
+import { Settings } from "../../settings"
 
+const API_SERVER_URL = Settings.API_SERVER_URL
 const AppDataContext = createContext<any>(null)
 export default function AppDataProvider({ children }: { children: ReactNode | ReactNode[] }) {
     const [notifs, dispatch] = useReducer(notificationReducer, [])
@@ -15,7 +17,7 @@ export default function AppDataProvider({ children }: { children: ReactNode | Re
     useEffect(() => {
         async function getNotifs() {
             try {
-                let response = await fetch('http://localhost:2000/api/notifications', { credentials: 'include' })
+                let response = await fetch(`${API_SERVER_URL}/api/notifications`, { credentials: 'include' })
                 if (response.ok) {
                     let data = await response.json()
                     if (data.ok && data.notifications.length !== 0) {
@@ -29,7 +31,7 @@ export default function AppDataProvider({ children }: { children: ReactNode | Re
         getNotifs()
         async function getSavedNotes() {
             try {
-                let response = await fetch('http://localhost:2000/api/posts/saved', { credentials: 'include' })
+                let response = await fetch(`${API_SERVER_URL}/api/posts/saved`, { credentials: 'include' })
                 if (response.ok) {
                     let data = await response.json()
                     if (data.ok && data.posts.length !== 0) {
@@ -60,7 +62,7 @@ export default function AppDataProvider({ children }: { children: ReactNode | Re
 
         async function getProfile() {
             try {
-                let response = await fetch(`http://localhost:2000/api/users/${currentUsername}`, { credentials: 'include' })
+                let response = await fetch(`${API_SERVER_URL}/api/users/${currentUsername}`, { credentials: 'include' })
                 if (response.ok) {
                     let data = await response.json()
                     if (data.ok && data.profile) {
@@ -81,7 +83,7 @@ export default function AppDataProvider({ children }: { children: ReactNode | Re
 
         async function getRequests() {
             try {
-                let response = await fetch('http://localhost:2000/api/requests', { credentials: 'include' })
+                let response = await fetch(`${API_SERVER_URL}/api/requests`, { credentials: 'include' })
                 if (response.ok) {
                     let data = await response.json()
                     if (data.ok && data.requests.length !== 0) {

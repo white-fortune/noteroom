@@ -7,7 +7,9 @@ import SignUpImage from "../../assets/signup_image.png"
 import "../../public/css/signup-login.css"
 import { useUserAuth } from '../../context/UserAuthContext';
 import slug from 'slug';
+import { Settings } from '../../../settings';
 
+const API_SERVER_URL = Settings.API_SERVER_URL
 
 const SignUp = () => {
     const [passwordVisible, setPasswordVisible] = useState(false);
@@ -45,7 +47,7 @@ const SignUp = () => {
             formData.append("password", password)
 			formData.append("username", username.current)
 
-            const response = await fetch('http://localhost:2000/api/auth/signup', {
+            const response = await fetch(`${API_SERVER_URL}/api/auth/signup`, {
                 method: "post",
                 body: formData,
                 credentials: "include"

@@ -2,6 +2,9 @@ import { useEffect, useRef, useState } from 'react';
 import { useAppData } from '../context/AppDataContext';
 import { IONotification } from '../types/types';
 import { Link } from 'react-router-dom';
+import { Settings } from '../../settings';
+
+const API_SERVER_URL = Settings.API_SERVER_URL
 
 interface Post {
   postID: string;
@@ -35,8 +38,8 @@ export default function NoteSearchBar({ notiModalState }: { notiModalState: [any
   useEffect(() => {
     async function handleSearch() {
       if (debounceQuery.length === 0) return
-      
-      const response = await fetch(`http://localhost:2000/api/search?q=${debounceQuery}&type=posts&countDoc=false`, {
+
+      const response = await fetch(`${API_SERVER_URL}/api/search?q=${debounceQuery}&type=posts&countDoc=false`, {
         credentials: "include"
       })
       if (response.ok) {

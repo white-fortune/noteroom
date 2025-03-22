@@ -3,6 +3,9 @@ import '../../public/css/search-profile.css'
 import ProfiesContainer from "./ProfilesContainer";
 import { useEffect, useRef, useState } from "react";
 import { ProfileTypes } from "./index";
+import { Settings } from "../../../settings";
+
+const API_SERVER_URL = Settings.API_SERVER_URL
 
 export default function SearchProfile() {
     const [mutualCollegeProfiles, setMututalCollegeProfiles] = useState<any[]>([])
@@ -19,7 +22,7 @@ export default function SearchProfile() {
 
     async function getMtcProfiles(showMore: boolean) {
         try {
-            let response = await fetch(`http://localhost:2000/api/users/mutual-college?batch=${mtcBatch}${!showMore ? "&countdoc=true" : ""}`, { credentials: 'include' })
+            let response = await fetch(`${API_SERVER_URL}/api/users/mutual-college?batch=${mtcBatch}${!showMore ? "&countdoc=true" : ""}`, { credentials: 'include' })
             let data = await response.json()
             if (data && data.students.length !== 0) {
                 if (showMore) {

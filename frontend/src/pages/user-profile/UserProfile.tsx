@@ -5,7 +5,9 @@ import PersonalInformation from "./PersonalInformation";
 import BasicInformation from "./BasicInformation"
 import { useAppData } from "../../context/AppDataContext";
 import "../../public/css/user-profile.css"
+import { Settings } from "../../../settings";
 
+const API_SERVER_URL = Settings.API_SERVER_URL
 export default function UserProfile() {
 	const [user, setUser] = useState<any>({})
 	const { userProfile: [profile, , currentUsername] } = useAppData()
@@ -17,7 +19,7 @@ export default function UserProfile() {
 			if (username === currentUsername) {
 				setUser(profile)
 			} else {
-				const response = await fetch(`http://localhost:2000/api/users/${username}`, { credentials: 'include' })
+				const response = await fetch(`${API_SERVER_URL}/api/users/${username}`, { credentials: 'include' })
 				if (response.ok) {
 					const data = await response.json()
 					if (data && data.ok) {

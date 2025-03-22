@@ -3,7 +3,9 @@ import AppDataProvider from "./AppDataContext";
 import FeedNotesProvider from "./FeedNoteContext";
 import ScrollPositionProvider from "./ScrollPosition";
 import WebSocketProvider from "./WebSocketContext";
+import { Settings } from "../../settings";
 
+const API_SERVER_URL = Settings.API_SERVER_URL
 const UserAuthContext = createContext<any>(null)
 
 export default function UserAuthProvider({ children }: { children: ReactNode | ReactNode[] }) {
@@ -13,7 +15,7 @@ export default function UserAuthProvider({ children }: { children: ReactNode | R
     useEffect(() => {
         async function getUserAuth() {
             try {
-                const response = await fetch('http://localhost:2000/api/auth/session', {
+                const response = await fetch(`${API_SERVER_URL}/api/auth/session`, {
                     method: 'get',
                     credentials: 'include'
                 })

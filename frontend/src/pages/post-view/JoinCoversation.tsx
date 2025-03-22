@@ -3,6 +3,9 @@ import { CommentsControllerContext } from "./CommentsContainer"
 import { useParams } from "react-router-dom"
 import "../../public/css/quick-post.css"
 import TextEditor from "./CommentEditor"
+import { Settings } from "../../../settings"
+
+const API_SERVER_URL = Settings.API_SERVER_URL
 
 export default function JoinConversation({ fireToast, loading: [loading, setLoading] }: any) {
 	const { comments: [, setComments] } = useContext(CommentsControllerContext)
@@ -17,7 +20,7 @@ export default function JoinConversation({ fireToast, loading: [loading, setLoad
 			const feedbackFormData = new FormData()
 			feedbackFormData.append("feedbackContent", commentData)
 
-			const response = await fetch(`http://localhost:2000/api/posts/${postID}/feedbacks`, {
+			const response = await fetch(`${API_SERVER_URL}/api/posts/${postID}/feedbacks`, {
 				method: "post",
 				body: feedbackFormData,
 				credentials: "include"

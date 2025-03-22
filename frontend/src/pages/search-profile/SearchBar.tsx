@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react"
+import { Settings } from "../../../settings"
 
+const API_SERVER_URL = Settings.API_SERVER_URL
 export default function SearchBar({
     profile: [searchedProfiles, setSearchProfiles],
     schBatch: [schBatch, setSchBatch],
@@ -12,7 +14,7 @@ export default function SearchBar({
     async function searchProfile(showMore: boolean) {
         try {
             if (text.trim().length !== 0) {
-                let response = await fetch(`http://localhost:2000/api/search?q=${text}&type=profiles&batch=${schBatch}${!showMore ? "&countdoc=true" : ""}`, { credentials: 'include' })
+                let response = await fetch(`${API_SERVER_URL}/api/search?q=${text}&type=profiles&batch=${schBatch}${!showMore ? "&countdoc=true" : ""}`, { credentials: 'include' })
                 let data = await response.json()
 
                 if (data && data.students.length !== 0) {
