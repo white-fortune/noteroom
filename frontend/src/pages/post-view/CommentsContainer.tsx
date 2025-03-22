@@ -1,9 +1,10 @@
-import { createContext, useContext, useEffect, useState } from "react"
+import { createContext, useContext, useEffect, useRef, useState } from "react"
 import JoinConversation from "./JoinCoversation"
 import { PostContext } from "./PostView"
 import TextEditor from "./CommentEditor"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
+import { Link } from "react-router-dom"
 
 function Comment({ feedbackData, children }: any) {
     const { controller: [openReplyEditor] } = useContext(CommentsControllerContext)
@@ -21,7 +22,9 @@ function Comment({ feedbackData, children }: any) {
             <div className="main__cmnts-replies-wrapper">
                 <div className="main__body cmnt-body-3rows">
                     <div className="main__reply-info reply-info">
-                        <span className="main__author-name">{feedbackData?.commenterDocID.displayname}</span>
+                        <Link to={`/user/${feedbackData?.commenterDocID.username}`}>
+                            <span className="main__author-name">{feedbackData?.commenterDocID.displayname}</span>
+                        </Link>
                         <span className="reply-date">{feedbackData?.createdAt}</span>
                     </div>
                     <div className="main__reply-msg reply-msg" dangerouslySetInnerHTML={{ __html: feedbackData?.feedbackContents }}></div>
@@ -37,7 +40,8 @@ function Comment({ feedbackData, children }: any) {
                             className="reply-icon thread-opener"
                             onClick={() => openReplyEditor(
                                 (new DOMParser()).parseFromString(feedbackData?.feedbackContents, "text/html").querySelector("body")?.textContent,
-                                feedbackData?._id
+                                feedbackData?._id,
+                                feedbackData?.commenterDocID.username
                             )}
                             width="25" height="24" viewBox="0 0 22 21" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M18.7186 12.9452C18.7186 13.401 18.5375 13.8382 18.2152 14.1605C17.8929 14.4829 17.4557 14.6639 16.9999 14.6639H6.68747L3.25 18.1014V4.35155C3.25 3.89571 3.43108 3.45854 3.75341 3.13622C4.07573 2.81389 4.5129 2.63281 4.96873 2.63281H16.9999C17.4557 2.63281 17.8929 2.81389 18.2152 3.13622C18.5375 3.45854 18.7186 3.89571 18.7186 4.35155V12.9452Z" stroke="#1E1E1E" strokeWidth="1.14582" strokeLinecap="round" strokeLinejoin="round" />
@@ -66,14 +70,17 @@ function Reply({ replyData, parentFeedbackDocID }: { replyData: any, parentFeedb
             />
             <div className="cmnt-body-3rows">
                 <div className="reply-info">
-                    <span className="main__author-name" >{replyData?.commenterDocID.displayname}</span>
+                    <Link to={`/user/${replyData?.commenterDocID.username}`}>
+                        <span className="main__author-name" >{replyData?.commenterDocID.displayname}</span>
+                    </Link>
                     <span className="reply-date">{replyData?.createdAt}</span>
                 </div>
                 <div className="reply-msg" dangerouslySetInnerHTML={{ __html: replyData.feedbackContents }}></div>
                 <div className="main__engagement-opts engagement-opts">
                     <svg className="reply-icon thread-opener" onClick={() => openReplyEditor(
                         (new DOMParser()).parseFromString(replyData?.feedbackContents, "text/html").querySelector("body")?.textContent,
-                        parentFeedbackDocID
+                        parentFeedbackDocID,
+                        replyData?.commenterDocID.username
                     )} width="25" height="24" viewBox="0 0 22 21" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M18.7186 12.9452C18.7186 13.401 18.5375 13.8382 18.2152 14.1605C17.8929 14.4829 17.4557 14.6639 16.9999 14.6639H6.68747L3.25 18.1014V4.35155C3.25 3.89571 3.43108 3.45854 3.75341 3.13622C4.07573 2.81389 4.5129 2.63281 4.96873 2.63281H16.9999C17.4557 2.63281 17.8929 2.81389 18.2152 3.13622C18.5375 3.45854 18.7186 3.89571 18.7186 4.35155V12.9452Z" stroke="#1E1E1E" strokeWidth="1.14582" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
@@ -122,6 +129,7 @@ export default function CommentsContainer() {
     
     const { noteData } = useContext(PostContext)
     const postID = noteData?.noteData.noteID
+    const replyToUsernameRef = useRef<string>("")
 
     async function sendReply() {
         try {
@@ -130,6 +138,7 @@ export default function CommentsContainer() {
             setLoading(true)
             const replyFormData = new FormData()
             replyFormData.append("replyContent", replyData)
+            replyFormData.append("replyToUsername", replyToUsernameRef.current)
 
             const response = await fetch(`http://localhost:2000/api/posts/${postID}/feedbacks/${openedThreadID}/replies`, {
                 method: "post",
@@ -179,10 +188,11 @@ export default function CommentsContainer() {
         }
     }
 
-    function openReplyEditor(replyToText: string, openedThreadID: string) {
+    function openReplyEditor(replyToText: string, openedThreadID: string, replyToUsername: string) {
         setShowEditor(prev => !prev)
         setOpenedThreadID(openedThreadID)
         setReplyToText(replyToText.length > 100 ? replyToText.slice(0, 100) + "..." : replyToText)
+        replyToUsernameRef.current = replyToUsername
     }
 
 

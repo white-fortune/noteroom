@@ -116,6 +116,7 @@ export default function postApiRouter(io: Server) {
             const studentID = req.session["stdid"]
             const replyContent = req.body.replyContent
             const parentFeedbackDocID = req.params.feedbackID 
+            const replyToUsername = req.body.replyToUsername
             const replierDocID = (await Convert.getDocumentID_studentid(studentID)).toString()
 
             const replyData = {
@@ -128,15 +129,10 @@ export default function postApiRouter(io: Server) {
             if (response.ok) {
                 const { reply } = response
 
-                const toStudentID = reply["parentFeedbackDocID"]["commenterDocID"]["studentID"]
+                const toStudentID = await Convert.getStudentID_username(replyToUsername)
                 const fromStudentID = reply["commenterDocID"]["studentID"]
 
-                /* TODO: when repling, parentFeedbackDocID can be used when repling a comment and adding a reply under a comment thread. 
-                But when repling a reply, the prentFeedbackDocID will stil refer the main comment, so the reply notification won't be sent correctly. 
-                Take a general solution for that so that when repling, I will send a explicit informaion about the commenter on which I am commenting 
-                and will store that as ownerStudentID */  
-
-                if (toStudentID !==  fromStudentID) {
+                if (toStudentID !== fromStudentID) {
                     await NotificationSender(io, {
                         ownerStudentID: toStudentID,
                         redirectTo: `/post/${postID}`

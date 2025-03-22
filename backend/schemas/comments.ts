@@ -2,7 +2,7 @@ import { Schema, model } from 'mongoose'
 
 const baseOptions = {
     discriminatorKey: 'docType',
-    collection: 'comments-test'
+    collection: 'comments'
 }
 
 const CommentsSchema = new Schema({
@@ -20,7 +20,7 @@ const CommentsSchema = new Schema({
         default: Date.now
     }
 }, baseOptions)
-const CommentsModel = model('comments-test', CommentsSchema)
+const CommentsModel = model('comments', CommentsSchema)
 
 
 const feedbackSchema = new Schema({
@@ -47,7 +47,7 @@ const replySchema = new Schema({
         required: true,
         ref: 'students'
     },
-    parentFeedbackDocID: { // The documentID of the feedback on which the reply the given
+    parentFeedbackDocID: { // The comment section on which a reply is given. This is currently used to add a reply under a specific comment via the thread-id (thread-parentFeedbackDocID)
         type: Schema.Types.ObjectId,
         required: true,
         ref: 'feedbacks'
