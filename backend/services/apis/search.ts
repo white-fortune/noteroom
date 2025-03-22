@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { Server } from "socket.io";
 import { searchStudent } from "../services/userService";
+import { searchPosts } from "../services/postService";
 
 export const router = Router()
 export default function seacrhApiRouter(io: Server) {
@@ -16,12 +17,20 @@ export default function seacrhApiRouter(io: Server) {
                 let skip = (batch - 1) * maxCount
 
                 if (type === "profiles") {
-                    let students = await searchStudent(term, { maxCount: maxCount, skip: skip, countDoc })
+                    const students = await searchStudent(term, { maxCount: maxCount, skip: skip, countDoc })
                     res.json(students)
+                } else if (type === "posts") {
+                    //TODO: batch search on search posts
+                    const response = await searchPosts(term)
+                    if (response.ok) {
+                        res.json({ ok: true, posts: response.posts })
+                    } else {
+                        res.json({ ok: false })
+                    }
                 }
             }
         } catch (error) {
-            res.json([])
+            res.json({ ok: false })
         }
     })
 

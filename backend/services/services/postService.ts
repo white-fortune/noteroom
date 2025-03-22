@@ -192,3 +192,20 @@ export async function getSavedPosts(studentID: string) {
         return { ok: false }
     }
 }
+
+
+export async function searchPosts(searchTerm: string, options?: any) {
+    try {
+        const regex = new RegExp(searchTerm.split(' ').map(word => `(${word})`).join('.*'), 'i');
+        const posts = await Notes.aggregate([
+            { $match: { title: { $regex: regex }, type_: { $ne: "private" } } },
+            { $project: {
+                postID: "$_id",
+                title: 1
+            } }
+        ])
+        return { ok: true, posts: posts }
+    } catch (error) {
+        return { ok: false }
+    }
+}
