@@ -2,10 +2,9 @@ import { useEffect, useRef, useState } from 'react';
 import { useAppData } from '../context/AppDataContext';
 import { IONotification } from '../types/types';
 import { Link } from 'react-router-dom';
-import { Settings } from '../../settings';
 import AvatarImage from "../assets/avatars/avatar-1.png"
 
-let API_SERVER_URL = Settings.API_SERVER_URL
+let API_SERVER_URL = import.meta.env.VITE_API_SERVER_URL
 
 interface Post {
   postID: string;

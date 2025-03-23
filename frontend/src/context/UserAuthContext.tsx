@@ -3,7 +3,6 @@ import AppDataProvider from "./AppDataContext";
 import FeedNotesProvider from "./FeedNoteContext";
 import ScrollPositionProvider from "./ScrollPosition";
 import WebSocketProvider from "./WebSocketContext";
-import { Settings } from "../../settings";
 
 type AuthValue = {
     loading: boolean,
@@ -14,7 +13,7 @@ type AuthValue = {
     setUserAuth: any,
 }
 
-let API_SERVER_URL = Settings.API_SERVER_URL
+let API_SERVER_URL = import.meta.env.VITE_API_SERVER_URL
 const UserAuthContext = createContext<AuthValue | null>(null)
 export default function UserAuthProvider({ children }: { children: ReactNode | ReactNode[] }) {
     const [userAuth, setUserAuth] = useState<any>(null)

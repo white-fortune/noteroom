@@ -3,9 +3,8 @@ import { CommentsControllerContext } from "./CommentsContainer"
 import { useParams } from "react-router-dom"
 import "../../public/css/quick-post.css"
 import TextEditor from "./CommentEditor"
-import { Settings } from "../../../settings"
 
-let API_SERVER_URL = Settings.API_SERVER_URL
+let API_SERVER_URL = import.meta.env.VITE_API_SERVER_URL
 
 export default function JoinConversation({ fireToast, loading: [loading, setLoading], comments: [comments, setComments] }: any) {
 	const [commentData, setCommentData] = useState<string>("")

@@ -1,10 +1,9 @@
 import "../../public/css/settings.css"
 import "../../public/css/header-footer.css"
-import { Settings as settings } from "../../../settings";
 import { useUserAuth } from "../../context/UserAuthContext";
 
-const API_SERVER_URL = settings.API_SERVER_URL
-export default function Settings () {
+const API_SERVER_URL = import.meta.env.VITE_API_SERVER_URL
+export default function Settings() {
   const { setUserAuth } = useUserAuth()!
   const handleNavigation = (url: any) => {
     window.location.href = url;

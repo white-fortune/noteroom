@@ -5,9 +5,8 @@ import TextEditor from "./CommentEditor"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
 import { Link } from "react-router-dom"
-import { Settings } from "../../../settings"
 
-let API_SERVER_URL = Settings.API_SERVER_URL
+let API_SERVER_URL = import.meta.env.VITE_API_SERVER_URL
 
 function Comment({ feedbackData, children }: any) {
     const { controller: [openReplyEditor] } = useContext(CommentsControllerContext)

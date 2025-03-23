@@ -7,9 +7,8 @@ import SignUpImage from "../../assets/signup_image.png"
 import "../../public/css/signup-login.css"
 import { useUserAuth } from '../../context/UserAuthContext';
 import slug from 'slug';
-import { Settings } from '../../../settings';
 
-let API_SERVER_URL = Settings.API_SERVER_URL
+let API_SERVER_URL = import.meta.env.VITE_API_SERVER_URL
 
 const SignUp = () => {
     const [passwordVisible, setPasswordVisible] = useState(false);

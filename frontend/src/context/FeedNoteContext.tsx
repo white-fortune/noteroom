@@ -4,9 +4,8 @@ import { SavedNoteObject } from "../types/types";
 import { useAppData } from "./AppDataContext";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import { Settings } from "../../settings";
 
-let API_SERVER_URL = Settings.API_SERVER_URL
+let API_SERVER_URL = import.meta.env.VITE_API_SERVER_URL
 export const FeedNoteContext = createContext<any>(null)
 export default function FeedNotesProvider({ children }: { children: ReactNode | ReactNode[] }) {
     const [feedNotes, dispatch] = useReducer(feedReducer, [])

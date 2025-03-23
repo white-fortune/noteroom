@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
-import { Settings } from "../../settings";
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
 
 
-const API_SERVER_URL = Settings.API_SERVER_URL
+const API_SERVER_URL = import.meta.env.VITE_API_SERVER_URL
 
 export default function RequestModal({ modalShow, recipientData }: any) {
   const MAX_MESSAGE_LENGTH = 170;
@@ -14,13 +13,13 @@ export default function RequestModal({ modalShow, recipientData }: any) {
 
   function fireToast(title: string, icon: any) {
     return withReactContent(Swal).fire({
-        toast: true,
-        icon: icon,
-        position: "bottom-right",
-        title: title,
-        showConfirmButton: true,
-        timer: 3000,
-        timerProgressBar: true
+      toast: true,
+      icon: icon,
+      position: "bottom-right",
+      title: title,
+      showConfirmButton: true,
+      timer: 3000,
+      timerProgressBar: true
     })
   }
   async function sendRequest() {

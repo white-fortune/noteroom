@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react"
-import { Settings } from "../../../settings"
 
-let API_SERVER_URL = Settings.API_SERVER_URL
+let API_SERVER_URL = import.meta.env.VITE_API_SERVER_URL
 export default function SearchBar({
     profile: [searchedProfiles, setSearchProfiles],
     schBatch: [schBatch, setSchBatch],

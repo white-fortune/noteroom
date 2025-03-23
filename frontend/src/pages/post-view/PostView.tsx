@@ -11,10 +11,9 @@ import "../../public/css/loaders.css"
 import "../../public/css/nav-section.css"
 import "../../public/css/main-pages.css"
 import "../../public/css/share-note.css"
-import { Settings } from "../../../settings";
 
 
-let API_SERVER_URL = Settings.API_SERVER_URL
+let API_SERVER_URL = import.meta.env.VITE_API_SERVER_URL
 export const PostContext = createContext<any>(null)
 
 export default function PostView() {

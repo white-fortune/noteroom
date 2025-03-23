@@ -7,9 +7,8 @@ import ngLogo from "../../assets/ng_logo.png"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
 import 'sweetalert2/dist/sweetalert2.min.css';
-import { Settings } from '../../../settings';
 
-let API_SERVER_URL = Settings.API_SERVER_URL
+let API_SERVER_URL = import.meta.env.VITE_API_SERVER_URL
 export default function Login() {
     const navigate = useNavigate();
     const { setUserAuth } = useUserAuth()!

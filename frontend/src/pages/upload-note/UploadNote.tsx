@@ -6,9 +6,8 @@ import withReactContent from "sweetalert2-react-content";
 import ThumbnailPopup from "./ThumbnailPopup";
 import "../../public/css/upload-note.css";
 import "mathlive";
-import { Settings } from "../../../settings";
 
-let API_SERVER_URL = Settings.API_SERVER_URL
+let API_SERVER_URL = import.meta.env.VITE_API_SERVER_URL
 const ReactSwal = withReactContent(Swal);
 
 interface MathfieldElement extends HTMLElement {

@@ -3,10 +3,9 @@ import '../../public/css/search-profile.css'
 import ProfiesContainer from "./ProfilesContainer";
 import { useEffect, useRef, useState } from "react";
 import { ProfileTypes } from "./index";
-import { Settings } from "../../../settings";
 import { useNavigate } from "react-router-dom";
 
-let API_SERVER_URL = Settings.API_SERVER_URL
+let API_SERVER_URL = import.meta.env.VITE_API_SERVER_URL
 
 export default function SearchProfile() {
     const [mutualCollegeProfiles, setMututalCollegeProfiles] = useState<any[]>([])

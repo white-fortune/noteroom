@@ -2,16 +2,15 @@ import { createContext, ReactNode, useContext, useEffect, useReducer, useState }
 import { IONotification, RequestObject, SavedNoteObject } from "../types/types";
 import { useUserAuth } from "./UserAuthContext";
 import notificationReducer, { NotificationActions } from "../reducers/notificationReducer";
-import { Settings } from "../../settings"
 import requestReducer, { RequestsActions } from "../reducers/requestReducer";
 
-let API_SERVER_URL = Settings.API_SERVER_URL
+let API_SERVER_URL = import.meta.env.VITE_API_SERVER_URL
 const AppDataContext = createContext<any>(null)
 export default function AppDataProvider({ children }: { children: ReactNode | ReactNode[] }) {
     const [notifs, dispatch] = useReducer(notificationReducer, [])
     const [savedNotes, setSavedNotes] = useState<SavedNoteObject[]>([])
     const [profile, setProfile] = useState<any>({})
-    const [requests, dispatchRequest] = useReducer(requestReducer, []) 
+    const [requests, dispatchRequest] = useReducer(requestReducer, [])
     const { userAuth } = useUserAuth()!
     const currentUsername = userAuth?.username
 
@@ -89,7 +88,7 @@ export default function AppDataProvider({ children }: { children: ReactNode | Re
                     let data = await response.json()
                     if (data.ok && data.requests.length !== 0) {
                         //FIXME: send pre-modified requests object
-                        dispatchRequest({type: RequestsActions.ADD, payload: { requests: data.requests.map((request: any) => new RequestObject(request)) }})
+                        dispatchRequest({ type: RequestsActions.ADD, payload: { requests: data.requests.map((request: any) => new RequestObject(request)) } })
                     }
                 }
             } catch (error) {

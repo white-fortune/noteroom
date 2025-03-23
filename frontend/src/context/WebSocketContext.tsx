@@ -3,11 +3,10 @@ import { io } from "socket.io-client"
 import { useUserAuth } from "./UserAuthContext"
 import { useAppData } from "./AppDataContext"
 import { NotificationActions, NotificationEvent } from "../reducers/notificationReducer"
-import { Settings } from "../../settings"
 import { RequestObject } from "../types/types"
 import { RequestsActions } from "../reducers/requestReducer"
 
-let API_SERVER_URL = Settings.API_SERVER_URL
+let API_SERVER_URL = import.meta.env.VITE_API_SERVER_URL
 const WebSocketContext = createContext<any>(null)
 export default function WebSocketProvider({ children }: { children: ReactNode | ReactNode[] }) {
     const [socket, setSocket] = useState<any>(null)

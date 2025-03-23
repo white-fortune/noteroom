@@ -2,9 +2,8 @@ import { useCallback, useEffect } from "react"
 import { useAppData } from "../context/AppDataContext"
 import { useNavigate } from "react-router-dom"
 import { NotificationActions, NotificationEvent } from "../reducers/notificationReducer"
-import { Settings } from "../../settings"
 
-let API_SERVER_URL = Settings.API_SERVER_URL
+let API_SERVER_URL = import.meta.env.VITE_API_SERVER_URL
 function Notification({ notiData, rightPanelState: [, setShowRightPanel], notiState: [, setShowNotiModal], dispatch }: any) {
     const navigate = useNavigate()
 
