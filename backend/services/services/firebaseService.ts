@@ -2,7 +2,7 @@ import { join } from 'path';
 import { config } from 'dotenv';
 import firebaseAdmin from 'firebase-admin'; 
 
-config({ path: join(__dirname, '../../.env') });
+config({ path: join(__dirname, '../../../.env') });
 
 const serviceAccount = JSON.parse(process.env.FIREBASE_CLOUD_CRED!);
 const bucketName = process.env.DEVELOPMENT === "true" ? process.env.NOTEROOM_DEVELOPMENT_FIREBASE_BUCKET : process.env.NOTEROOM_PRODUCTION_FIREBASE_BUCKET

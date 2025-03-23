@@ -24,6 +24,7 @@ import authApiRouter from './services/apis/auth.js';
 import uploadApiRouter from './services/apis/upload.js';
 
 config({ path: join(__dirname, '.env') });
+console.log(join(__dirname, '.env'))
 
 const app = express()
 const server = createServer(app);
