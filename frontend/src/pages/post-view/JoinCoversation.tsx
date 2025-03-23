@@ -2,7 +2,7 @@ import { useContext, useState } from "react"
 import { CommentsControllerContext } from "./CommentsContainer"
 import { useParams } from "react-router-dom"
 import "../../public/css/quick-post.css"
-import TextEditor from "./CommentEditor"
+import TextEditor from "../../partials/PopupTextEditor"
 
 let API_SERVER_URL = import.meta.env.VITE_API_SERVER_URL
 
@@ -69,7 +69,15 @@ export default function JoinConversation({ fireToast, loading: [loading, setLoad
 					<div className="quick-post__fr--msg-btn">Join the conversation</div>
 				</div>
 			</div>
-			<TextEditor showState={[showEditor, setShowEditor]} reply={false} text={[commentData, setCommentData]} action={sendComment} loading={[loading, setLoading]} title={"Give a comment"} />
+			<TextEditor 
+				showState={[showEditor, setShowEditor]} 
+				text={[commentData, setCommentData]} 
+				loading={[loading, setLoading]} 
+				action={sendComment} 
+				title={"Give a comment"}
+				buttonText={"Comment"}
+				inputPlaceHolder={"Join the conversation"}
+			/> 
 		</>
 	)
 }

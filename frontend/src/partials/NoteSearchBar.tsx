@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useAppData } from '../context/AppDataContext';
 import { IONotification } from '../types/types';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AvatarImage from "../assets/avatars/avatar-1.png"
 
 let API_SERVER_URL = import.meta.env.VITE_API_SERVER_URL
@@ -11,13 +11,14 @@ interface Post {
   title: string;
 }
 export default function NoteSearchBar({ notiModalState }: { notiModalState: [any, any] }) {
-  const { notification: [notifs,] } = useAppData()
+  const { notification: [notifs,], userProfile: [, , currentUsername] } = useAppData()
   const [unreadNotiCount, setUnreadNotiCount] = useState<number>(0)
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [debounceQuery, setDebounceQuery] = useState<string>("")
+  const navigate = useNavigate()
 
   function handleClick() {
     setIsSearchFocused(true)
@@ -118,7 +119,7 @@ export default function NoteSearchBar({ notiModalState }: { notiModalState: [any
             {unreadNotiCount}
           </span> : null}
         </div>
-        <img src={AvatarImage} className="profile-avatar" alt="Profile" />
+        <img src={AvatarImage} className="profile-avatar" alt="Profile" onClick={() => navigate(`/user/${currentUsername}`)} />
       </div>
       <div className={`search-results-container ${isSearchFocused ? 'visible' : ''} no-hide`} >
         <div className="search-results-list no-hide">

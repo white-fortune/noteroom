@@ -24,7 +24,6 @@ import authApiRouter from './services/apis/auth.js';
 import uploadApiRouter from './services/apis/upload.js';
 
 config({ path: join(__dirname, '.env') });
-console.log(join(__dirname, '.env'))
 
 const app = express()
 const server = createServer(app);
@@ -35,10 +34,8 @@ connect(url).then(() => {
     if (process.env.DEVELOPMENT) {
         console.log(`DEVELOPMENT flag enabled`)
         console.log(`[-] using local mongodb on ${url}`)
-        console.log(`[-] using firebase development storage bucket: ${process.env.NOTEROOM_DEVELOPMENT_FIREBASE_BUCKET}`)
     } else {
         console.log(`[-] using remote mongodb on ${url}`)
-        console.log(`[-] using firebase development storage bucket: ${process.env.NOTEROOM_PRODUCTION_FIREBASE_BUCKET}`)
     }
 })
 

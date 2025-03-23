@@ -1,10 +1,11 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react"
 import JoinConversation from "./JoinCoversation"
 import { PostContext } from "./PostView"
-import TextEditor from "./CommentEditor"
+import TextEditor from "../../partials/PopupTextEditor"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
 import { Link } from "react-router-dom"
+import { useAppData } from "../../context/AppDataContext"
 
 let API_SERVER_URL = import.meta.env.VITE_API_SERVER_URL
 
@@ -43,7 +44,8 @@ function Comment({ feedbackData, children }: any) {
                             onClick={() => openReplyEditor(
                                 (new DOMParser()).parseFromString(feedbackData?.feedbackContents, "text/html").querySelector("body")?.textContent,
                                 feedbackData?._id,
-                                feedbackData?.commenterDocID.username
+                                feedbackData?.commenterDocID.username,
+                                feedbackData?.commenterDocID.displayname
                             )}
                             width="25" height="24" viewBox="0 0 22 21" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M18.7186 12.9452C18.7186 13.401 18.5375 13.8382 18.2152 14.1605C17.8929 14.4829 17.4557 14.6639 16.9999 14.6639H6.68747L3.25 18.1014V4.35155C3.25 3.89571 3.43108 3.45854 3.75341 3.13622C4.07573 2.81389 4.5129 2.63281 4.96873 2.63281H16.9999C17.4557 2.63281 17.8929 2.81389 18.2152 3.13622C18.5375 3.45854 18.7186 3.89571 18.7186 4.35155V12.9452Z" stroke="#1E1E1E" strokeWidth="1.14582" strokeLinecap="round" strokeLinejoin="round" />
@@ -82,7 +84,8 @@ function Reply({ replyData, parentFeedbackDocID }: { replyData: any, parentFeedb
                     <svg className="reply-icon thread-opener" onClick={() => openReplyEditor(
                         (new DOMParser()).parseFromString(replyData?.feedbackContents, "text/html").querySelector("body")?.textContent,
                         parentFeedbackDocID,
-                        replyData?.commenterDocID.username
+                        replyData?.commenterDocID.username,
+                        replyData?.commenterDocID.displayname
                     )} width="25" height="24" viewBox="0 0 22 21" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M18.7186 12.9452C18.7186 13.401 18.5375 13.8382 18.2152 14.1605C17.8929 14.4829 17.4557 14.6639 16.9999 14.6639H6.68747L3.25 18.1014V4.35155C3.25 3.89571 3.43108 3.45854 3.75341 3.13622C4.07573 2.81389 4.5129 2.63281 4.96873 2.63281H16.9999C17.4557 2.63281 17.8929 2.81389 18.2152 3.13622C18.5375 3.45854 18.7186 3.89571 18.7186 4.35155V12.9452Z" stroke="#1E1E1E" strokeWidth="1.14582" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
@@ -128,10 +131,12 @@ export default function CommentsContainer() {
     const [replyData, setReplyData] = useState<string>("")
     const [loading, setLoading] = useState<boolean>(false)
     const [loadingComments, setLoadingComments] = useState<boolean>(true)
+    const { userProfile: [, , currentUsername] } = useAppData()
 
     const { noteData } = useContext(PostContext)
     const postID = noteData?.noteData.noteID
     const replyToUsernameRef = useRef<string>("")
+    const replyToDisplaynameRef = useRef<string>("")
 
     async function sendReply() {
         try {
@@ -190,11 +195,12 @@ export default function CommentsContainer() {
         }
     }
 
-    function openReplyEditor(replyToText: string, openedThreadID: string, replyToUsername: string) {
+    function openReplyEditor(replyToText: string, openedThreadID: string, replyToUsername: string, replyToDisplayname: string) {
         setShowEditor(prev => !prev)
         setOpenedThreadID(openedThreadID)
         setReplyToText(replyToText.length > 100 ? replyToText.slice(0, 100) + "..." : replyToText)
         replyToUsernameRef.current = replyToUsername
+        replyToDisplaynameRef.current = replyToDisplayname
     }
 
 
@@ -238,7 +244,16 @@ export default function CommentsContainer() {
                 <JoinConversation fireToast={fireToast} loading={[loading, setLoading]} comments={[comments, setComments]}></JoinConversation>
                 <CommentSection comments={[comments, setComments]}></CommentSection>
 
-                <TextEditor showState={[showEditor, setShowEditor]} reply={replyToText} text={[replyData, setReplyData]} action={sendReply} loading={[loading, setLoading]} title={"Give a reply"} />
+                <TextEditor 
+                    showState={[showEditor, setShowEditor]} 
+                    text={[replyData, setReplyData]} 
+                    loading={[loading, setLoading]} 
+                    title={"Give a reply"}
+                    action={sendReply} 
+                    subTitle={replyToText}
+                    buttonText={"Reply"}
+                    inputPlaceHolder={replyToUsernameRef.current === currentUsername ? `Extend your opinion!` : `Reply to ${replyToDisplaynameRef.current}'s opinion`}
+                />
             </CommentsControllerContext.Provider>}
         </div>
     )

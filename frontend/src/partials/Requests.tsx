@@ -1,8 +1,7 @@
-import { act, useCallback, useEffect, useState } from "react"
-import { RequestObject } from "../types/types"
+import { useCallback, useState } from "react"
 import { useAppData } from "../context/AppDataContext"
 import { RequestsActions } from "../reducers/requestReducer"
-import TextEditor from "../pages/post-view/CommentEditor"
+import TextEditor from "./PopupTextEditor"
 import withReactContent from "sweetalert2-react-content"
 import Swal from "sweetalert2"
 
@@ -20,7 +19,13 @@ function fireToast(title: string, icon: any) {
     })
 }
 
-function Request({ request: [request, dispatchRequest], inputOptions, showEditor: [showEditor, setShowEditor], recID: [recID, setRecID] }: any) {
+function Request({ 
+    request: [request, dispatchRequest], 
+    showEditor: [showEditor, setShowEditor], 
+    recID: [recID, setRecID], 
+    senderDisplayName: [senderDisplayName, setSenderDisplayName],
+    inputOptions, 
+}: any) {
     const [isReqExpanded, setIsReqExpanded] = useState(false)
 
     const acceptRequest = useCallback(async () => {
@@ -58,6 +63,7 @@ function Request({ request: [request, dispatchRequest], inputOptions, showEditor
     const handleDecline = useCallback(() => {
         setShowEditor((prev: boolean) => !prev)
         setRecID(request.recID)
+        setSenderDisplayName(request.senderDisplayName)
     }, [])
 
 
@@ -82,7 +88,7 @@ function Request({ request: [request, dispatchRequest], inputOptions, showEditor
                         </svg>
                     </button>
                     <button className="btn-request btn-reject-request" onClick={() => handleDecline()}>
-                        Reject
+                        Decline
                         <svg className="req-reject-icon" width="12" height="12" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M3 3L67 67" stroke="black" strokeWidth="6" strokeLinejoin="round" />
                             <path d="M67 3L3 67" stroke="black" strokeWidth="6" strokeLinejoin="round" />
@@ -99,15 +105,15 @@ export default function RequestsContainer() {
     const [text, setText] = useState<string>("")
     const [showEditor, setShowEditor] = useState<boolean>(false)
     const [recID, setRecID] = useState<string>("")
+    const [senderDisplayName, setSenderDisplayName] = useState<string>("")
 
     const { requests: [requests, dispatchRequest] } = useAppData()
     const { userProfile: [profile,] } = useAppData()
 
-    const posts: any = {}
-    profile?.owned_posts?.map((post: any) => {
-        const postID = post.noteID
-        posts[postID] = post.noteTitle
-    })
+    const posts = profile?.owned_posts?.reduce((inputOptions: Record<string, string>, post: any) => {
+        inputOptions[post.noteID] = post.noteTitle;
+        return inputOptions;
+    }, {});
 
     async function declineRequest() {
         try {
@@ -141,14 +147,32 @@ export default function RequestsContainer() {
 
     return (
         <>
-            <TextEditor showState={[showEditor, setShowEditor]} reply={false} text={[text, setText]} action={declineRequest} loading={[loading, setLoading]} title={"Give a reply"} />
+            <TextEditor 
+                showState={[showEditor, setShowEditor]} 
+                text={[text, setText]} 
+                action={declineRequest} 
+                loading={[loading, setLoading]} 
+                title={"Declining Request"}
+                subTitle={""}
+                inputPlaceHolder={`Let ${senderDisplayName} know why you are unable to give the requested resource`}
+                buttonText={"Send"}
+            />
             <div className="right-panel__requests-component">
                 <div className="requests-component__header">
                     <h4 className="requests-component__header-label">Requests</h4>
                 </div>
                 <div className="requests-container">
                     {requests?.map((request: any) => {
-                        return <Request request={[request, dispatchRequest]} key={request.recID} inputOptions={posts} showEditor={[showEditor, setShowEditor]} recID={[recID, setRecID]} />
+                        return (
+                            <Request 
+                                request={[request, dispatchRequest]} 
+                                inputOptions={posts} 
+                                showEditor={[showEditor, setShowEditor]} 
+                                recID={[recID, setRecID]} 
+                                senderDisplayName={[senderDisplayName, setSenderDisplayName]}
+                                key={request.recID} 
+                            />
+                        )
                     })}
                 </div>
             </div>
