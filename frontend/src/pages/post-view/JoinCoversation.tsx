@@ -70,7 +70,7 @@ export default function JoinConversation({ fireToast, loading: [loading, setLoad
 					<div className="quick-post__fr--msg-btn">Join the conversation</div>
 				</div>
 			</div>
-			<TextEditor showState={[showEditor, setShowEditor]} reply={false} text={[commentData, setCommentData]} action={sendComment} loading={[loading, setLoading]} />
+			<TextEditor showState={[showEditor, setShowEditor]} reply={false} text={[commentData, setCommentData]} action={sendComment} loading={[loading, setLoading]} title={"Give a comment"} />
 		</>
 	)
 }

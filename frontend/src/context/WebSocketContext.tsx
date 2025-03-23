@@ -4,12 +4,15 @@ import { useUserAuth } from "./UserAuthContext"
 import { useAppData } from "./AppDataContext"
 import { NotificationActions, NotificationEvent } from "../reducers/notificationReducer"
 import { Settings } from "../../settings"
+import { RequestObject } from "../types/types"
+import { RequestsActions } from "../reducers/requestReducer"
 
 let API_SERVER_URL = Settings.API_SERVER_URL
 const WebSocketContext = createContext<any>(null)
 export default function WebSocketProvider({ children }: { children: ReactNode | ReactNode[] }) {
     const [socket, setSocket] = useState<any>(null)
     const { notification: [, dispatch] } = useAppData()
+    const { requests: [, dispatchRequest] } = useAppData()
     const { userAuth } = useUserAuth()!
 
 
@@ -20,10 +23,26 @@ export default function WebSocketProvider({ children }: { children: ReactNode | 
         socket?.on(NotificationEvent.NOTIF_COMMENT, (notification: any) => {
             dispatch({ type: NotificationActions.ADD, payload: { notifications: [notification] } })
         })
+        socket?.on(NotificationEvent.NOTIF_REQUEST, (notification: any) => {
+            dispatch({ type: NotificationActions.ADD, payload: { notifications: [notification] } })
+        })
+        socket?.on(NotificationEvent.NOTIF_REQUEST_ACCEPT, (notification: any) => {
+            dispatch({ type: NotificationActions.ADD, payload: { notifications: [notification] } })
+        })
+        socket?.on(NotificationEvent.NOTIF_REQUEST_DECLINE, (notification: any) => {
+            dispatch({ type: NotificationActions.ADD, payload: { notifications: [notification] } })
+        })
+        socket?.on('request-object', (request: RequestObject) => {
+            dispatchRequest({ type: RequestsActions.ADD, payload: { requests: [request] } })
+        })
 
         return () => {
             socket.disconnect()
             socket.off(NotificationEvent.NOTIF_COMMENT)
+            socket.off(NotificationEvent.NOTIF_REQUEST)
+            socket.off(NotificationEvent.NOTIF_REQUEST_ACCEPT)
+            socket.off(NotificationEvent.NOTIF_REQUEST_DECLINE)
+            socket.off('request-object')
         }
     }, [userAuth?.studentID])
 

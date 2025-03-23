@@ -3,6 +3,7 @@ import { IONotification, RequestObject, SavedNoteObject } from "../types/types";
 import { useUserAuth } from "./UserAuthContext";
 import notificationReducer, { NotificationActions } from "../reducers/notificationReducer";
 import { Settings } from "../../settings"
+import requestReducer, { RequestsActions } from "../reducers/requestReducer";
 
 let API_SERVER_URL = Settings.API_SERVER_URL
 const AppDataContext = createContext<any>(null)
@@ -10,7 +11,7 @@ export default function AppDataProvider({ children }: { children: ReactNode | Re
     const [notifs, dispatch] = useReducer(notificationReducer, [])
     const [savedNotes, setSavedNotes] = useState<SavedNoteObject[]>([])
     const [profile, setProfile] = useState<any>({})
-    const [requests, setRequests] = useState<any>()
+    const [requests, dispatchRequest] = useReducer(requestReducer, []) 
     const { userAuth } = useUserAuth()!
     const currentUsername = userAuth?.username
 
@@ -87,12 +88,9 @@ export default function AppDataProvider({ children }: { children: ReactNode | Re
                 if (response.ok) {
                     let data = await response.json()
                     if (data.ok && data.requests.length !== 0) {
-                        setRequests(data.requests.map((request: any) => new RequestObject(request)))
-                    } else {
-                        setRequests([])
+                        //FIXME: send pre-modified requests object
+                        dispatchRequest({type: RequestsActions.ADD, payload: { requests: data.requests.map((request: any) => new RequestObject(request)) }})
                     }
-                } else {
-                    setRequests([])
                 }
             } catch (error) {
                 console.error(error)
@@ -108,7 +106,7 @@ export default function AppDataProvider({ children }: { children: ReactNode | Re
                 notification: [notifs, dispatch],
                 savedNotes: [savedNotes, setSavedNotes],
                 userProfile: [profile, setProfile, currentUsername],
-                requests: [requests, setRequests]
+                requests: [requests, dispatchRequest]
             }
         }>
             {children}

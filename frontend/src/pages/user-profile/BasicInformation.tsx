@@ -40,7 +40,7 @@ export default function BasicInformation({ user }: { user: any }) {
 				{!user.owner && (
 					<>
 						<button className="user-profile-request-btn" onClick={() => setReqModalShow(prev => !prev)}>Request</button>
-		  				<RequestModal modalShow={[reqModalShow, setReqModalShow]} recipientData={{ profile_pic: user.profile_pic, displayname: user.displayname }}></RequestModal>
+		  				<RequestModal modalShow={[reqModalShow, setReqModalShow]} recipientData={{ profile_pic: user.profile_pic, displayname: user.displayname, username: user.username }}></RequestModal>
 					</>
 				)}
 				<svg className="share-user-profile" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">

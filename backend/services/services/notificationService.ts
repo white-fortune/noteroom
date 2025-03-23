@@ -5,9 +5,12 @@ import { userSocketMap } from "../../server"
 
 export enum NotificationEvent {
     NOTIF_COMMENT = 'notification-comment',
+    NOTIF_REQUEST = 'notification-request',
+    NOTIF_REQUEST_ACCEPT = 'notification-request-accept',
+    NOTIF_REQUEST_DECLINE = 'notification-request-decline'
 }
 
-export function NotificationSender(io: Server, options?: { ownerStudentID: string, redirectTo: string }) {
+export function NotificationSender(io: Server, options?: { ownerStudentID: string, redirectTo?: string }) {
     return {
         async sendNotification({content, event, isInteraction, fromUserSudentDocID, additional}: any) {
             try {
@@ -71,13 +74,6 @@ export async function getNotifications(ownerStudentID: string) {
             { $project: {
                 _id: 0,
                 notiID: "$_id", title: 1, content: 1, isRead: 1, createdAt: 1, notiType: 1, isInteraction: 1,
-                redirectTo: {
-                    $cond: {
-                        if: { $eq: [{ $strLenCP: "$redirectTo" }, 0] },
-                        then: null,
-                        else: "$redirectTo"
-                    }
-                },
                 fromUser: {
                     $cond: {
                         if: { $eq: [ { $size: { $objectToArray: "$fromUser" } }, 0 ] },
@@ -89,6 +85,7 @@ export async function getNotifications(ownerStudentID: string) {
         ])
         return { ok: true, notifications }
     } catch (error) {
+        console.error(error)
         return { ok: false }
     }
 }

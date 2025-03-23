@@ -2,6 +2,9 @@ import { IONotification } from "../types/types";
 
 export enum NotificationEvent {
     NOTIF_COMMENT = 'notification-comment',
+    NOTIF_REQUEST = 'notification-request',
+    NOTIF_REQUEST_ACCEPT = 'notification-request-accept',
+    NOTIF_REQUEST_DECLINE = 'notification-request-decline'
 }
 export enum NotificationActions { ADD, READ, DELETE_ALL }
 export default function notificationReducer(notifications: IONotification[], actions: { type: NotificationActions, payload?: any }) {

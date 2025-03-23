@@ -239,7 +239,7 @@ export default function CommentsContainer() {
                 <JoinConversation fireToast={fireToast} loading={[loading, setLoading]} comments={[comments, setComments]}></JoinConversation>
                 <CommentSection comments={[comments, setComments]}></CommentSection>
 
-                <TextEditor showState={[showEditor, setShowEditor]} reply={replyToText} text={[replyData, setReplyData]} action={sendReply} loading={[loading, setLoading]} />
+                <TextEditor showState={[showEditor, setShowEditor]} reply={replyToText} text={[replyData, setReplyData]} action={sendReply} loading={[loading, setLoading]} title={"Give a reply"} />
             </CommentsControllerContext.Provider>}
         </div>
     )

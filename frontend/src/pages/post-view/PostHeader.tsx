@@ -16,7 +16,7 @@ export default function PostHeader() {
                     <path d="M16.6029 29.8333H67.332V38.1666H16.6029L39.9362 61.5L33.9987 67.3333L0.665367 34L33.9987 0.666649L39.9362 6.49998L16.6029 29.8333Z" fill="#1D1B20"/>
                 </svg>
                 <img className="post-author-pic" src={noteData?.ownerData.profile_pic} alt="Author Picture" />
-                <span className="post-author-name">{noteData?.ownerData.ownerDisplayName}</span>
+                <span className="post-author-name" onClick={() => navigate(`/user/${noteData?.ownerData.ownerUserName}`)}>{noteData?.ownerData.ownerDisplayName}</span>
             </div>
 
             <div className="post-header__actions">
@@ -34,7 +34,7 @@ export default function PostHeader() {
                 } 
             </div>
 
-            <RequestModal modalShow={[showReqModal, setShowReqModal]} recipientData={{profile_pic: noteData?.ownerData.profile_pic, displayname: noteData?.ownerData.ownerDisplayName }}></RequestModal>
+            <RequestModal modalShow={[showReqModal, setShowReqModal]} recipientData={{profile_pic: noteData?.ownerData.profile_pic, displayname: noteData?.ownerData.ownerDisplayName, username: noteData?.ownerData.ownerUserName }}></RequestModal>
         </div>
     )
 }

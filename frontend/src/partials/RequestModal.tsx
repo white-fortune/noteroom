@@ -1,10 +1,55 @@
 import { useEffect, useState } from "react";
+import { Settings } from "../../settings";
+import withReactContent from "sweetalert2-react-content";
+import Swal from "sweetalert2";
+
+
+const API_SERVER_URL = Settings.API_SERVER_URL
 
 export default function RequestModal({ modalShow, recipientData }: any) {
   const MAX_MESSAGE_LENGTH = 170;
   const [reqMsg, setReqMsg] = useState("");
   const [charCounter, setCharCounter] = useState(0);
   const [isDisabled, setIsDisabled] = useState(true);
+
+  function fireToast(title: string, icon: any) {
+    return withReactContent(Swal).fire({
+        toast: true,
+        icon: icon,
+        position: "bottom-right",
+        title: title,
+        showConfirmButton: true,
+        timer: 3000,
+        timerProgressBar: true
+    })
+  }
+  async function sendRequest() {
+    try {
+      const requestForm = new FormData()
+      requestForm.append("receiverUsername", recipientData.username)
+      requestForm.append("message", reqMsg)
+
+      const response = await fetch(`${API_SERVER_URL}/api/requests/send`, {
+        method: "post",
+        credentials: "include",
+        body: requestForm
+      })
+      if (response.ok) {
+        const data = await response.json()
+        if (data.ok) {
+          fireToast('Request sent successfully!', 'success')
+          modalShow[1](false)
+        } else {
+          fireToast(data.message || "Something went wrong! Please try again a bit later", 'error')
+        }
+      } else {
+        fireToast("Something went wrong! Please try again a bit later", 'error')
+      }
+    } catch (error) {
+      fireToast("Something went wrong! Please try again a bit later", 'error')
+      console.error(error)
+    }
+  }
 
   function writeRequest(e: any) {
     setReqMsg(e.target.value);
@@ -66,6 +111,7 @@ export default function RequestModal({ modalShow, recipientData }: any) {
           <button
             className="request-modal__tr--send-req-btn"
             disabled={isDisabled}
+            onClick={() => !isDisabled && sendRequest()}
           >
             Request
           </button>

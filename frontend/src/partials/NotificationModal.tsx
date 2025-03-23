@@ -28,10 +28,13 @@ function Notification({ notiData, rightPanelState: [, setShowRightPanel], notiSt
         readNoti(notiData.notiID)
 
         switch (notiData.notiType) {
-            case "notification-request":
+            case NotificationEvent.NOTIF_REQUEST:
                 setShowRightPanel((prev: boolean) => !prev)
                 break
             case NotificationEvent.NOTIF_COMMENT:
+                navigate(notiData.redirectTo as string)
+                break
+            case NotificationEvent.NOTIF_REQUEST_ACCEPT:
                 navigate(notiData.redirectTo as string)
                 break
         }
@@ -65,7 +68,7 @@ export default function NotificationModal({ notiState: [showNotiModal, setShowNo
     async function deleteAllNotification() {
         if (notifs.length === 0) return
 
-        let response = await fetch('${API_SERVER_URL}/api/notifications', {
+        let response = await fetch(`${API_SERVER_URL}/api/notifications`, {
             method: 'delete',
             credentials: 'include'
         })
