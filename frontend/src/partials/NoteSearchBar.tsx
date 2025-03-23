@@ -3,8 +3,9 @@ import { useAppData } from '../context/AppDataContext';
 import { IONotification } from '../types/types';
 import { Link } from 'react-router-dom';
 import { Settings } from '../../settings';
+import AvatarImage from "../assets/avatars/avatar-1.png"
 
-const API_SERVER_URL = Settings.API_SERVER_URL
+let API_SERVER_URL = Settings.API_SERVER_URL
 
 interface Post {
   postID: string;
@@ -118,9 +119,7 @@ export default function NoteSearchBar({ notiModalState }: { notiModalState: [any
             {unreadNotiCount}
           </span> : null}
         </div>
-        <a href="" aria-label="Profile">
-          <img src="something" className="profile-avatar" alt="Profile" />
-        </a>
+        <img src={AvatarImage} className="profile-avatar" alt="Profile" />
       </div>
       <div className={`search-results-container ${isSearchFocused ? 'visible' : ''} no-hide`} >
         <div className="search-results-list no-hide">

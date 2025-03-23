@@ -1,8 +1,11 @@
+import { useNavigate } from "react-router-dom";
+
 export default function MobileControlPanel({ rightPanelState }: { rightPanelState: [boolean, (value: boolean) => void] }) {
+    const navigate = useNavigate()
     return (
         <div className="mbl-ctrl-panel">
             <div className="mbl-ctrl-panel__inner">
-                <svg className="mbl-ctrl-panel__icon mbl-btn-home" width="32" height="32" viewBox="0 0 44 43" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
+                <svg className="mbl-ctrl-panel__icon mbl-btn-home" width="32" height="32" viewBox="0 0 44 43" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" onClick={() => navigate("/")}>
                     <rect x="0.125" width="43" height="43" fill="url(#pattern0_2219_2119)" />
                     <defs>
                         <pattern id="pattern0_2219_2119" patternContentUnits="objectBoundingBox" width="1" height="1">
@@ -12,7 +15,7 @@ export default function MobileControlPanel({ rightPanelState }: { rightPanelStat
                     </defs>
                 </svg>
 
-                <svg className="mbl-ctrl-panel__icon search-prfls-mbl-btn" width="32" height="32" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
+                <svg className="mbl-ctrl-panel__icon search-prfls-mbl-btn" width="32" height="32" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" onClick={() => navigate("/search-profile")}>
                     <rect width="30" height="30" fill="url(#pattern0_4312_6021)" />
                     <defs>
                         <pattern id="pattern0_4312_6021" patternContentUnits="objectBoundingBox" width="1" height="1">
@@ -22,7 +25,7 @@ export default function MobileControlPanel({ rightPanelState }: { rightPanelStat
                     </defs>
                 </svg>
 
-                <svg className="mbl-ctrl-panel__icon mbl-upload-btn" width="32" height="32" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
+                <svg className="mbl-ctrl-panel__icon mbl-upload-btn" width="32" height="32" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" onClick={() => navigate("/upload")}>
                     <rect width="30" height="30" fill="url(#pattern0_4312_6022)" />
                     <defs>
                         <pattern id="pattern0_4312_6022" patternContentUnits="objectBoundingBox" width="1" height="1">
@@ -42,7 +45,7 @@ export default function MobileControlPanel({ rightPanelState }: { rightPanelStat
                         </defs>
                 </svg>
 
-                <svg className="mbl-ctrl-panel__icon mbl-settings-icon" width="32" height="32" viewBox="0 0 40 41" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
+                <svg className="mbl-ctrl-panel__icon mbl-settings-icon" width="32" height="32" viewBox="0 0 40 41" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" onClick={() => navigate("/settings")}>
                     <rect x="0.625" y="0.875" width="39.25" height="39.25" fill="url(#pattern0_2219_2129)" />
                     <defs>
                         <pattern id="pattern0_2219_2129" patternContentUnits="objectBoundingBox" width="1" height="1">

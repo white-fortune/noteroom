@@ -4,14 +4,14 @@ import { useUserAuth } from "./UserAuthContext";
 import notificationReducer, { NotificationActions } from "../reducers/notificationReducer";
 import { Settings } from "../../settings"
 
-const API_SERVER_URL = Settings.API_SERVER_URL
+let API_SERVER_URL = Settings.API_SERVER_URL
 const AppDataContext = createContext<any>(null)
 export default function AppDataProvider({ children }: { children: ReactNode | ReactNode[] }) {
     const [notifs, dispatch] = useReducer(notificationReducer, [])
     const [savedNotes, setSavedNotes] = useState<SavedNoteObject[]>([])
     const [profile, setProfile] = useState<any>({})
     const [requests, setRequests] = useState<any>()
-    const [userAuth] = useUserAuth()
+    const { userAuth } = useUserAuth()!
     const currentUsername = userAuth?.username
 
     useEffect(() => {

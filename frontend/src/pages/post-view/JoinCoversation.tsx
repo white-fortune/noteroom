@@ -5,10 +5,9 @@ import "../../public/css/quick-post.css"
 import TextEditor from "./CommentEditor"
 import { Settings } from "../../../settings"
 
-const API_SERVER_URL = Settings.API_SERVER_URL
+let API_SERVER_URL = Settings.API_SERVER_URL
 
-export default function JoinConversation({ fireToast, loading: [loading, setLoading] }: any) {
-	const { comments: [, setComments] } = useContext(CommentsControllerContext)
+export default function JoinConversation({ fireToast, loading: [loading, setLoading], comments: [comments, setComments] }: any) {
 	const [commentData, setCommentData] = useState<string>("")
 	const [showEditor, setShowEditor] = useState<boolean>(false)
 	const { postID } = useParams()
@@ -62,7 +61,7 @@ export default function JoinConversation({ fireToast, loading: [loading, setLoad
 			setLoading(false)
 		}
 	}
-	
+
 
 	return (
 		<>

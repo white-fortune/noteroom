@@ -7,7 +7,7 @@ import withReactContent from "sweetalert2-react-content"
 import { Link } from "react-router-dom"
 import { Settings } from "../../../settings"
 
-const API_SERVER_URL = Settings.API_SERVER_URL
+let API_SERVER_URL = Settings.API_SERVER_URL
 
 function Comment({ feedbackData, children }: any) {
     const { controller: [openReplyEditor] } = useContext(CommentsControllerContext)
@@ -94,8 +94,7 @@ function Reply({ replyData, parentFeedbackDocID }: { replyData: any, parentFeedb
 }
 
 
-function CommentSection() {
-    const { comments: [comments,] } = useContext(CommentsControllerContext)
+function CommentSection({ comments: [comments, setComments] }: any) {
 
     return (
         <>
@@ -129,7 +128,8 @@ export default function CommentsContainer() {
     const [openedThreadID, setOpenedThreadID] = useState<string>("")
     const [replyData, setReplyData] = useState<string>("")
     const [loading, setLoading] = useState<boolean>(false)
-    
+    const [loadingComments, setLoadingComments] = useState<boolean>(true)
+
     const { noteData } = useContext(PostContext)
     const postID = noteData?.noteData.noteID
     const replyToUsernameRef = useRef<string>("")
@@ -209,22 +209,24 @@ export default function CommentsContainer() {
             timerProgressBar: true
         })
     }
-    
+
 
     useEffect(() => {
         async function getComments() {
             try {
+                setLoadingComments(true)
                 if (postID) {
                     const response = await fetch(`${API_SERVER_URL}/api/posts/${postID}/comments`, { credentials: 'include' })
                     const data = await response.json()
                     if (data && data.ok) {
                         setComments(prev => [...prev, ...data.comments])
-                    } else {
-                        setComments([])
                     }
+                    setLoadingComments(false)
                 }
             } catch (error) {
                 console.error(error)
+            } finally {
+                setLoadingComments(false)
             }
         }
         getComments()
@@ -233,12 +235,12 @@ export default function CommentsContainer() {
 
     return (
         <div className="comment-section">
-            <CommentsControllerContext.Provider value={{ comments: [comments, setComments], controller: [openReplyEditor] }}>
-                <JoinConversation fireToast={fireToast} loading={[loading, setLoading]}></JoinConversation>
-                <CommentSection></CommentSection>
+            {loadingComments ? <h3>Loading...</h3> : <CommentsControllerContext.Provider value={{ controller: [openReplyEditor] }}>
+                <JoinConversation fireToast={fireToast} loading={[loading, setLoading]} comments={[comments, setComments]}></JoinConversation>
+                <CommentSection comments={[comments, setComments]}></CommentSection>
 
                 <TextEditor showState={[showEditor, setShowEditor]} reply={replyToText} text={[replyData, setReplyData]} action={sendReply} loading={[loading, setLoading]} />
-            </CommentsControllerContext.Provider>
+            </CommentsControllerContext.Provider>}
         </div>
     )
 }

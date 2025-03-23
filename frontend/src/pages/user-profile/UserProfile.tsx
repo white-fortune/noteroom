@@ -7,7 +7,7 @@ import { useAppData } from "../../context/AppDataContext";
 import "../../public/css/user-profile.css"
 import { Settings } from "../../../settings";
 
-const API_SERVER_URL = Settings.API_SERVER_URL
+let API_SERVER_URL = Settings.API_SERVER_URL
 export default function UserProfile() {
 	const [user, setUser] = useState<any>({})
 	const { userProfile: [profile, , currentUsername] } = useAppData()

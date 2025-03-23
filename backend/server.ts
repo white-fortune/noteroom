@@ -42,15 +42,15 @@ connect(url).then(() => {
 })
 
 const port = process.env.PORT
-
+const staticPath = join(__dirname, "../../frontend/dist")
+const allowedHosts = JSON.parse(process.env.ALLOWED_HOSTS)
 
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: allowedHosts,
     credentials: true
 }))
-app.use(urlencoded({
-    extended: true
-})) 
+app.use(express.static(staticPath))
+app.use(urlencoded({ extended: true })) 
 app.use(session({
     secret: process.env.SECRET_KEY,
     resave: false,
@@ -79,30 +79,21 @@ app.use('/api/auth', authApiRouter(io))
 app.use('/api/upload', uploadApiRouter(io))
 
 app.get('/logout', (req, res) => {
-    req.session.destroy(error => {
-        res.clearCookie('studentID')
-        res.clearCookie('recordID')
-        res.clearCookie('username')
-        res.clearCookie('connect.sid')
-        if(!error) {
-            res.redirect('/login')
-        } else {
-            res.redirect('/login')
-        }
-    })
+    try {
+        req.session.destroy(error => {
+            res.clearCookie('studentID')
+            res.clearCookie('username')
+            res.clearCookie('connect.sid')
+            res.json({ ok: true })
+        })
+    } catch (error) {
+        res.json({ ok: false })
+    }
 })
 
-app.get('/', (req, res) => {
-    res.render('home')
-})
-app.get('/support', (req, res) => {
-    res.render('support')
-})
-app.get('/about-us', (req, res) => {
-    res.render('about-us')
-})
-app.get('/privacy-policy', (req, res) => {
-    res.render('privacy-policy')
+
+app.get("*", (req, res) => {
+    res.sendFile(join(staticPath, 'index.html'))
 })
 
 

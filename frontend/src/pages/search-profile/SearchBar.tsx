@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import { Settings } from "../../../settings"
 
-const API_SERVER_URL = Settings.API_SERVER_URL
+let API_SERVER_URL = Settings.API_SERVER_URL
 export default function SearchBar({
     profile: [searchedProfiles, setSearchProfiles],
     schBatch: [schBatch, setSchBatch],
@@ -11,6 +11,8 @@ export default function SearchBar({
 
     const [text, setText] = useState<any>("")
     const totalCount = useRef<number>(-1)
+
+    //TODO: use debouncing just like note search in profile search
     async function searchProfile(showMore: boolean) {
         try {
             if (text.trim().length !== 0) {

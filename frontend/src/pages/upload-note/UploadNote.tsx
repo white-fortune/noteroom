@@ -8,7 +8,7 @@ import "../../public/css/upload-note.css";
 import "mathlive";
 import { Settings } from "../../../settings";
 
-const API_SERVER_URL = Settings.API_SERVER_URL
+let API_SERVER_URL = Settings.API_SERVER_URL
 const ReactSwal = withReactContent(Swal);
 
 interface MathfieldElement extends HTMLElement {

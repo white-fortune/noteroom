@@ -1,11 +1,13 @@
 import { useState } from "react"
 import { useAppData } from "../../context/AppDataContext"
+import { useNavigate } from "react-router-dom"
 
 function NoteCard({ note }: { note: any }) {
 	// let description = note.description ? (new DOMParser()).parseFromString(note.description, "text/html").body.textContent?.slice(0, 50) + "..." : ""
+	const navigate = useNavigate()
 
 	return (
-		<div className="note-card" style={{ marginBottom: "10px" }}>
+		<div className="note-card" style={{ marginBottom: "10px" }} onClick={() => navigate(`/post/${note.noteID}`)}>
 			<img className="profile-note-card-thumbnail" src={note.noteThumbnail || 'https://placehold.co/800x500'} alt="Note Thumbnail" />
 			<h3 id="note-title">{note.noteTitle.length > 25 ? `${note.noteTitle.slice(0, 25)}...` : note.noteTitle}</h3>
 			{/* <p style={{ padding: "10px 5px" }}>{description}</p> */}

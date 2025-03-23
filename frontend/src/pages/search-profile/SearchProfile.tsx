@@ -4,8 +4,9 @@ import ProfiesContainer from "./ProfilesContainer";
 import { useEffect, useRef, useState } from "react";
 import { ProfileTypes } from "./index";
 import { Settings } from "../../../settings";
+import { useNavigate } from "react-router-dom";
 
-const API_SERVER_URL = Settings.API_SERVER_URL
+let API_SERVER_URL = Settings.API_SERVER_URL
 
 export default function SearchProfile() {
     const [mutualCollegeProfiles, setMututalCollegeProfiles] = useState<any[]>([])
@@ -19,6 +20,7 @@ export default function SearchProfile() {
     const [showStatusMessage, setShowStatusMessage] = useState<string | null>(null)
 
     const totalMtcCount = useRef<number>(-1)
+    const navigate = useNavigate()
 
     async function getMtcProfiles(showMore: boolean) {
         try {
@@ -59,6 +61,7 @@ export default function SearchProfile() {
                     viewBox="0 0 68 68"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
+                    onClick={() => navigate(-1)}
                 >
                     <path
                         d="M16.6029 29.8333H67.332V38.1666H16.6029L39.9362 61.5L33.9987 67.3333L0.665367 34L33.9987 0.666649L39.9362 6.49998L16.6029 29.8333Z"

@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom"
 import { NotificationActions, NotificationEvent } from "../reducers/notificationReducer"
 import { Settings } from "../../settings"
 
-const API_SERVER_URL = Settings.API_SERVER_URL
+let API_SERVER_URL = Settings.API_SERVER_URL
 function Notification({ notiData, rightPanelState: [, setShowRightPanel], notiState: [, setShowNotiModal], dispatch }: any) {
     const navigate = useNavigate()
 

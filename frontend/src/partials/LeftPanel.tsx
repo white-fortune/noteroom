@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react"
-import { useSavedNotes } from "../context/SavedNotesContext";
 import { SavedNoteObject } from "../types/types";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAppData } from "../context/AppDataContext";
 import ngLogo from "../assets/ng_logo.png"
 
@@ -17,6 +16,7 @@ function SavedNote({ note }: { note: SavedNoteObject }) {
 export default function LeftPanel() {
     const [showNoSavedNotesMsg, setShowSavedNotesMsg] = useState(false)
     const { savedNotes: [savedNotes, ] } = useAppData()
+    const navigate = useNavigate()
 
     useEffect(() => {
         if (savedNotes?.length === 0) setShowSavedNotesMsg(true)
@@ -30,7 +30,7 @@ export default function LeftPanel() {
                 <span className="users-db-msg">NoteRoom</span>
             </div>
 
-            <button className="btn-home">
+            <button className="btn-home" onClick={() => navigate('/')}>
                 <svg width="28" height="28" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
                     <rect width="24.4687" height="24.4687" fill="url(#pattern0_3781_4874)"/>
                     <defs>
@@ -43,7 +43,7 @@ export default function LeftPanel() {
                 Home
             </button>
 
-            <button className="btn-upload-note">
+            <button className="btn-upload-note" onClick={() => navigate("/upload")}>
                 <svg className="btn-upload-note-svg" width="35" height="35" viewBox="0 0 36 35" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <g clipPath="url(#clip0_1010_510)">
                         <path d="M23.6606 22.7891L17.9636 17.0921M17.9636 17.0921L12.2666 22.7891M17.9636 17.0921V29.9104M29.9131 26.1931C31.3022 25.4358 32.3996 24.2374 33.032 22.7871C33.6644 21.3369 33.7959 19.7173 33.4056 18.1841C33.0154 16.6508 32.1256 15.2912 30.8768 14.3197C29.628 13.3483 28.0913 12.8204 26.5091 12.8193H24.7146C24.2835 11.1519 23.48 9.60387 22.3645 8.29165C21.249 6.97942 19.8505 5.93716 18.2742 5.2432C16.6979 4.54924 14.9849 4.22166 13.2637 4.28507C11.5426 4.34848 9.85828 4.80124 8.33734 5.60931C6.8164 6.41739 5.49843 7.55974 4.48253 8.95049C3.46662 10.3412 2.77922 11.9442 2.47199 13.6389C2.16477 15.3335 2.24572 17.0758 2.70875 18.7346C3.17179 20.3935 4.00486 21.9258 5.14534 23.2164" stroke="#1E1E1E" strokeWidth="2.8485" strokeLinecap="round" strokeLinejoin="round" />

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Profile from "./ProfileCard";
 import { ProfileTypes } from "./index";
+import { useNavigate } from "react-router-dom";
 
 export default function ProfilesContainer({ 
     sectionLabel, profiles, type_,
@@ -10,6 +11,7 @@ export default function ProfilesContainer({
 }: any) {
 
     const [showContainer, setShowContainer] = useState<boolean>(true)
+    const navigate = useNavigate()
 
     useEffect(() => {
         if (type_ === ProfileTypes.SEARCHED_PROFILES) {

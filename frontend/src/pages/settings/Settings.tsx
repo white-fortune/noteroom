@@ -1,10 +1,30 @@
 import "../../public/css/settings.css"
 import "../../public/css/header-footer.css"
+import { Settings as settings } from "../../../settings";
+import { useUserAuth } from "../../context/UserAuthContext";
 
+const API_SERVER_URL = settings.API_SERVER_URL
 export default function Settings () {
+  const { setUserAuth } = useUserAuth()!
   const handleNavigation = (url: any) => {
     window.location.href = url;
   };
+
+  async function handleLogout() {
+    try {
+      const response = await fetch(`${API_SERVER_URL}/logout`, {
+        credentials: "include"
+      })
+      if (response.ok) {
+        const data = await response.json()
+        if (data.ok) {
+          setUserAuth(null)
+        }
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   return (
     <div className="container">
@@ -39,7 +59,7 @@ export default function Settings () {
         </div>
         <div className="msg-section nft-msg">
           <span className="section-msg">Studied enough for now? Log out and come back anytime.</span>
-          <button className="logout" onClick={() => handleNavigation("/logout")}>Logout</button>
+          <button className="logout" onClick={() => handleLogout()}>Logout</button>
         </div>
       </div>
 

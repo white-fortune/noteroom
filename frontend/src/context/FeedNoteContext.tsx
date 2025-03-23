@@ -6,7 +6,7 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import { Settings } from "../../settings";
 
-const API_SERVER_URL = Settings.API_SERVER_URL
+let API_SERVER_URL = Settings.API_SERVER_URL
 export const FeedNoteContext = createContext<any>(null)
 export default function FeedNotesProvider({ children }: { children: ReactNode | ReactNode[] }) {
     const [feedNotes, dispatch] = useReducer(feedReducer, [])
@@ -61,9 +61,9 @@ export default function FeedNotesProvider({ children }: { children: ReactNode | 
     }
 
     async function upvoteNote(noteID: string, upvoteState: boolean) {
-        try {        
+        try {
             dispatch({ type: FeedActions.TOGGLE_UPVOTE_NOTE, payload: { noteID: noteID } })
-            let response = await fetch(`${API_SERVER_URL}/api/posts/${noteID}/vote?type=upvote${upvoteState ? '&action=delete' : ''}`, { 
+            let response = await fetch(`${API_SERVER_URL}/api/posts/${noteID}/vote?type=upvote${upvoteState ? '&action=delete' : ''}`, {
                 method: "post",
                 credentials: "include"
             })
@@ -88,9 +88,9 @@ export default function FeedNotesProvider({ children }: { children: ReactNode | 
                 }
             })
 
-            let response = await fetch(`${API_SERVER_URL}/api/posts/${noteID}/save?action=${savedState ? 'delete' : 'save'}`, { 
+            let response = await fetch(`${API_SERVER_URL}/api/posts/${noteID}/save?action=${savedState ? 'delete' : 'save'}`, {
                 method: 'put',
-                credentials: "include" 
+                credentials: "include"
             })
             if (response.ok) {
                 let data = await response.json()

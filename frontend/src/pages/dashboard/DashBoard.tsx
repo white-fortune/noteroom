@@ -42,7 +42,7 @@ export default function DashBoard() {
 
     return (
         <div className="middle-section" ref={middleSection}>
-            <QuickPost></QuickPost>
+            {/* <QuickPost></QuickPost> */}
             <FeedSection></FeedSection>
         </div>
     )

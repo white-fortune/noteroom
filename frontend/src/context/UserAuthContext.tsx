@@ -5,12 +5,26 @@ import ScrollPositionProvider from "./ScrollPosition";
 import WebSocketProvider from "./WebSocketContext";
 import { Settings } from "../../settings";
 
-const API_SERVER_URL = Settings.API_SERVER_URL
-const UserAuthContext = createContext<any>(null)
+type AuthValue = {
+    loading: boolean,
+    userAuth: {
+        studentID: string,
+        username: string
+    },
+    setUserAuth: any,
+}
 
+let API_SERVER_URL = Settings.API_SERVER_URL
+const UserAuthContext = createContext<AuthValue | null>(null)
 export default function UserAuthProvider({ children }: { children: ReactNode | ReactNode[] }) {
     const [userAuth, setUserAuth] = useState<any>(null)
     const [loading, setLoading] = useState<boolean>(true)
+
+    const value: AuthValue = {
+        loading,
+        userAuth,
+        setUserAuth,
+    }
 
     useEffect(() => {
         async function getUserAuth() {
@@ -36,7 +50,7 @@ export default function UserAuthProvider({ children }: { children: ReactNode | R
     }, [])
 
     return (
-        <UserAuthContext.Provider value={[userAuth, setUserAuth, loading]}>
+        <UserAuthContext.Provider value={value}>
             {userAuth ? <AuthenticatedProviders>{children}</AuthenticatedProviders> : children}
         </UserAuthContext.Provider>
     )

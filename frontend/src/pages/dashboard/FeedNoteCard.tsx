@@ -1,12 +1,13 @@
 import { useState } from "react";
 import FeedNoteMenu from "./NoteMenu";
 import RequestModal from "../../partials/RequestModal";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FeedNoteEngagement } from "./NoteEngagements";
 import { FeedNoteObject } from "../../types/types";
 
 function FeedNoteFirstRow({ note }: { note: FeedNoteObject }) {
   const [showReqModal, setShowReqModal] = useState(false);
+  const navigate = useNavigate()
 
   return (
     <>
@@ -21,7 +22,7 @@ function FeedNoteFirstRow({ note }: { note: FeedNoteObject }) {
           <div className="note-info-wrapper--first-row">
             <div className="niw--fr-first-col">
               <div className="niw--fr-first-col-fr">
-                <a className="author-prfl-link">
+                <a className="author-prfl-link" onClick={() => navigate(`/user/${note.ownerData.ownerUserName}`)}>
                   {note.ownerData.ownerDisplayName}
                 </a>
                 {!note.ownerData.isOwner ? (

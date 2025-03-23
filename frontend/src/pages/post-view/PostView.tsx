@@ -14,7 +14,7 @@ import "../../public/css/share-note.css"
 import { Settings } from "../../../settings";
 
 
-const API_SERVER_URL = Settings.API_SERVER_URL
+let API_SERVER_URL = Settings.API_SERVER_URL
 export const PostContext = createContext<any>(null)
 
 export default function PostView() {
@@ -83,7 +83,7 @@ export default function PostView() {
                     <div className="post-content">
                         <h1 className="post-title">{noteData?.noteData.noteTitle}</h1>
                         <div className="post-description" dangerouslySetInnerHTML={{ __html: noteData?.noteData.description }}></div>
-                        { noteData?.contentData.contentCount > 0 && <ImageContainer noteImages={noteImages} controller={[prevImage, nextImage, offset]} />}
+                        {noteData?.contentData.contentCount > 0 && <ImageContainer noteImages={noteImages} controller={[prevImage, nextImage, offset]} />}
                     </div>
 
                     <NoteEngagement></NoteEngagement>
