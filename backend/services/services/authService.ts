@@ -21,7 +21,7 @@ export async function getUserAuth(studentID_: string) {
         const { studentID, username } = authData
         return { ok: true, userAuth: { studentID, username} }
     } catch (error) {
-        return { ok: false }
+        return { ok: false, error: error }
     }
 }
 
@@ -36,10 +36,10 @@ export async function getUserVarification(email: string) {
                 authProvider: student["authProvider"]
             } }
         } else {
-            return { ok: false, error: "NO_EMAIL" }
+            return { ok: false, code: "NO_EMAIL" }
         }
     } catch (error) {
-        return { ok: false, error: "SERVER" }
+        return { ok: false, code: "SERVER", error: error }
     }
 }
 
