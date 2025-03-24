@@ -4,6 +4,7 @@ import RequestModal from "../../partials/RequestModal";
 import { Link, useNavigate } from "react-router-dom";
 import { FeedNoteEngagement } from "./NoteEngagements";
 import { FeedNoteObject } from "../../types/types";
+import UnavailableImage from "../../assets/placeholders/unavailable_content.png"
 
 function FeedNoteFirstRow({ note }: { note: FeedNoteObject }) {
   const [showReqModal, setShowReqModal] = useState(false);
@@ -101,13 +102,13 @@ function FeedNoteSecondRow({ note }: { note: FeedNoteObject }) {
           isQuickPost ?
             contentCount !== 0 ?
               <div className="quickpost-thumbnail-wrapper">
-                <img className="quickpost-thumbnail" src={note.contentData.content1} />
+                <img className="quickpost-thumbnail" src={note.contentData.content1 || UnavailableImage} />
               </div> : ''
             :
             <div className="thumbnail-grid">
-              <img className="thumbnail primary-img" src={note.contentData.content1} />
+              <img className="thumbnail primary-img" src={note.contentData.content1 || UnavailableImage} />
               <div className="thumbnail-secondary-wrapper">
-                <img className="thumbnail secondary-img" src={note.contentData.content2} />
+                <img className="thumbnail secondary-img" src={note.contentData.content2 || UnavailableImage} />
                 {contentCount > 2 ? <div className="thumbnail-overlay">+{contentCount - 2}</div> : ''}
               </div>
             </div>

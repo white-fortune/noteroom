@@ -1,3 +1,5 @@
+import UnavilableContent from "../../assets/placeholders/unavailable_content.png"
+
 export function ImageContainer({ noteImages, controller: [prevImage, nextImage, offset]}: any) {
     return (
         <>
@@ -8,7 +10,7 @@ export function ImageContainer({ noteImages, controller: [prevImage, nextImage, 
                             return <div className="carousel-slide" key={index}>
                                 <div className="carousel-content">
                                     <span className="note-page-number">{index + 1}</span>
-                                    <img src={imageLink} className="image-links" />
+                                    <img src={imageLink || UnavilableContent} className="image-links" />
                                 </div>
                             </div>
                         })}

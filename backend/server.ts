@@ -13,6 +13,7 @@ import fileUpload from 'express-fileupload'
 import cors from 'cors'
 import pkg from 'connect-mongo';
 const { create } = pkg;
+import chalk from 'chalk';
 
 import postApiRouter from './services/apis/post.js';
 import feedApiRouter from './services/apis/feed.js';
@@ -28,14 +29,12 @@ config({ path: join(__dirname, '.env') });
 const app = express()
 const server = createServer(app);
 const io = new SocketIOServer(server, { cors: { origin: '*' } });
-const url = process.env.DEVELOPMENT === "true" ? process.env.MONGO_URI_DEV : process.env.MONGO_URI
+const url = (process.env.DEVELOPMENT && process.env.DEVELOPMENT === "true") ? process.env.MONGO_URI_DEV : process.env.MONGO_URI
 
 connect(url).then(() => {
-    if (process.env.DEVELOPMENT) {
-        console.log(`DEVELOPMENT flag enabled`)
-        console.log(`[-] using local mongodb on ${url}`)
-    } else {
-        console.log(`[-] using remote mongodb on ${url}`)
+    if (process.env.DEVELOPMENT && process.env.DEVELOPMENT === "true") {
+        console.log(chalk.cyan(`[-] development mode: ${chalk.yellow(process.env.DEVELOPMENT)}`))
+        console.log(chalk.cyan(`[-] using local mongodb: ${chalk.yellow(url)}`))
     }
 })
 
@@ -112,5 +111,5 @@ io.on('connection', (socket) => {
 })
 
 server.listen(port, () => {
-    console.log(`Server is listening on ${port}`);
+    console.log(chalk.cyan(`[-] server is listening on: ${chalk.yellow(`http://localhost:${port}`)}`));
 })
