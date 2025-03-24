@@ -524,7 +524,7 @@ body {
   /* Carousel Control Adjustments */
   .carousel-container > .carousel-control.prev,
   .carousel-container > .carousel-control.next {
-    display: none; /* Hide side controllers on smaller screens */
+    /* display: none; Hide side controllers on smaller screens */
   }
   .carousel-controls-bottom {
     display: flex; /* Show bottom controllers */
