@@ -17,11 +17,11 @@ body {
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  background: #f5f5f8; /* Slightly lighter background to match screenshot */
+  background: #f5f5f8;
 }
 
 .middle-section {
-  padding: 95px 0; /* Consistent top padding to avoid overlap */
+  padding: 95px 0;
   width: 100%;
   max-width: 680px;
   margin: 0 auto;
@@ -41,7 +41,7 @@ body {
   align-items: center;
   padding: 15px 20px;
   border-bottom: 1px solid var(--grayish-border);
-  margin-top: 0px; /* Add space to avoid overlap */
+  margin-top: 0px;
 }
 
 .post-header__info {
@@ -51,11 +51,11 @@ body {
 }
 
 .nav-back-btn {
-  display: block; /* Ensure visibility */
+  display: block;
   visibility: visible;
   cursor: pointer;
   transition: transform 0.2s ease;
-  fill: #1D1B20; /* Fallback fill color for visibility */
+  fill: #1D1B20;
 }
 
 .nav-back-btn:hover {
@@ -227,7 +227,7 @@ body {
   display: flex;
   transition: transform 0.5s ease-in-out;
   width: 100%;
-  background: #ffffff; /* Match post-container background */
+  background: #ffffff;
 }
 
 .carousel-slide {
@@ -236,12 +236,12 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #f5f5f8; /* Match post-container background */
+  background: #f5f5f8;
 }
 
 .carousel-content {
   position: relative;
-  width: 100%; /* Ensure content takes full width */
+  width: 100%;
 }
 
 .note-page-number {
@@ -274,8 +274,8 @@ body {
   top: 50%;
   transform: translateY(-50%);
   border: none;
-  background: rgba(255, 255, 255, 0.95); /* Semi-transparent white */
-  border-radius: 50%; /* Circular buttons */
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 50%;
   width: 48px;
   height: 48px;
   display: flex;
@@ -328,8 +328,8 @@ body {
 
 .note-engagement {
   display: flex;
-  gap: 15px; /* Adjusted gap for better spacing */
-  justify-content: center; /* Center the buttons */
+  gap: 15px;
+  justify-content: center;
   align-items: center;
 }
 
@@ -337,9 +337,9 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 48px; /* Fixed size for uniformity */
+  width: 48px;
   height: 48px;
-  padding: 12px; /* Adjusted padding to center the 24x24 SVG */
+  padding: 12px;
   border-radius: 50%;
   cursor: pointer;
   transition: background-color 0.2s ease;
@@ -358,7 +358,7 @@ body {
 }
 
 .uv-container .uv-icon {
-  width: 24px; /* Match original size */
+  width: 24px;
   height: 24px;
 }
 
@@ -367,7 +367,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 48px; /* Fixed size for uniformity */
+  width: 48px;
   height: 48px;
   padding: 10px;
   border-radius: 50%;
@@ -434,10 +434,10 @@ body {
   fill: #fff;
   cursor: pointer;
   transition: background-color 0.2s ease;
-  display: flex; /* Ensure SVG is centered */
+  display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0; /* Remove padding to avoid affecting SVG alignment */
+  padding: 0;
 }
 
 .cmnt-btn:hover {
@@ -472,8 +472,8 @@ body {
 
 /* Media Queries for Smaller Screens */
 
-/* ≤ 767px */
-@media (max-width: 767px) {
+/* ≤ 768px (Updated from 767px to match JS logic) */
+@media (max-width: 768px) {
   .middle-section {
     padding-top: 70px;
     padding-bottom: 65px;
@@ -485,7 +485,7 @@ body {
     gap: 10px;
   }
   .nav-back-btn {
-    width: 18px; /* Slightly smaller for better fit */
+    width: 18px;
     height: auto;
   }
   .post-author-pic {
@@ -512,22 +512,22 @@ body {
     font-size: 15px;
   }
   .carousel-container {
-    min-height: 400px; /* Reduce min-height for smaller screens */
+    min-height: 400px;
     padding: 0px;
     background: #f5f5f8;
   }
   .carousel-slide img {
     width: 100%;
-    max-height: 500px; /* Adjusted for smaller screens */
+    max-height: 500px;
     object-fit: contain;
   }
-  /* Carousel Control Adjustments */
-  .carousel-container > .carousel-control.prev,
-  .carousel-container > .carousel-control.next {
-    /* display: none; Hide side controllers on smaller screens */
+  /* Hide side carousel controls on smaller screens */
+  .carousel-control.prev,
+  .carousel-control.next {
+    display: none;
   }
   .carousel-controls-bottom {
-    display: flex; /* Show bottom controllers */
+    display: flex;
     position: absolute;
     bottom: 10px;
     left: 50%;
@@ -559,35 +559,31 @@ body {
     background: rgba(116, 116, 116, 0.8);
     right: 10px;
   }
-
-  /* Engagement Bar Adjustments */
   .engagement-bar {
-    padding: 10px 15px; /* Reduce padding for smaller screens */
+    padding: 10px 15px;
   }
   .note-engagement {
-    gap: 12px; /* Reduce gap between buttons */
+    gap: 12px;
   }
   .uv-container,
   .download-icon,
   .share-icon {
-    width: 40px; /* Reduce container size for better fit */
+    width: 40px;
     height: 40px;
-    padding: 8px; /* Adjust padding to center smaller SVGs */
+    padding: 8px;
   }
   .uv-container .uv-icon {
-    width: 20px; /* Reduce SVG size */
+    width: 20px;
     height: 20px;
   }
   .download-icon svg,
   .share-icon svg {
-    width: 24px; /* Reduce SVG size */
+    width: 24px;
     height: 24px;
   }
   .engagement-count {
-    font-size: 12px; /* Slightly smaller font size */
+    font-size: 12px;
   }
-
-  /* Comment Section Adjustments */
   .comments-section {
     padding: 15px;
   }
@@ -602,7 +598,7 @@ body {
     height: 34px;
   }
   #cmnt-btn {
-    width: 20px; /* Slightly larger SVG to ensure visibility */
+    width: 20px;
     height: 20px;
   }
 }
@@ -620,7 +616,7 @@ body {
     gap: 8px;
   }
   .nav-back-btn {
-    width: 18px; /* Slightly smaller for better fit */
+    width: 18px;
     height: auto;
   }
   .post-author-pic {
@@ -647,16 +643,15 @@ body {
     font-size: 14px;
   }
   .carousel-container {
-    min-height: 350px; /* Further reduce min-height */
+    min-height: 350px;
     padding: 0px;
     background: #f5f5f8;
   }
   .carousel-slide img {
     width: 100%;
-    max-height: 450px; /* Further adjusted for smaller screens */
+    max-height: 450px;
     object-fit: contain;
   }
-  /* Carousel Control Adjustments */
   .carousel-controls-bottom .carousel-control {
     padding: 5px 8px;
   }
@@ -664,7 +659,7 @@ body {
     width: 16px;
   }
   .carousel-content {
-    width: 100%; /* Ensure content takes full width */
+    width: 100%;
   }
   .editor {
     padding: 10px;
@@ -673,24 +668,24 @@ body {
   .cmnt-btn {
     bottom: 8px;
     right: 8px;
-    width: 32px; /* Slightly smaller button */
+    width: 32px;
     height: 32px;
   }
   #cmnt-btn {
-    width: 18px; /* Keep SVG size consistent */
+    width: 18px;
     height: 18px;
   }
   .main-cmnt-container {
     margin: 40px 0;
   }
   .main__author-threadline-wrapper {
-    flex: 0 0 50px; /* Adjusted to match image size */
+    flex: 0 0 50px;
     max-width: 50px;
   }
   .cmnt-author-img {
-    width: 36px; /* Slightly smaller */
+    width: 36px;
     height: 36px;
-    aspect-ratio: 1 / 1; /* Maintain aspect ratio */
+    aspect-ratio: 1 / 1;
     object-fit: cover;
     border-radius: 50%;
     overflow: hidden;
@@ -727,10 +722,10 @@ body {
     gap: 8px;
   }
   .thread-avatar {
-    flex: 0 0 40px; /* Adjusted to match image size */
+    flex: 0 0 40px;
     width: 40px;
     height: 40px;
-    aspect-ratio: 1 / 1; /* Maintain aspect ratio */
+    aspect-ratio: 1 / 1;
     object-fit: cover;
     border-radius: 50%;
   }
@@ -744,28 +739,26 @@ body {
   .thread-editor {
     font-size: 14px;
   }
-
-  /* Engagement Bar Adjustments */
   .engagement-bar {
-    padding: 8px 12px; /* Further reduce padding */
+    padding: 8px 12px;
   }
   .note-engagement {
-    gap: 10px; /* Further reduce gap */
+    gap: 10px;
   }
   .uv-container,
   .download-icon,
   .share-icon {
-    width: 36px; /* Further reduce container size */
+    width: 36px;
     height: 36px;
-    padding: 6px; /* Adjust padding */
+    padding: 6px;
   }
   .uv-container .uv-icon {
-    width: 18px; /* Further reduce SVG size */
+    width: 18px;
     height: 18px;
   }
   .download-icon svg,
   .share-icon svg {
-    width: 22px; /* Further reduce SVG size */
+    width: 22px;
     height: 22px;
   }
   .engagement-count {
@@ -786,7 +779,7 @@ body {
     gap: 5px;
   }
   .nav-back-btn {
-    width: 16px; /* Reduce size for very small screens */
+    width: 16px;
     height: auto;
   }
   .post-author-pic {
@@ -813,16 +806,15 @@ body {
     font-size: 13px;
   }
   .carousel-container {
-    min-height: 300px; /* Minimize for very small screens */
+    min-height: 300px;
     padding: 0px;
     background: #f5f5f8;
   }
   .carousel-slide img {
     width: 100%;
-    max-height: 400px; /* Minimize for very small screens */
+    max-height: 400px;
     object-fit: contain;
   }
-  /* Carousel Control Adjustments */
   .carousel-controls-bottom .carousel-control {
     padding: 4px 6px;
   }
@@ -836,24 +828,24 @@ body {
   .cmnt-btn {
     bottom: 6px;
     right: 6px;
-    width: 28px; /* Even smaller button */
+    width: 28px;
     height: 28px;
   }
   #cmnt-btn {
-    width: 16px; /* Adjust SVG size to fit smaller container */
+    width: 16px;
     height: 16px;
   }
   .main-cmnt-container {
     margin: 40px 0;
   }
   .main__author-threadline-wrapper {
-    flex: 0 0 40px; /* Adjusted to match image size */
+    flex: 0 0 40px;
     max-width: 40px;
   }
   .cmnt-author-img {
-    width: 32px; /* Smaller for very small screens */
+    width: 32px;
     height: 32px;
-    aspect-ratio: 1 / 1; /* Maintain aspect ratio */
+    aspect-ratio: 1 / 1;
     object-fit: cover;
     border-radius: 50%;
     overflow: hidden;
@@ -886,10 +878,10 @@ body {
     gap: 5px;
   }
   .thread-avatar {
-    flex: 0 0 32px; /* Adjusted to match image size */
+    flex: 0 0 32px;
     width: 32px;
     height: 32px;
-    aspect-ratio: 1 / 1; /* Maintain aspect ratio */
+    aspect-ratio: 1 / 1;
     object-fit: cover;
     border-radius: 50%;
   }
@@ -903,36 +895,32 @@ body {
   .thread-editor {
     font-size: 12px;
   }
-
-  /* Engagement Bar Adjustments */
   .engagement-bar {
-    padding: 6px 10px; /* Minimize padding */
+    padding: 6px 10px;
   }
   .note-engagement {
-    gap: 8px; /* Minimize gap */
+    gap: 8px;
   }
   .uv-container,
   .download-icon,
   .share-icon {
-    width: 32px; /* Minimize container size */
+    width: 32px;
     height: 32px;
-    padding: 4px; /* Adjust padding */
+    padding: 4px;
   }
   .uv-container .uv-icon {
-    width: 16px; /* Minimize SVG size */
+    width: 16px;
     height: 16px;
   }
   .download-icon svg,
   .share-icon svg {
-    width: 20px; /* Minimize SVG size */
+    width: 20px;
     height: 20px;
   }
   .engagement-count {
     font-size: 10px;
   }
 }
-
-/* Rest of the CSS remains unchanged */
 
 /* User Mention Styling */
 .tribute-container {
@@ -1184,7 +1172,7 @@ body {
 .main__author-threadline-wrapper {
   height: 100%;
   min-height: 100%;
-  flex: 0 0 60px; /* Fixed width to match image size */
+  flex: 0 0 60px;
   max-width: 60px;
   display: flex;
   flex-direction: column;
@@ -1198,8 +1186,8 @@ body {
   object-fit: cover;
   overflow: hidden;
   aspect-ratio: 1 / 1;
-  width: 40px; /* Fixed width */
-  height: 40px; /* Fixed height to match width */
+  width: 40px;
+  height: 40px;
 }
 
 .thread-line {
@@ -1378,11 +1366,11 @@ body {
 }
 
 .thread-avatar {
-  flex: 0 0 25px; /* Fixed width to match image size */
+  flex: 0 0 25px;
   border-radius: 50%;
   object-fit: cover;
-  width: 25px; /* Fixed width */
-  height: 25px; /* Fixed height to match width */
+  width: 25px;
+  height: 25px;
   aspect-ratio: 1 / 1;
 }
 
@@ -1483,8 +1471,8 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.8); /* Dark backdrop for contrast */
-  backdrop-filter: blur(6px); /* Polished blur effect */
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(6px);
   z-index: 1;
   transition: opacity 0.3s ease;
 }
@@ -1500,68 +1488,65 @@ body {
   height: 100%;
 }
 
-/* Enlarged Image */
 .enlarged-image {
-  max-height: calc(100vh - 80px); /* Leave space for top controls */
-  max-width: calc(100vw - 80px); /* Leave space for side controls on larger screens */
+  max-height: calc(100vh - 80px);
+  max-width: calc(100vw - 80px);
   object-fit: contain;
   border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4); /* Enhanced shadow for depth */
-  transition: transform 0.3s ease; /* Smooth scaling on load */
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  transition: transform 0.3s ease;
 }
 
 .enlarged-image:hover {
-  transform: scale(1.01); /* Subtle zoom on hover for larger screens */
+  transform: scale(1.01);
 }
 
-/* Carousel Controls (Left and Right) */
 .modal-carousel-control {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
   border: none;
-  background: rgba(255, 255, 255, 0.95); /* Semi-transparent white */
-  border-radius: 50%; /* Circular buttons */
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 50%;
   width: 48px;
   height: 48px;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .modal-carousel-control.prev {
-  left: 20px; /* Far left of the screen */
+  left: 20px;
 }
 
 .modal-carousel-control.next {
-  right: 20px; /* Far right of the screen */
+  right: 20px;
 }
 
 .modal-carousel-control .carousel-control-icon {
   width: 24px;
   height: 24px;
-  stroke: var(--squid-ink); /* Use squid-ink color for consistency */
+  stroke: var(--squid-ink);
 }
 
 .modal-carousel-control:hover {
-  background-color: #ffffff; /* Solid white on hover */
-  transform: translateY(-50%) scale(1.05); /* Slight scale on hover */
+  background-color: #ffffff;
+  transform: translateY(-50%) scale(1.05);
 }
 
 .modal-carousel-control:active {
   background-color: #f0f0f0;
-  transform: translateY(-50%) scale(0.95); /* Scale down on click */
+  transform: translateY(-50%) scale(0.95);
 }
 
 .modal-carousel-control.touched {
   background-color: #f0f0f0;
-  transform: translateY(-50%) scale(0.95); /* Scale down on touch */
+  transform: translateY(-50%) scale(0.95);
 }
 
-/* Top Controls (Download, Share, Close) */
 .image-modal-top-controls {
   position: absolute;
   top: 20px;
@@ -1571,115 +1556,139 @@ body {
   z-index: 3;
 }
 
-/* Download Button */
 .image-modal-download {
-  background: #ffffff; /* White background */
+  background: #ffffff;
   border: none;
   padding: 10px;
-  border-radius: 50%; /* Circular button */
+  border-radius: 50%;
   width: 40px;
   height: 40px;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .image-modal-download svg {
   width: 20px;
   height: 20px;
-  stroke: var(--squid-ink); /* Use squid-ink for consistency */
+  stroke: var(--squid-ink);
 }
 
 .image-modal-download:hover {
   background-color: #f8f8f8;
-  transform: scale(1.05); /* Slight scale on hover */
+  transform: scale(1.05);
 }
 
 .image-modal-download:active {
   background-color: #e0e0e0;
-  transform: scale(0.95); /* Scale down on click */
+  transform: scale(0.95);
 }
 
 .image-modal-download.touched {
   background-color: #e0e0e0;
-  transform: scale(0.95); /* Scale down on touch */
+  transform: scale(0.95);
 }
 
-/* Share Button */
 .image-modal-share {
-  background: #ffffff; /* White background */
+  background: #ffffff;
   border: none;
   padding: 10px;
-  border-radius: 50%; /* Circular button */
+  border-radius: 50%;
   width: 40px;
   height: 40px;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .image-modal-share svg {
   width: 20px;
   height: 20px;
-  fill: var(--squid-ink); /* Use squid-ink for consistency */
+  stroke: var(--squid-ink);
 }
 
 .image-modal-share:hover {
   background-color: #f8f8f8;
-  transform: scale(1.05); /* Slight scale on hover */
+  transform: scale(1.05);
 }
 
 .image-modal-share:active {
   background-color: #e0e0e0;
-  transform: scale(0.95); /* Scale down on click */
+  transform: scale(0.95);
 }
 
 .image-modal-share.touched {
   background-color: #e0e0e0;
-  transform: scale(0.95); /* Scale down on touch */
+  transform: scale(0.95);
 }
 
-/* Close Button */
 .image-modal-close {
   background: #ffffff;
   border: none;
   padding: 10px;
-  border-radius: 50%; /* Circular button */
+  border-radius: 50%;
   width: 40px;
   height: 40px;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .image-modal-close svg {
   width: 20px;
   height: 20px;
-  stroke: var(--squid-ink); /* Use squid-ink for consistency */
+  stroke: var(--squid-ink);
 }
 
 .image-modal-close:hover {
   background-color: #f8f8f8;
-  transform: scale(1.05); /* Slight scale on hover */
+  transform: scale(1.05);
 }
 
 .image-modal-close:active {
   background-color: #e0e0e0;
-  transform: scale(0.95); /* Scale down on click */
+  transform: scale(0.95);
 }
 
 .image-modal-close.touched {
   background-color: #e0e0e0;
-  transform: scale(0.95); /* Scale down on touch */
+  transform: scale(0.95);
+}
+
+.image-modal-page-number {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #ffffff;
+  padding: 8px 12px;
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--squid-ink);
+  z-index: 3;
+}
+
+.image-modal-page-number .page-number-icon {
+  width: 20px;
+  height: 20px;
+  stroke: var(--squid-ink);
+}
+
+.image-modal-page-number .page-number-text {
+  color: var(--squid-ink);
 }
 
 /* Smaller Screens (≤ 768px) */
@@ -1687,24 +1696,19 @@ body {
   .image-modal-content {
     padding: 15px;
   }
-
   .enlarged-image {
     max-width: calc(100vw - 30px);
-    max-height: calc(100vh - 70px); /* Adjusted for top controls */
+    max-height: calc(100vh - 70px);
     object-fit: contain;
   }
-
-  /* Remove carousel control buttons on smaller screens */
   .modal-carousel-control {
     display: none;
   }
-
   .image-modal-top-controls {
     top: 15px;
     right: 15px;
     gap: 8px;
   }
-
   .image-modal-download,
   .image-modal-share,
   .image-modal-close {
@@ -1712,10 +1716,20 @@ body {
     height: 36px;
     padding: 8px;
   }
-
   .image-modal-download svg,
   .image-modal-share svg,
   .image-modal-close svg {
+    width: 18px;
+    height: 18px;
+  }
+  .image-modal-page-number {
+    top: 15px;
+    left: 15px;
+    padding: 6px 10px;
+    border-radius: 18px;
+    font-size: 12px;
+  }
+  .image-modal-page-number .page-number-icon {
     width: 18px;
     height: 18px;
   }
@@ -1726,18 +1740,15 @@ body {
   .image-modal-content {
     padding: 10px;
   }
-
   .enlarged-image {
     max-width: calc(100vw - 20px);
     max-height: calc(100vh - 60px);
   }
-
   .image-modal-top-controls {
     top: 10px;
     right: 10px;
     gap: 6px;
   }
-
   .image-modal-download,
   .image-modal-share,
   .image-modal-close {
@@ -1745,10 +1756,20 @@ body {
     height: 32px;
     padding: 6px;
   }
-
   .image-modal-download svg,
   .image-modal-share svg,
   .image-modal-close svg {
+    width: 16px;
+    height: 16px;
+  }
+  .image-modal-page-number {
+    top: 10px;
+    left: 10px;
+    padding: 5px 8px;
+    border-radius: 16px;
+    font-size: 11px;
+  }
+  .image-modal-page-number .page-number-icon {
     width: 16px;
     height: 16px;
   }
@@ -1759,18 +1780,15 @@ body {
   .image-modal-content {
     padding: 8px;
   }
-
   .enlarged-image {
     max-width: calc(100vw - 16px);
     max-height: calc(100vh - 50px);
   }
-
   .image-modal-top-controls {
     top: 8px;
     right: 8px;
     gap: 5px;
   }
-
   .image-modal-download,
   .image-modal-share,
   .image-modal-close {
@@ -1778,36 +1796,44 @@ body {
     height: 28px;
     padding: 5px;
   }
-
   .image-modal-download svg,
   .image-modal-share svg,
   .image-modal-close svg {
     width: 14px;
     height: 14px;
   }
+  .image-modal-page-number {
+    top: 8px;
+    left: 8px;
+    padding: 4px 6px;
+    border-radius: 14px;
+    font-size: 10px;
+  }
+  .image-modal-page-number .page-number-icon {
+    width: 14px;
+    height: 14px;
+  }
 }
 
-/* Link Copied Popup Styles */
+/* Link Copied Popup Styles (if needed in future enhancements) */
 .link-copied-popup {
   position: absolute;
-  background: rgba(0, 0, 0, 0.8); /* Dark background with transparency */
+  background: rgba(0, 0, 0, 0.8);
   color: #ffffff;
   font-size: 14px;
   font-weight: 500;
   padding: 8px 12px;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3); /* Subtle shadow for depth */
-  z-index: 4; /* Above image-modal-content (z-index: 2) and controls (z-index: 3) */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  z-index: 4;
   opacity: 0;
   transition: opacity 0.3s ease;
 }
 
 .link-copied-popup.show {
-  opacity: 1; /* Fade in when show class is added */
+  opacity: 1;
 }
 
-/* Responsive Adjustments for Link Copied Popup */
-/* Smaller Screens (≤ 768px) */
 @media (max-width: 768px) {
   .link-copied-popup {
     font-size: 13px;
@@ -1816,7 +1842,6 @@ body {
   }
 }
 
-/* Very Small Screens (≤ 480px) */
 @media (max-width: 480px) {
   .link-copied-popup {
     font-size: 12px;
@@ -1825,89 +1850,10 @@ body {
   }
 }
 
-/* Extremely Small Screens (≤ 360px) */
 @media (max-width: 360px) {
   .link-copied-popup {
     font-size: 11px;
     padding: 4px 6px;
     border-radius: 4px;
-  }
-}
-
-/* Image Modal Page Number */
-.image-modal-page-number {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: #ffffff; /* White background to match top-right buttons */
-  padding: 8px 12px; /* Adjusted padding for a more polished look */
-  border-radius: 20px; /* Circular shape to match button style */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth, matching buttons */
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--squid-ink); /* Use squid-ink for text color to match button icons */
-  z-index: 3; /* Above the enlarged image (z-index: 2) */
-}
-
-.image-modal-page-number .page-number-icon {
-  width: 20px;
-  height: 20px;
-  stroke: var(--squid-ink); /* Match the text color and button icons */
-}
-
-.image-modal-page-number .page-number-text {
-  color: var(--squid-ink);
-}
-
-/* Responsive Adjustments for Image Modal Page Number */
-
-/* Smaller Screens (≤ 768px) */
-@media (max-width: 768px) {
-  .image-modal-page-number {
-    top: 15px;
-    left: 15px;
-    padding: 6px 10px;
-    border-radius: 18px;
-    font-size: 12px;
-  }
-
-  .image-modal-page-number .page-number-icon {
-    width: 18px;
-    height: 18px;
-  }
-}
-
-/* Very Small Screens (≤ 480px) */
-@media (max-width: 480px) {
-  .image-modal-page-number {
-    top: 10px;
-    left: 10px;
-    padding: 5px 8px;
-    border-radius: 16px;
-    font-size: 11px;
-  }
-
-  .image-modal-page-number .page-number-icon {
-    width: 16px;
-    height: 16px;
-  }
-}
-
-/* Extremely Small Screens (≤ 360px) */
-@media (max-width: 360px) {
-  .image-modal-page-number {
-    top: 8px;
-    left: 8px;
-    padding: 4px 6px;
-    border-radius: 14px;
-    font-size: 10px;
-  }
-
-  .image-modal-page-number .page-number-icon {
-    width: 14px;
-    height: 14px;
   }
 }
