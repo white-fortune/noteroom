@@ -1,5 +1,5 @@
 import { createContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ImageContainer } from "./ImageContainer";
 import { NoteEngagement } from "./NoteEngagements";
 import PostHeader from "./PostHeader";
@@ -18,6 +18,7 @@ export const PostContext = createContext<any>(null)
 
 export default function PostView() {
     const { feedNotes, controller: [upvoteNote, saveNote] } = useFeed()
+    const navigate = useNavigate()
 
     const [noteImages, setNoteImages] = useState<string[]>([])
     const [offset, setOffset] = useState<number>(0)
@@ -40,6 +41,8 @@ export default function PostView() {
                     if (data.ok) {
                         let note = new FeedNoteObject(data.noteData)
                         setNoteData(note)
+                    } else {
+						navigate("/not-found", { replace: true, state: { type: "post", postID: postID } })
                     }
                 }
             } catch (error) {

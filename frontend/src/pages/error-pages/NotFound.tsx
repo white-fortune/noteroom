@@ -4,8 +4,8 @@ import { useLocation, useNavigate } from "react-router-dom"
 type NoteFound = {
     title: string,
     message: string,
-    btnText: string,
-    btnRedirect: string
+    btnText?: string,
+    btnRedirect?: string
 }
 export default function NotFound() {
     const navigate = useNavigate()
@@ -21,8 +21,6 @@ export default function NotFound() {
                     setContent({
                         title: `Page not found`,
                         message: `Looks like you are lost. The page "${state?.route}" doesn't really exist!`,
-                        btnText: "Go Home",
-                        btnRedirect: "/"
                     })
                     break
                 case "user":
@@ -31,6 +29,12 @@ export default function NotFound() {
                         message: `No one in NoteRoom goes by "${state?.username}"`,
                         btnText: "Search Users",
                         btnRedirect: "/search-profile"
+                    })
+                    break
+                case "post":
+                    setContent({
+                        title: "Post not found",
+                        message: `Post "${state?.postID}" cannot be found. Maybe it is deleted.`
                     })
                     break
                     
@@ -43,7 +47,7 @@ export default function NotFound() {
         <>
             <p style={{fontSize: "50px"}}>{content?.title}</p>
             <p style={{fontSize: "20px"}}>{content?.message}</p>
-            <button onClick={() => navigate(content?.btnRedirect as string)}>{content?.btnText}</button>
+            <button onClick={() => navigate((content?.btnRedirect as string) || "/")}>{content?.btnText || "Go Home"}</button>
         </>
     )
 }
