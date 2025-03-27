@@ -5,19 +5,20 @@ export default function SearchBar({
     profile: [searchedProfiles, setSearchProfiles],
     schBatch: [schBatch, setSchBatch],
     showMoreButton: [showMoreButton, setShowMoreButton],
-    showStatusMessage: [showStatusMessage, setShowStatusMessage]
+    showStatusMessage: [showStatusMessage, setShowStatusMessage],
+    loading: [loading, setLoading]
 }: any) {
 
     const [text, setText] = useState<any>("")
+    const [debounceText, setDebounceText] = useState<string>()
     const totalCount = useRef<number>(-1)
 
-    //TODO: use debouncing just like note search in profile search
     async function searchProfile(showMore: boolean) {
         try {
             if (text.trim().length !== 0) {
-                let response = await fetch(`${API_SERVER_URL}/api/search?q=${text}&type=profiles&batch=${schBatch}${!showMore ? "&countdoc=true" : ""}`, { credentials: 'include' })
+                let response = await fetch(`${API_SERVER_URL}/api/search?q=${debounceText}&type=profiles&batch=${schBatch}${!showMore ? "&countdoc=true" : ""}`, { credentials: 'include' })
                 let data = await response.json()
-
+                setLoading(false)
                 if (data && data.students.length !== 0) {
                     if (showMore) {
                         setSearchProfiles((prev: any) => [...prev, ...(data.students)])
@@ -35,6 +36,10 @@ export default function SearchBar({
     }
 
     useEffect(() => {
+        searchProfile(false)
+    }, [debounceText])
+
+    useEffect(() => {
         if (schBatch !== 1) {
             searchProfile(true)
         }
@@ -46,7 +51,14 @@ export default function SearchBar({
             setSchBatch(1)
             totalCount.current = -1
         }
+        setLoading(text.length !== 0)
         setShowStatusMessage("Start typing to search for people!")
+
+        const timer = setTimeout(() => {
+            setDebounceText(text)
+        }, 1500) 
+
+        return () => clearTimeout(timer) 
     }, [text])
 
     useEffect(() => {
@@ -59,7 +71,7 @@ export default function SearchBar({
         <div className="prfl-search-container">
             <fieldset className="field-container">
                 <input type="text" placeholder="Who are you looking for?" className="field" value={text} onChange={(e) => setText(e.target.value)} />
-                <button className="search-prfl-btn" onClick={() => searchProfile(false)}>
+                <button className="search-prfl-btn">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         x="0px"

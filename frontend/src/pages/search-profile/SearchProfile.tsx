@@ -17,6 +17,7 @@ export default function SearchProfile() {
     const [showSchMoreButton, setShowSchMoreButton] = useState<boolean>(false)
     const [showMtcMoreButton, setShowMtcMoreButton] = useState<boolean>(true)
     const [showStatusMessage, setShowStatusMessage] = useState<string | null>(null)
+    const [loading, setLoading] = useState<boolean>(false)
 
     const totalMtcCount = useRef<number>(-1)
     const navigate = useNavigate()
@@ -74,6 +75,7 @@ export default function SearchProfile() {
                 schBatch={[schBatch, setSchBatch]}
                 showMoreButton={[showSchMoreButton, setShowSchMoreButton]}
                 showStatusMessage={[showStatusMessage, setShowStatusMessage]}
+                loading={[loading, setLoading]}
             />
             <ProfiesContainer
                 sectionLabel={"Search Results"}
@@ -82,6 +84,7 @@ export default function SearchProfile() {
                 showMoreButton={[showSchMoreButton, setShowSchMoreButton]}
                 showStatusMessage={[showStatusMessage, setShowStatusMessage]}
                 type_={ProfileTypes.SEARCHED_PROFILES}
+                loading={[loading, setLoading]}
             />
 
             {mutualCollegeProfiles.length !== 0 && <ProfiesContainer

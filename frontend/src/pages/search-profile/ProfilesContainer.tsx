@@ -1,17 +1,16 @@
 import { useEffect, useState } from "react";
 import Profile from "./ProfileCard";
 import { ProfileTypes } from "./index";
-import { useNavigate } from "react-router-dom";
 
 export default function ProfilesContainer({ 
     sectionLabel, profiles, type_,
     batch: [batch, setBatch], 
     showMoreButton: [showMoreButton, setShowMoreButton], 
-    showStatusMessage: [showStatusMessage, setShowStatusMessage]
+    showStatusMessage: [showStatusMessage, setShowStatusMessage],
+    loading
 }: any) {
 
     const [showContainer, setShowContainer] = useState<boolean>(true)
-    const navigate = useNavigate()
 
     useEffect(() => {
         if (type_ === ProfileTypes.SEARCHED_PROFILES) {
@@ -38,7 +37,8 @@ export default function ProfilesContainer({
                             }) }
                         </div> : 
                         
-                        type_ === ProfileTypes.SEARCHED_PROFILES ? <h3>{showStatusMessage}</h3> : null 
+                        type_ === ProfileTypes.SEARCHED_PROFILES ? 
+                            loading[0] ? <div className="search-loading-indicator"></div> : <h3>{showStatusMessage}</h3> : null 
                 }
 
                 { showMoreButton && <button className="load-more-btn" onClick={() => setBatch((prev: number) => prev + 1)}>
