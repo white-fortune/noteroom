@@ -8,7 +8,7 @@
 :root {
   --squid-ink: #06192d;
   --neon-blue: #04dbf6;
-  --light-gray: #f8f8f8;
+  --light-gray: #f2f4f7;
 }
 
 body {
@@ -25,178 +25,49 @@ body {
 
 .middle-section-upload {
   width: 100%;
-  height: auto;
-  margin-top: clamp(60px, 7vw, 90px);
-  max-width: 1000px;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-  padding: clamp(15px, 2.5vw, 30px);
+  max-width: 1400px;
+  padding: clamp(20px, 3vw, 40px);
   display: flex;
   flex-direction: column;
-  gap: clamp(10px, 2vw, 25px);
+  gap: clamp(20px, 2.5vw, 30px);
+  margin: clamp(20px, 5vw, 40px) 0;
 }
 
-.section-header {
-  margin-top: -10px;
-  text-align: center;
+.upload-nav {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
-  position: relative;
-  border: none;
-  border-bottom: none !important;
-  margin-bottom: -10px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: clamp(5px, 1vw, 10px);
 }
 
-.section-header h2 {
-  font-size: clamp(1.2rem, 3.5vw, 1.75rem);
+.upload-nav h2 {
+  font-size: clamp(1.2rem, 3vw, 1.5rem);
   font-weight: 600;
   color: var(--squid-ink);
-  margin-bottom: clamp(8px, 1.5vw, 12px);
-  width: 100%;
-  display: block;
-  border-bottom: none;
 }
 
-.section-header .header-subtitle {
+.nav-options {
+  display: flex;
+  gap: clamp(10px, 2vw, 20px);
+}
+
+.nav-options span {
   font-size: clamp(0.8rem, 2vw, 1rem);
   color: #666;
-  width: 100%;
-  max-width: 90%;
-  display: block;
-  margin: 0;
-  padding: 0;
+  cursor: pointer;
+  transition: color 0.3s ease;
 }
 
-.section-header::before,
-.section-header::after {
-  display: none !important;
-  content: none;
-}
-
-.upload-container {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: clamp(10px, 2vw, 25px);
-  background: var(--light-gray);
-  border-radius: 8px;
-  border: 1px dashed #ccc;
-  transition: border-color 0.3s ease;
-}
-
-.upload-container:hover {
-  border-color: var(--neon-blue);
-}
-
-.upload-icon svg {
-  width: clamp(30px, 6vw, 60px);
-  height: clamp(30px, 6vw, 60px);
-  margin-bottom: clamp(5px, 1.5vw, 15px);
-}
-
-.upload-msg {
-  font-size: clamp(0.9rem, 2.5vw, 1.25rem);
-  font-weight: 500;
-  color: var(--squid-ink);
-  margin-bottom: clamp(3px, 1vw, 5px);
-}
-
-.suggested-formats-msg {
-  font-size: clamp(0.7rem, 1.8vw, 0.9rem);
-  color: #888;
-}
-
-.browse-file-container {
-  margin-top: clamp(10px, 2vw, 20px);
-}
-
-.file-input {
-  display: none;
-}
-
-.browse-files-btn {
-  background: var(--squid-ink);
+.nav-options span.active {
   color: var(--neon-blue);
-  padding: clamp(8px, 1.5vw, 12px) clamp(15px, 2.5vw, 25px);
-  border-radius: 6px;
-  font-size: clamp(0.8rem, 2vw, 1rem);
   font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border: none;
+  border-bottom: 2px solid var(--neon-blue);
+  padding-bottom: 2px;
 }
 
-.browse-files-btn:hover {
-  background: var(--neon-blue);
-  color: var(--squid-ink);
-  transform: translateY(-2px);
-}
-
-.stack-status {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: clamp(5px, 1vw, 10px);
-}
-
-.stack-number-container {
-  background: var(--light-gray);
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
-  padding: clamp(6px, 1.2vw, 10px) clamp(10px, 1.8vw, 15px);
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.stack-number-container:hover {
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.snc-info-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.stack-number {
-  font-size: clamp(0.8rem, 2vw, 1rem);
-  font-weight: 500;
-  color: var(--squid-ink);
-}
-
-.stack-prompt {
-  width: 100%;
-  font-size: clamp(0.6rem, 1.5vw, 0.85rem);
-  color: #888;
-  margin-top: clamp(3px, 0.8vw, 5px);
-}
-
-.success-upload-msg {
-  display: none;
-  align-items: center;
-  gap: clamp(5px, 1vw, 8px);
-  background: #e6f4e6;
-  border: 1px solid #1d8102;
-  border-radius: 6px;
-  padding: clamp(6px, 1.2vw, 10px) clamp(10px, 1.8vw, 15px);
-  font-size: clamp(0.7rem, 1.8vw, 0.9rem);
-  color: #1d8102;
-  transition: all 0.4s ease;
-}
-
-.s-u-effect {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.text-form {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: clamp(10px, 2vw, 20px);
+.nav-options span:hover {
+  color: var(--neon-blue);
 }
 
 .form-group {
@@ -205,25 +76,39 @@ body {
   gap: clamp(5px, 1vw, 8px);
 }
 
+.form-group.description-group {
+  position: relative;
+}
+
 .form-group label {
+  margin-top: -10px;
   font-size: clamp(0.8rem, 2vw, 1rem);
   font-weight: 500;
   color: var(--squid-ink);
 }
 
-.note-subject,
-.note-title {
-  width: 100%;
-  padding: clamp(8px, 1.5vw, 12px) clamp(10px, 2vw, 15px);
+.note-title{
+  width: 680px;
+  padding: clamp(8px, 1.5vw, 15px);
   border: 1px solid #ddd;
-  border-radius: 6px;
+  border-radius: 15px;
+  font-size: clamp(0.8rem, 2vw, 1rem);
+  background: #fff;
+  transition: border-color 0.3s ease;
+}
+.note-subject {
+  
+  width: 680px;
+  padding: clamp(8px, 1.5vw, 15px);
+  border: 1px solid #ddd;
+  border-radius: 15px;
   font-size: clamp(0.8rem, 2vw, 1rem);
   background: #fff;
   transition: border-color 0.3s ease;
 }
 
-.note-subject:focus,
-.note-title:focus {
+.note-title:focus,
+.note-subject:focus {
   border-color: var(--neon-blue);
   outline: none;
 }
@@ -236,307 +121,288 @@ body {
   background-size: clamp(8px, 1.5vw, 12px) clamp(4px, 1vw, 6px);
 }
 
-.text-editor-wrapper {
+.char-count {
+  align-self: flex-end;
+  font-size: clamp(0.7rem, 1.8vw, 0.9rem);
+  color: #666;
+}
+
+.upload-container {
+  width: 100%;
+  min-height: 150px;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  transition: border-color 0.3s ease;
+}
+
+.upload-container:hover {
+  border-color: var(--neon-blue);
+}
+
+.upload-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.upload-actions {
+  display: flex;
+  align-items: center;
+  gap: clamp(10px, 2vw, 20px);
+}
+
+.upload-label {
+  display: flex;
+  align-items: center;
+  gap: clamp(5px, 1vw, 10px);
+  font-size: clamp(0.8rem, 2vw, 1rem);
+  color: #666;
+  cursor: pointer;
+}
+
+.upload-icon {
+  width: clamp(20px, 3vw, 24px);
+  height: clamp(20px, 3vw, 24px);
+}
+
+.carousel-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  gap: clamp(10px, 2vw, 20px);
+}
+
+.carousel-actions {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  display: flex;
   gap: clamp(5px, 1vw, 10px);
 }
 
-.ql-toolbar,
-.ql-editor {
-  background: #fff !important;
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: #fff;
   border: 1px solid #ddd;
+  border-radius: 20px;
+  padding: clamp(5px, 1vw, 8px) clamp(8px, 1.5vw, 12px);
+  font-size: clamp(0.7rem, 1.8vw, 0.9rem);
+  color: #666;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.action-btn:hover {
+  background: #f0f0f0;
+}
+
+.carousel-image-wrapper {
+  position: relative;
+  width: 200px;
+  height: 300px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.carousel-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.carousel-btn {
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.carousel-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.carousel-btn:hover:not(:disabled) {
+  background: #f0f0f0;
+}
+
+.delete-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.delete-btn:hover {
+  background: rgba(255, 220, 220, 0.9);
+}
+
+.carousel-indicators {
+  position: absolute;
+  bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.indicator-text {
+  font-size: clamp(0.7rem, 1.8vw, 0.9rem);
+  color: #666;
+}
+
+.text-editor-wrapper:focus-within {
+  border-color: var(--neon-blue);
+  box-shadow: 0 0 0 3px rgba(4, 219, 246, 0.2);
+}
+
+/* Custom Toolbar Styles */
+#custom-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #f9fafb;
+  border-bottom: 1px solid #e0e0e0;
+  border-radius: 10px 10px 0 0;
+}
+
+#custom-toolbar button {
+  background: none;
+  border: none;
+  padding: 6px;
   border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
 }
 
-.ql-toolbar {
-  border-bottom: none;
-  border-radius: 6px 6px 0 0;
+#custom-toolbar button:hover {
+  background: #e5e7eb;
+  transform: translateY(-1px);
 }
 
+#custom-toolbar button.ql-active {
+  background: var(--neon-blue);
+  color: #fff;
+}
+
+#custom-toolbar button .ql-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  color: #666;
+}
+
+#custom-toolbar button.ql-active .ql-icon {
+  color: #fff;
+}
+
+#custom-toolbar button svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Editor Styles */
 .ql-editor {
-  border-radius: 0 0 6px 6px;
+  border: none !important;
+  border-radius: 0 0 10px 10px;
   min-height: clamp(150px, 20vw, 200px);
+  padding: 12px 16px;
+  font-size: clamp(0.9rem, 2vw, 1rem);
+  line-height: 1.6;
+  color: #333;
+  background: #fff;
+}
+
+.ql-editor:focus {
+  outline: none;
+}
+
+.ql-editor::placeholder {
+  color: #999;
+  font-style: italic;
 }
 
 .math-editor-container {
   display: flex;
-  flex-direction: column;
-  gap: clamp(5px, 1vw, 8px);
-}
-
-.math-editor-wrapper {
-  display: flex;
   align-items: center;
-  gap: clamp(5px, 1vw, 10px);
+  gap: clamp(5px, 1vw, 8px);
+  justify-content: flex-end;
+  margin-top: clamp(5px, 1vw, 10px);
 }
 
-math-field {
-  flex: 1;
-  min-height: clamp(30px, 5vw, 50px);
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  padding: clamp(6px, 1.2vw, 10px);
-  font-size: clamp(12px, 2.5vw, 16px);
-  background: #fff;
-  transition: border-color 0.3s ease;
+.math-label {
+  font-size: clamp(0.8rem, 2vw, 1rem);
+  font-weight: 500;
+  color: var(--squid-ink);
 }
 
-math-field:focus-within {
-  border-color: var(--neon-blue);
-  outline: none;
-}
-
-.insert-math-btn {
+.add-math-btn {
+  background: var(--squid-ink);
+  border: none;
+  border-radius: 50%;
+  width: clamp(28px, 5vw, 40px);
+  height: clamp(28px, 5vw, 40px);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--squid-ink);
-  border: none;
-  border-radius: 50%; 
-  width: clamp(28px, 5vw, 40px);
-  height: clamp(28px, 5vw, 40px);
   cursor: pointer;
   transition: all 0.3s ease;
-  position: relative;
 }
 
-.insert-math-btn:hover {
+.add-math-btn:hover {
   background: var(--neon-blue);
   transform: translateY(-2px);
 }
 
-.insert-math-btn:hover svg circle {
+.add-math-btn:hover svg circle {
   fill: var(--neon-blue);
 }
 
-.insert-math-btn:hover svg path {
+.add-math-btn:hover svg path {
   stroke: var(--squid-ink);
 }
 
-/* Tooltip for the button */
-.insert-math-btn:hover::after {
-  content: "Insert Math";
-  position: absolute;
-  bottom: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--squid-ink);
-  color: var(--neon-blue);
-  padding: clamp(2px, 0.5vw, 4px) clamp(4px, 1vw, 8px);
-  border-radius: 4px;
-  font-size: clamp(10px, 1.5vw, 12px);
-  white-space: nowrap;
-  z-index: 10;
-  margin-bottom: clamp(5px, 1vw, 8px);
-}
-
-.insert-math-btn:hover::before {
-  content: "";
-  position: absolute;
-  bottom: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  border: clamp(3px, 0.8vw, 5px) solid transparent;
-  border-top-color: var(--squid-ink);
-  margin-bottom: clamp(2px, 0.5vw, 3px);
-}
-
-.insert-math-btn svg {
+.add-math-btn svg {
   width: clamp(14px, 2.5vw, 20px);
   height: clamp(14px, 2.5vw, 20px);
 }
 
-/* Style for custom math blocks in Quill */
-.ql-editor div[data-latex] {
-  display: inline-block;
-  margin: clamp(3px, 0.8vw, 5px) 0;
-  font-size: clamp(12px, 2.5vw, 16px);
-  line-height: 1.5;
-}
-
-@media (max-width: 1024px) {
-  .ql-editor {
-    min-height: clamp(120px, 18vw, 150px);
-  }
-  math-field {
-    min-height: clamp(25px, 4.5vw, 40px);
-    padding: clamp(5px, 1vw, 8px);
-    font-size: clamp(11px, 2.2vw, 14px);
-  }
-  .insert-math-btn {
-    width: clamp(26px, 4.5vw, 36px);
-    height: clamp(26px, 4.5vw, 36px);
-  }
-  .insert-math-btn svg {
-    width: clamp(13px, 2.2vw, 18px);
-    height: clamp(13px, 2.2vw, 18px);
-  }
-}
-
-@media (max-width: 970px){
-  .middle-section-upload {
-    margin-top: 80px;
-    margin-bottom: 60px;
-  }
-}
-
-@media (max-width: 768px) {
-  .math-editor-container {
-    width: 100%;
-  }
-  .middle-section-upload {
-    margin-top: 80px;
-    margin-bottom: 60px;
-    width: 100%;
-    padding: clamp(15px, 2.5vw, 20px);
-  }
-  .upload-container {
-    padding: clamp(15px, 2.5vw, 20px);
-  }
-  .text-form {
-    gap: clamp(10px, 2vw, 15px);
-  }
-  .publish-note-btn {
-    width: 100%;
-  }
-  .thumbnail-container {
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  }
-  .ql-editor {
-    min-height: clamp(100px, 15vw, 120px);
-  }
-  math-field {
-    min-height: clamp(22px, 4vw, 35px);
-    padding: clamp(4px, 0.8vw, 6px);
-    font-size: clamp(10px, 2vw, 12px);
-  }
-  .insert-math-btn {
-    width: clamp(24px, 4vw, 34px);
-    height: clamp(24px, 4vw, 34px);
-  }
-  .insert-math-btn svg {
-    width: clamp(22px, 2vw, 26px);
-    height: clamp(22px, 2vw, 26px);
-  }
-}
-
-@media (max-width: 480px) {
-  .math-editor-container {
-    width: 100%;
-  }
-  .middle-section-upload {
-    margin-top: 70px;
-    width: 100%;
-    padding: clamp(10px, 2vw, 15px);
-  }
-  .section-header h2 {
-    font-size: clamp(1.1rem, 3vw, 1.5rem);
-  }
-  .upload-msg {
-    font-size: clamp(0.9rem, 2.5vw, 1.1rem);
-  }
-  .browse-files-btn {
-    padding: clamp(8px, 1.5vw, 10px) clamp(15px, 2.5vw, 20px);
-  }
-  .note-subject,
-  .note-title {
-    font-size: clamp(0.7rem, 1.8vw, 0.95rem);
-    padding: clamp(6px, 1.2vw, 8px) clamp(8px, 1.5vw, 10px);
-  }
-  .ql-editor {
-    min-height: clamp(80px, 12vw, 100px);
-  }
-  math-field {
-    width: 100%;
-    min-height: clamp(20px, 3.5vw, 30px);
-    padding: clamp(3px, 0.6vw, 5px);
-  }
-  .insert-math-btn {
-    width: clamp(22px, 3.5vw, 30px);
-    height: clamp(22px, 3.5vw, 30px);
-  }
-  .insert-math-btn svg {
-    width: clamp(20px, 1.8vw, 24px);
-    height: clamp(20px, 1.8vw, 24px);
-  }
-  .math-editor-wrapper {
-    flex-direction: column;
-    gap: clamp(5px, 1vw, 8px);
-  }
-  .insert-math-btn {
-    width: clamp(30px, 4vw, 40px);
-    height: clamp(30px, 4vw, 40px);
-    align-self: flex-end;
-  }
-  .thumbnail-container {
-    grid-template-columns: repeat(2, 1fr);
-    gap: clamp(5px, 1vw, 10px);
-  }
-  .thumbnail-card {
-    aspect-ratio: 1/1;
-  }
-  .discard-btn {
-    width: 32px;
-    height: 32px;
-  }
-}
-
-@media (max-width: 320px) {
-  .middle-section-upload {
-    padding: clamp(8px, 1.5vw, 12px);
-  }
-  .thumbnail-container {
-    grid-template-columns: 1fr;
-  }
-  .ql-editor {
-    min-height: clamp(70px, 10vw, 80px);
-  }
-  math-field {
-    min-height: clamp(18px, 2vw, 25px);
-    padding: clamp(2px, 0.5vw, 4px);
-    font-size: 12px;
-  }
-  .insert-math-btn {
-    width: clamp(20px, 3vw, 28px);
-    height: clamp(20px, 3vw, 28px);
-  }
-  .insert-math-btn svg {
-    width: clamp(15px, 2.5vw, 20px);
-    height: clamp(15px, 2.5vw, 20px);
-  }
-  .browse-files-btn {
-    padding: clamp(6px, 1vw, 8px) clamp(10px, 2vw, 15px);
-  }
-}
-
-.publish-note-btn {
-  background: var(--squid-ink);
-  color: var(--neon-blue);
-  padding: clamp(10px, 2vw, 14px) clamp(20px, 3.5vw, 30px);
-  border: none;
-  border-radius: 6px;
-  font-size: clamp(0.9rem, 2vw, 1.1rem);
-  font-weight: 600;
-  cursor: pointer;
-  align-self: center;
-  transition: all 0.3s ease;
-}
-
-.publish-note-btn:hover {
-  background: var(--neon-blue);
-  color: var(--squid-ink);
-  transform: translateY(-2px);
-}
-
-.publish-note-btn:disabled {
-  background: #ccc;
-  color: #666;
-  cursor: not-allowed;
-}
-
-.thumbnail-pop-up {
-  width: clamp(300px, 80vw, 700px);
+.math-popup {
+  width: clamp(300px, 80vw, 500px);
   position: fixed;
   top: 50%;
   left: 50%;
@@ -547,22 +413,21 @@ math-field:focus-within {
   z-index: 1010;
   padding: clamp(10px, 2vw, 20px);
   animation: animatemode 0.3s ease forwards;
-  max-height: clamp(200px, 70vh, 90vh);
   display: flex;
   flex-direction: column;
+  gap: clamp(10px, 2vw, 15px);
 }
 
 .popup-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: clamp(5px, 1.5vw, 15px);
+  padding-bottom: clamp(5px, 1.5vw, 10px);
   border-bottom: 1px solid #eee;
-  margin-bottom: clamp(2px, 0.5vw, 5px);
 }
 
 .popup-header h2 {
-  font-size: clamp(1rem, 2.5vw, 1.5rem);
+  font-size: clamp(1rem, 2.5vw, 1.3rem);
   font-weight: 600;
   color: var(--squid-ink);
   margin: 0;
@@ -590,98 +455,93 @@ math-field:focus-within {
   outline-offset: 2px;
 }
 
-.thumbnail-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(clamp(90px, 15vw, 120px), 1fr));
-  grid-auto-rows: minmax(clamp(120px, 20vw, 160px), 1fr);
-  grid-auto-flow: row;
-  gap: clamp(5px, 1vw, 12px);
-  padding: clamp(10px, 2vw, 20px) 0;
-  overflow-y: auto;
-  overflow-x: hidden;
-  max-height: clamp(150px, 50vh, 360px);
-  scrollbar-width: thin;
-  scrollbar-color: #888 #f0f0f0;
-}
-
-.no-notes {
-  text-align: center;
-  padding: clamp(20px, 3vw, 40px);
-  font-size: clamp(0.9rem, 2vw, 1.1rem);
-  color: #666;
-  margin: auto;
-}
-
-.thumbnail-card {
-  position: relative;
-  border-radius: 6px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s ease;
-  aspect-ratio: 3/4;
-  height: 100%;
-  display: flex;
-}
-
-.thumbnail-card:hover {
-  transform: scale(1.03);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.noteImage {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.thumbnail-card .delete-btn {
-  position: absolute;
-  top: clamp(5px, 1vw, 8px);
-  right: clamp(5px, 1vw, 8px);
-  background: rgba(255, 255, 255, 0.9);
-  border: none;
-  border-radius: 50%;
-  width: clamp(22px, 3.5vw, 28px);
-  height: clamp(22px, 3.5vw, 28px);
+.math-editor-wrapper {
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: clamp(5px, 1vw, 10px);
+}
+
+math-field {
+  flex: 1;
+  min-height: clamp(30px, 5vw, 50px);
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: clamp(6px, 1.2vw, 10px);
+  font-size: clamp(12px, 2.5vw, 16px);
+  background: #fff;
+  transition: border-color 0.3s ease;
+}
+
+math-field:focus-within {
+  border-color: var(--neon-blue);
+  outline: none;
+}
+
+.insert-math-btn-popup {
+  background: var(--squid-ink);
+  color: var(--neon-blue);
+  border: none;
+  border-radius: 20px;
+  padding: clamp(8px, 1.5vw, 12px) clamp(20px, 3vw, 30px);
+  font-size: clamp(0.8rem, 2vw, 1rem);
+  font-weight: 500;
   cursor: pointer;
-  opacity: 0;
-  transition: all 0.2s ease;
+  align-self: flex-end;
+  transition: all 0.3s ease;
 }
 
-.thumbnail-card:hover .delete-btn,
-.thumbnail-card:focus-within .delete-btn {
-  opacity: 1;
+.insert-math-btn-popup:hover {
+  background: var(--neon-blue);
+  color: var(--squid-ink);
+  transform: translateY(-2px);
 }
 
-.thumbnail-card .delete-btn:hover {
-  background-color: rgba(255, 220, 220, 0.9);
-  transform: scale(1.1);
+.ql-editor div[data-latex] {
+  display: inline-block;
+  margin: clamp(3px, 0.8vw, 5px) 0;
+  font-size: clamp(12px, 2.5vw, 16px);
+  line-height: 1.5;
 }
 
-.thumbnail-card .delete-btn:hover svg path {
-  fill: #d9534f;
+.button-group {
+  display: flex;
+  gap: clamp(10px, 2vw, 20px);
+  justify-content: flex-end;
 }
 
-.thumbnail-container::-webkit-scrollbar {
-  width: clamp(4px, 0.8vw, 8px);
-  height: clamp(4px, 0.8vw, 8px);
+.save-draft-btn,
+.publish-note-btn {
+  padding: clamp(8px, 1.5vw, 12px) clamp(20px, 3vw, 30px);
+  border: none;
+  border-radius: 25px;
+  font-size: clamp(0.9rem, 2vw, 1rem);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.thumbnail-container::-webkit-scrollbar-track {
-  background: #f0f0f0;
-  border-radius: clamp(2px, 0.5vw, 4px);
+.save-draft-btn {
+  background: var(--neon-blue);
+  color: #fff;
 }
 
-.thumbnail-container::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: clamp(2px, 0.5vw, 4px);
+.publish-note-btn {
+  background: var(--squid-ink);
+  color: #fff;
 }
 
-.thumbnail-container::-webkit-scrollbar-thumb:hover {
-  background: #666;
+.save-draft-btn:hover,
+.publish-note-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+.save-draft-btn:disabled,
+.publish-note-btn:disabled {
+  background: #ccc;
+  color: #666;
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 
 .overlay {
@@ -695,37 +555,6 @@ math-field:focus-within {
   z-index: 1008;
 }
 
-.loader-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.7);
-  z-index: 1020;
-}
-
-.loader {
-  width: clamp(20px, 4vw, 40px);
-  height: clamp(20px, 4vw, 40px);
-  border: clamp(2px, 0.5vw, 4px) solid var(--neon-blue);
-  border-top: clamp(2px, 0.5vw, 4px) solid transparent;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
 @keyframes animatemode {
   from {
     transform: translate(-50%, -50%) scale(0.95);
@@ -737,12 +566,126 @@ math-field:focus-within {
   }
 }
 
-@media (min-width: 769px) {
+@media (max-width: 1024px) {
   .middle-section-upload {
-    width: clamp(500px, 60vw, 600px);
-    padding: clamp(15px, 2.5vw, 20px);
+    max-width: 90%;
+    padding: clamp(15px, 2vw, 20px);
   }
-  .upload-container {
-    padding: clamp(15px, 2.5vw, 20px);
+
+  .upload-nav h2 {
+    font-size: clamp(1.1rem, 2.5vw, 1.3rem);
+  }
+
+  .nav-options {
+    gap: clamp(8px, 1.5vw, 15px);
+  }
+
+  .nav-options span {
+    font-size: clamp(0.7rem, 1.8vw, 0.9rem);
+  }
+
+  .note-title,
+  .note-subject {
+    font-size: clamp(0.7rem, 1.8vw, 0.9rem);
+    padding: clamp(6px, 1.2vw, 8px);
+  }
+
+  .carousel-image-wrapper {
+    width: 150px;
+    height: 225px;
+  }
+
+  .carousel-btn {
+    width: 35px;
+    height: 35px;
+  }
+
+  .ql-editor {
+    min-height: clamp(120px, 18vw, 150px);
+  }
+
+  math-field {
+    min-height: clamp(25px, 4.5vw, 40px);
+    padding: clamp(5px, 1vw, 8px);
+    font-size: clamp(11px, 2.2vw, 14px);
+  }
+
+  .add-math-btn {
+    width: clamp(26px, 4.5vw, 36px);
+    height: clamp(26px, 4.5vw, 36px);
+  }
+
+  .add-math-btn svg {
+    width: clamp(13px, 2.2vw, 18px);
+    height: clamp(13px, 2.2vw, 18px);
+  }
+
+  .button-group {
+    flex-direction: column;
+    gap: clamp(8px, 1.5vw, 12px);
+  }
+
+  .save-draft-btn,
+  .publish-note-btn {
+    width: 100%;
+    padding: clamp(8px, 1.5vw, 10px);
+  }
+
+  .upload-actions {
+    flex-direction: column;
+    gap: clamp(8px, 1.5vw, 12px);
+  }
+
+  .math-editor-container {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 768px) {
+  .middle-section-upload {
+    max-width: 95%;
+    padding: clamp(10px, 2vw, 15px);
+  }
+
+  .upload-nav h2 {
+    font-size: clamp(1rem, 2.2vw, 1.2rem);
+  }
+
+  .nav-options {
+    gap: clamp(5px, 1vw, 10px);
+  }
+
+  .nav-options span {
+    font-size: clamp(0.6rem, 1.5vw, 0.8rem);
+  }
+
+  .carousel-image-wrapper {
+    width: 120px;
+    height: 180px;
+  }
+
+  .carousel-btn {
+    width: 30px;
+    height: 30px;
+  }
+
+  .ql-editor {
+    min-height: clamp(100px, 15vw, 120px);
+  }
+
+  math-field {
+    min-height: clamp(22px, 4vw, 35px);
+    padding: clamp(4px, 0.8vw, 6px);
+    font-size: clamp(10px, 2vw, 12px);
+  }
+
+  .add-math-btn {
+    width: clamp(24px, 4vw, 34px);
+    height: clamp(24px, 4vw, 34px);
+  }
+
+  .add-math-btn svg {
+    width: clamp(12px, 2vw, 16px);
+    height: clamp(12px, 2vw, 16px);
   }
 }

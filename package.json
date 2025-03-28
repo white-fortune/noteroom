@@ -12,6 +12,7 @@
         "build:frontend": "npm run build --workspace=frontend"
     },
     "dependencies": {
+        "react-icons": "^5.5.0",
         "sharp": "^0.33.5"
     }
 }
