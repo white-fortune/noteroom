@@ -2,7 +2,7 @@
   --notiDotUnread: #0073e6;
   --secondaryUnread: #e7f3ff;
   --secondaryUnreadHover: #dcefff;
-  --main-bg: #f8f8f8;
+  --main-bg: #f2f4f7;
   --primary-color: #007bff;
   --text-color: #333333;
   --border-color: #d1d5db;
@@ -30,8 +30,6 @@ body {
   width: 100%;
   max-width: 1800px;
   padding: 5px 20px;
-  background: #ffffff;
-  box-shadow: var(--shadow);
   z-index: 1000;
 }
 
@@ -52,7 +50,7 @@ body {
   max-width: 680px;
   background: #ffffff;
   border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border-radius: 15px;
   box-shadow: var(--shadow);
   overflow: hidden;
   transition: border-color 0.2s ease;
