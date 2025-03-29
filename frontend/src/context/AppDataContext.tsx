@@ -87,8 +87,7 @@ export default function AppDataProvider({ children }: { children: ReactNode | Re
                 if (response.ok) {
                     let data = await response.json()
                     if (data.ok && data.requests.length !== 0) {
-                        //FIXME: send pre-modified requests object
-                        dispatchRequest({ type: RequestsActions.ADD, payload: { requests: data.requests.map((request: any) => new RequestObject(request)) } })
+                        dispatchRequest({ type: RequestsActions.ADD, payload: { requests: data.requests } })
                     }
                 }
             } catch (error) {
