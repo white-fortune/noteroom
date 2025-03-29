@@ -136,7 +136,7 @@ body {
   justify-content: center;
   background: #fff;
   border: 1px solid #ddd;
-  border-radius: 8px;
+  border-radius: 15px;
   transition: border-color 0.3s ease;
 }
 
