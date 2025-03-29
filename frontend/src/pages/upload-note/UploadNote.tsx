@@ -3,11 +3,11 @@ import Quill, { QuillOptions } from "quill";
 import "quill/dist/quill.snow.css";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import ThumbnailPopup from "./ThumbnailPopup";
 import "../../public/css/upload-note.css";
 import "mathlive";
+import { FaBold, FaItalic, FaUnderline, FaCode, FaLink, FaSuperscript, FaSubscript } from "react-icons/fa";
 
-let API_SERVER_URL = import.meta.env.VITE_API_SERVER_URL
+let API_SERVER_URL = import.meta.env.VITE_API_SERVER_URL;
 const ReactSwal = withReactContent(Swal);
 
 interface MathfieldElement extends HTMLElement {
@@ -33,20 +33,13 @@ declare global {
   }
 }
 
-const toolbarOptions = [
-  ["bold", "italic", "underline"],
-  ["code-block"],
-  ["link"],
-  [{ script: "sub" }, { script: "super" }],
-];
-
 const UploadNote: React.FC = () => {
   const [noteSubject, setNoteSubject] = useState<string>("");
   const [noteTitle, setNoteTitle] = useState<string>("");
   const [stackFiles, setStackFiles] = useState<File[]>([]);
-  const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [showUploadSuccess, setShowUploadSuccess] = useState<boolean>(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
+  const [isMathPopupOpen, setIsMathPopupOpen] = useState<boolean>(false);
 
   const editorRef = useRef<HTMLDivElement>(null);
   const quillRef = useRef<Quill | null>(null);
@@ -83,17 +76,31 @@ const UploadNote: React.FC = () => {
 
   useEffect(() => {
     if (editorRef.current && !quillRef.current) {
+      // Create a custom toolbar container
+      const toolbar = document.createElement("div");
+      toolbar.id = "custom-toolbar";
+      toolbar.innerHTML = `
+        <button class="ql-bold" title="Bold"><span class="ql-icon"><svg viewBox="0 0 24 24"><FaBold /></svg></span></button>
+        <button class="ql-italic" title="Italic"><span class="ql-icon"><svg viewBox="0 0 24 24"><FaItalic /></svg></span></button>
+        <button class="ql-underline" title="Underline"><span class="ql-icon"><svg viewBox="0 0 24 24"><FaUnderline /></svg></span></button>
+        <button class="ql-code-block" title="Code Block"><span class="ql-icon"><svg viewBox="0 0 24 24"><FaCode /></svg></span></button>
+        <button class="ql-link" title="Link"><span class="ql-icon"><svg viewBox="0 0 24 24"><FaLink /></svg></span></button>
+        <button class="ql-script" value="sub" title="Subscript"><span class="ql-icon"><svg viewBox="0 0 24 24"><FaSubscript /></svg></span></button>
+        <button class="ql-script" value="super" title="Superscript"><span class="ql-icon"><svg viewBox="0 0 24 24"><FaSuperscript /></svg></span></button>
+      `;
+      editorRef.current.parentElement?.insertBefore(toolbar, editorRef.current);
+
       quillRef.current = new Quill(editorRef.current, {
         theme: "snow",
         placeholder:
           "Describe your note's key insights, unique takeaways, or how it aids learning.",
         modules: {
-          toolbar: toolbarOptions,
+          toolbar: "#custom-toolbar",
         },
       } as QuillOptions);
 
       const BlockEmbed = Quill.import("blots/block/embed") as unknown as {
-        new(...args: any[]): {
+        new (...args: any[]): {
           domNode: HTMLElement;
         };
         create(value: string): HTMLElement;
@@ -103,7 +110,7 @@ const UploadNote: React.FC = () => {
       class MathBlot extends BlockEmbed {
         static blotName = "math";
         static tagName = "div";
-        static scope = (Quill.import('blots/block/embed') as any).scope;
+        static scope = (Quill.import("blots/block/embed") as any).scope;
 
         static create(value: string) {
           const node = super.create(value);
@@ -120,7 +127,7 @@ const UploadNote: React.FC = () => {
           return node.getAttribute("data-latex") || "";
         }
       }
-      Quill.register('formats/math', MathBlot);
+      Quill.register("formats/math", MathBlot);
 
       if (editorRef.current) {
         editorRef.current.style.height = "250px";
@@ -147,6 +154,7 @@ const UploadNote: React.FC = () => {
         const index = range ? range.index : quillRef.current.getLength();
         quillRef.current.insertEmbed(index, "math", latex, "user");
         mathFieldRef.current.setValue("");
+        setIsMathPopupOpen(false);
       } else {
         ReactSwal.fire({
           icon: "warning",
@@ -184,25 +192,24 @@ const UploadNote: React.FC = () => {
     });
 
     setStackFiles((prev) => [...prev, ...validFiles]);
+    setCurrentImageIndex(0);
 
-    if (validFiles.length > 0) showUploadEffect();
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  const updateStackStatus = (): string => {
-    const count = stackFiles.length;
-    return count === 0
-      ? "No Images"
-      : count === 1
-        ? "1 Image"
-        : `${count} Images`;
+  const handleDeleteImage = (index: number) => {
+    setStackFiles((prev) => prev.filter((_, i) => i !== index));
+    if (currentImageIndex >= stackFiles.length - 1) {
+      setCurrentImageIndex(Math.max(0, stackFiles.length - 2));
+    }
   };
 
-  const showUploadEffect = () => {
-    setShowUploadSuccess(true);
-    setTimeout(() => {
-      setShowUploadSuccess(false);
-    }, 2400);
+  const handlePrevImage = () => {
+    setCurrentImageIndex((prev) => Math.max(0, prev - 1));
+  };
+
+  const handleNextImage = () => {
+    setCurrentImageIndex((prev) => Math.min(stackFiles.length - 1, prev + 1));
   };
 
   const handlePublish = async () => {
@@ -232,22 +239,22 @@ const UploadNote: React.FC = () => {
       ReactSwal.fire({
         icon: "success",
         title: "Processing...",
-        text: "Your post is being processed to upload"
-      })
+        text: "Your post is being processed to upload",
+      });
 
       const response = await fetch(`${API_SERVER_URL}/api/upload`, {
         method: "post",
         credentials: "include",
-        body: formData
-      })
+        body: formData,
+      });
       if (response.ok) {
-        const data = await response.json()
+        const data = await response.json();
         if (data.ok) {
           setStackFiles([]);
-          setIsPopupOpen(false);
+          setCurrentImageIndex(0);
 
           if (fileInputRef.current) {
-            fileInputRef.current.value = ""
+            fileInputRef.current.value = "";
           }
           (document.querySelector(".note-subject") as HTMLSelectElement).value = "";
           (document.querySelector(".note-title") as HTMLInputElement).value = "";
@@ -258,262 +265,346 @@ const UploadNote: React.FC = () => {
           ReactSwal.fire({
             icon: "success",
             title: "You're good to go!",
-            text: "Your post has been uploaded successfully!"
-          })
+            text: "Your post has been uploaded successfully!",
+          });
         } else {
           ReactSwal.fire({
             icon: "error",
             title: "Upload failure",
-            text: data.message || "Something went wrong! Please try again a bit later"
-          })
+            text: data.message || "Something went wrong! Please try again a bit later",
+          });
         }
       } else {
         ReactSwal.fire({
           icon: "error",
           title: "Upload failure",
-          text: "Something went wrong! Please try again a bit later"
-        })
+          text: "Something went wrong! Please try again a bit later",
+        });
       }
-
     } catch (error) {
       ReactSwal.fire({
         icon: "error",
         title: "Connection Error",
-        text: "Please check your internet connection and try again."
-      })
+        text: "Please check your internet connection and try again.",
+      });
     } finally {
       setIsLoading(false);
     }
-
   };
 
   return (
     <div className="middle-section-upload">
-      <header className="section-header">
-        <h2>Upload New Post</h2>
-        <p className="header-subtitle">
-          Upload images if you want, or skip them. Just share the details, and you're good to go!"
-        </p>
-      </header>
+      <nav className="upload-nav">
+        <h2>Upload</h2>
+        <div className="nav-options">
+          <span className="active">Text & Images</span>
+          <span>Links</span>
+          <span>File</span>
+          <span>MCQ</span>
+        </div>
+      </nav>
 
-      <div className="upload-container">
-        <div className="upload-icon">
-          <svg
-            width="60"
-            height="60"
-            viewBox="0 0 73 73"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
+      <div className="form-group">
+        <label htmlFor="noteTitle">Title*</label>
+        <input
+          type="text"
+          id="noteTitle"
+          className="note-title"
+          placeholder="Enter a concise title (max 300 characters)"
+          name="noteTitle"
+          maxLength={300}
+          value={noteTitle}
+          onChange={(e) => setNoteTitle(e.target.value)}
+        />
+        <span className="char-count">{noteTitle.length}/300</span>
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="noteSubject">Subject</label>
+        <select
+          name="noteSubject"
+          id="noteSubject"
+          className="note-subject"
+          value={noteSubject}
+          onChange={(e) => setNoteSubject(e.target.value)}
+          required
+        >
+          <option value="" disabled>
+            Select a Subject
+          </option>
+          {[
+            "Bangla",
+            "English",
+            "ICT",
+            "Physics 1st Paper",
+            "Physics 2nd Paper",
+            "Chemistry 1st Paper",
+            "Chemistry 2nd Paper",
+            "Biology 1st Paper",
+            "Biology 2nd Paper",
+            "Higher Mathematics 1st Paper",
+            "Higher Mathematics 2nd Paper",
+            "Statistics",
+            "History",
+            "Geography",
+            "Logic",
+            "Philosophy",
+            "Political Science",
+            "Sociology",
+            "Economics",
+            "Islamic History & Culture",
+            "Social Work",
+            "Psychology",
+            "Islamic Studies",
+          ].map((subject) => (
+            <option key={subject} value={subject}>
+              {subject}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="form-group description-group">
+        <label>Description</label>
+        <div className="text-editor-wrapper">
+          <div ref={editorRef} />
+        </div>
+        <span className="char-count">
+          {(quillRef.current?.getText().trim().length || 0)}/5000
+        </span>
+        <div className="math-editor-container">
+          <label className="math-label">Add Mathematical Expression</label>
+          <button
+            className="add-math-btn"
+            onClick={() => setIsMathPopupOpen(true)}
+            title="Add Mathematical Expression"
+            aria-label="Add Mathematical Expression"
           >
-            <g clipPath="url(#clip0_606_961)">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <circle cx="12" cy="12" r="12" fill="var(--squid-ink)" />
               <path
-                d="M48.3085 48.3057L36.2314 36.2286M36.2314 36.2286L24.1542 48.3057M36.2314 36.2286V63.4021M61.5631 55.5218C64.5079 53.9164 66.8343 51.376 68.175 48.3016C69.5156 45.2272 69.7943 41.7938 68.967 38.5435C68.1397 35.2931 66.2535 32.4108 63.6062 30.3514C60.9588 28.2921 57.7011 27.173 54.347 27.1708H50.5427C49.6289 23.6359 47.9255 20.3542 45.5608 17.5724C43.196 14.7907 40.2314 12.5811 36.8899 11.11C33.5483 9.6389 29.9167 8.94445 26.2681 9.07888C22.6195 9.21331 19.0488 10.1731 15.8246 11.8862C12.6003 13.5992 9.80635 16.0209 7.65273 18.9691C5.49911 21.9174 4.04188 25.3155 3.39059 28.908C2.7393 32.5006 2.9109 36.194 3.89249 39.7106C4.87409 43.2273 6.64013 46.4756 9.05784 49.2115"
-                stroke="#1E1E1E"
-                strokeWidth="6.03856"
+                d="M12 7V17M7 12H17"
+                stroke="var(--neon-blue)"
+                strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
-            </g>
-            <defs>
-              <clipPath id="clip0_606_961">
-                <rect width="72.4627" height="72.4627" fill="white" />
-              </clipPath>
-            </defs>
-          </svg>
-        </div>
-        <p className="upload-msg">Upload Images</p>
-        <p className="suggested-formats-msg">
-          Supported: PNG, JPG (Max 10MB each)
-        </p>
-        <div className="browse-file-container">
-          <input
-            type="file"
-            id="fileInput"
-            className="file-input"
-            name="images"
-            multiple
-            ref={fileInputRef}
-            onChange={handleFileChange}
-            accept="image/png, image/jpeg"
-          />
-          <label htmlFor="fileInput" className="browse-files-btn">
-            Select Files
-          </label>
+            </svg>
+          </button>
         </div>
       </div>
 
-      <div className="stack-status">
-        <div
-          className="stack-number-container"
-          onClick={() => setIsPopupOpen(true)}
-          style={{
-            backgroundColor:
-              stackFiles.length >= 1 && stackFiles.length <= 5
-                ? "#DEEDFF"
-                : stackFiles.length >= 6
-                  ? "#F2F8F0"
-                  : "#F8F8F8",
-            borderColor:
-              stackFiles.length >= 1 && stackFiles.length <= 5
-                ? "#2D61D8"
-                : stackFiles.length >= 6
-                  ? "#529F3D"
-                  : "#E0E0E0",
-          }}
-        >
-          <div className="snc-info-wrapper">
-            <span className="stack-info">
-              <span className="stack-number">{updateStackStatus()}</span>
-            </span>
-          </div>
-          <span className="stack-prompt">View Stack</span>
-        </div>
-        <div className={`success-upload-msg ${showUploadSuccess ? 's-u-effect' : ''}`}
-          style={{ display: showUploadSuccess ? "flex" : "none" }}>
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 28 28"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <g clipPath="url(#clip0_1844_2149)">
-              <path
-                d="M14.0001 0C6.28041 0 0 6.28031 0 13.9999C0 21.7195 6.28041 27.9998 14.0001 27.9998C21.7197 27.9998 28 21.7195 28 13.9999C28 6.28031 21.7197 0 14.0001 0ZM14.0001 25.7047C7.5459 25.7047 2.29507 20.4541 2.29507 13.9999C2.29507 7.54581 7.5459 2.29507 14.0001 2.29507C20.4542 2.29507 25.7049 7.54581 25.7049 13.9999C25.7049 20.4541 20.4542 25.7047 14.0001 25.7047Z"
-                fill="#1D8102"
-              />
-              <path
-                d="M20.0564 8.62512L11.744 16.9376L7.94357 13.1371C7.49539 12.689 6.76887 12.689 6.32069 13.1371C5.8726 13.5853 5.8726 14.3118 6.32069 14.76L10.9326 19.3719C11.1567 19.5959 11.4503 19.708 11.744 19.708C12.0377 19.708 12.3314 19.708 12.5555 19.3719L21.6793 10.2481C22.1274 9.79992 22.1274 9.07339 21.6793 8.62521C21.2311 8.17703 20.5045 8.17703 20.0564 8.62512Z"
-                fill="#1D8102"
-              />
-            </g>
-            <defs>
-              <clipPath id="clip0_1844_2149">
-                <rect width="28" height="28" fill="white" />
-              </clipPath>
-            </defs>
-          </svg>
-          <span>Files Added Successfully</span>
-        </div>
-      </div>
-
-      <div className="text-form">
-        <div className="form-group">
-          <label htmlFor="noteSubject">Subject</label>
-          <select
-            name="noteSubject"
-            id="noteSubject"
-            className="note-subject"
-            value={noteSubject}
-            onChange={(e) => setNoteSubject(e.target.value)}
-            required
-          >
-            <option value="" disabled>
-              Select a Subject
-            </option>
-            {[
-              "Bangla",
-              "English",
-              "ICT",
-              "Physics 1st Paper",
-              "Physics 2nd Paper",
-              "Chemistry 1st Paper",
-              "Chemistry 2nd Paper",
-              "Biology 1st Paper",
-              "Biology 2nd Paper",
-              "Higher Mathematics 1st Paper",
-              "Higher Mathematics 2nd Paper",
-              "Statistics",
-              "History",
-              "Geography",
-              "Logic",
-              "Philosophy",
-              "Political Science",
-              "Sociology",
-              "Economics",
-              "Islamic History & Culture",
-              "Social Work",
-              "Psychology",
-              "Islamic Studies",
-            ].map((subject) => (
-              <option key={subject} value={subject}>
-                {subject}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="form-group">
-          <label htmlFor="noteTitle">Title</label>
-          <input
-            type="text"
-            id="noteTitle"
-            className="note-title"
-            placeholder="Enter a concise title (max 200 characters)"
-            name="noteTitle"
-            maxLength={200}
-            value={noteTitle}
-            onChange={(e) => setNoteTitle(e.target.value)}
-          />
-        </div>
-        <div className="form-group">
-          <label>Description</label>
-          <div className="text-editor-wrapper">
-            <div ref={editorRef} />
-            <div className="math-editor-container">
-              <label style={{ marginTop: "10px", display: "block" }}>
-                Add Mathematical Expressions:
-              </label>
-              <div className="math-editor-wrapper">
-                {React.createElement('math-field', {
-                  ref: mathFieldRef,
-                  placeholder: "Enter math here (e.g., x^2 + 3)",
-                })}
-                <button
-                  className="insert-math-btn"
-                  onClick={handleInsertMath}
-                  title="Insert Math"
-                  aria-label="Insert Math"
+      <div className="upload-container">
+        {stackFiles.length === 0 ? (
+          <div className="upload-placeholder">
+            <input
+              type="file"
+              id="fileInput"
+              className="file-input"
+              name="images"
+              multiple
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              accept="image/png, image/jpeg"
+            />
+            <div className="upload-actions">
+              <label htmlFor="fileInput" className="upload-label">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="upload-icon"
                 >
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <circle cx="12" cy="12" r="12" fill="var(--squid-ink)" />
-                    <path
-                      d="M12 7V17M7 12H17"
-                      stroke="var(--neon-blue)"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </button>
-              </div>
+                  <path
+                    d="M12 2v10m0-10l-4 4m4-4l4 4m-10 6h12v6H6v-6z"
+                    stroke="#666"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                <span>Drag and Drop or upload media</span>
+              </label>
             </div>
           </div>
-        </div>
+        ) : (
+          <div className="carousel-container">
+            <div className="carousel-actions">
+              <button className="action-btn add-btn" onClick={() => fileInputRef.current?.click()}>
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M12 4v16m8-8H4"
+                    stroke="#666"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                Add
+              </button>
+              <button className="action-btn edit-btn">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
+                    stroke="#666"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"
+                    stroke="#666"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                Edit
+              </button>
+              <input
+                type="file"
+                id="fileInput"
+                className="file-input"
+                name="images"
+                multiple
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                accept="image/png, image/jpeg"
+              />
+            </div>
+            <button
+              className="carousel-btn prev"
+              onClick={handlePrevImage}
+              disabled={currentImageIndex === 0}
+            >
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M15 18l-6-6 6-6"
+                  stroke="#666"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </button>
+            <div className="carousel-image-wrapper">
+              <img
+                src={URL.createObjectURL(stackFiles[currentImageIndex])}
+                alt={`Uploaded Image ${currentImageIndex + 1}`}
+                className="carousel-image"
+                onLoad={(e) => URL.revokeObjectURL(e.currentTarget.src)}
+              />
+              <button
+                className="delete-btn"
+                onClick={() => handleDeleteImage(currentImageIndex)}
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"
+                    fill="#d9534f"
+                  />
+                </svg>
+              </button>
+            </div>
+            <button
+              className="carousel-btn next"
+              onClick={handleNextImage}
+              disabled={currentImageIndex === stackFiles.length - 1}
+            >
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M9 6l6 6-6 6"
+                  stroke="#666"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </button>
+            <div className="carousel-indicators">
+              <span className="indicator-text">
+                {currentImageIndex + 1} of {stackFiles.length}
+              </span>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="button-group">
+        <button className="save-draft-btn" disabled={isLoading}>
+          Save Draft
+        </button>
         <button
           className="publish-note-btn"
           onClick={handlePublish}
           disabled={isLoading}
         >
-          {isLoading ? "Publishing..." : "Publish Post"}
+          {isLoading ? "Publishing..." : "Publish"}
         </button>
       </div>
 
-      <div
-        className="overlay"
-        style={{ display: isPopupOpen ? "block" : "none" }}
-      />
-      <ThumbnailPopup
-        isOpen={isPopupOpen}
-        stackFiles={stackFiles}
-        setStackFiles={setStackFiles}
-        onClose={() => setIsPopupOpen(false)}
-      />
+      {isMathPopupOpen && (
+        <>
+          <div className="overlay" onClick={() => setIsMathPopupOpen(false)} />
+          <div className="math-popup">
+            <div className="popup-header">
+              <h2>Add Mathematical Expression</h2>
+              <button className="discard-btn" onClick={() => setIsMathPopupOpen(false)}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M6 18L18 6M6 6l12 12" stroke="#333" strokeWidth="2" strokeLinecap="round" />
+                </svg>
+              </button>
+            </div>
+            <div className="math-editor-wrapper">
+              {React.createElement("math-field", {
+                ref: mathFieldRef,
+                placeholder: "Enter math here (e.g., x^2 + 3)",
+              })}
+            </div>
+            <button className="insert-math-btn-popup" onClick={handleInsertMath}>
+              Insert
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 };
