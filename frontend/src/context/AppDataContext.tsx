@@ -37,13 +37,11 @@ export default function AppDataProvider({ children }: { children: ReactNode | Re
                     if (data.ok && data.posts.length !== 0) {
                         setSavedNotes([
                             ...savedNotes,
-                            ...data.posts.map((note: any) => {
-                                //FIXME: send pre-modified saved notes object just like owned_posts
-                                return {
-                                    noteID: note._id,
-                                    noteTitle: note.title.length > 30 ? note.title.slice(0, 30) + "..." : note.title,
-                                    noteThumbnail: note.thumbnail
+                            ...data.posts.map((note: SavedNoteObject) => {
+                                if (note.noteTitle.length > 30) {
+                                    return { ...note, noteTitle: note.noteTitle.slice(0, 30) + "..." }
                                 }
+                                return note
                             })
                         ])
                     } else {
